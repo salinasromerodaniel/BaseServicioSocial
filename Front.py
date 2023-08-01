@@ -58,5 +58,17 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/activos', methods=['GET', 'POST'])
+def activos():
+    return render_template('MenuPrincipal.html')
+
+@app.route('/personas', methods=['GET', 'POST'])
+def personas():
+    return render_template('MenuPrincipal.html')
+
+@app.route('/historico', methods=['GET', 'POST'])
+def historico():
+    return render_template('MenuPrincipal.html')
+
 if __name__=='__main__':
     app.run(debug=True, port=5000)
