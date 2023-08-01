@@ -58,9 +58,23 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-@app.route('/activos', methods=['GET', 'POST'])
+@app.route('/activos')
 def activos():
-    return render_template('MenuPrincipal.html')
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        return render_template('MActivosPrincipal.html')
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/activos/marca')
+def marca():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        return render_template('Marca.html')
+    else:
+        return redirect(url_for('logout'))
 
 @app.route('/personas', methods=['GET', 'POST'])
 def personas():

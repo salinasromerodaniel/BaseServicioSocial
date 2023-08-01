@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .menu-item a:hover {
+            text-decoration: underline;
+        }
+
+        .menu-icon {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Activos</h1>
+        <div class="menu-item">
+            <span class="menu-icon">&#128199;</span>
+            <a href="/activos/modelo">Modelo</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#127916;</span>
+            <a href="/activos/marca">Marca</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#127975;</span>
+            <a href="/activos/ubicacion">Ubicación</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#128726;</span>
+            <a href="/activos/edificio">Edificio</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#128736;</span>
+            <a href="/activos/herramientas">Herramientas/Consumibles</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#128187;</span>
+            <a href="/activos/proyectores">Proyectores/TV</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#128214;</span>
+            <a href="/activos/libros">Libros</a>
+        </div>
+        <a class="btn-back" href="/menuP">Volver al Menú Principal</a>
+    </div>
+</body>
+</html>
