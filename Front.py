@@ -18,8 +18,6 @@ cursor = conn.cursor()
 # Simulación de usuarios y contraseñas (reemplaza esto con una base de datos en un entorno de producción)
 users = {
     'admin': 'admin',
-    'user2': 'password2',
-    # Agrega más usuarios aquí...
 }
 
 @app.route('/')

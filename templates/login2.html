@@ -43,8 +43,14 @@
             box-sizing: border-box;
         }
 
-        input[type="submit"] {
-            width: 100%;
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="submit"],
+        .btn-add-user {
+            flex: 1;
             background-color: #4CAF50;
             color: #fff;
             padding: 12px 20px;
@@ -54,8 +60,17 @@
             transition: background-color 0.3s;
         }
 
-        input[type="submit"]:hover {
+        input[type="submit"]:hover,
+        .btn-add-user:hover {
             background-color: #45a049;
+        }
+
+        .btn-add-user {
+            background-color: #3498db;
+        }
+
+        .btn-add-user:hover {
+            background-color: #2980b9;
         }
     </style>
 </head>
@@ -69,7 +84,10 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
 
-            <input type="submit" value="Login">
+            <div class="button-group">
+                <input type="submit" value="Login">
+                <button class="btn-add-user" onclick="window.location.href='/add_user_page'">Add User</button>
+            </div>
         </form>
     </div>
 </body>
