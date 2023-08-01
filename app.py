@@ -7,7 +7,7 @@ app = Flask(__name__)
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': '9806',
+    'password': 'admin',
     'database': 'Inventario',
 }
 conn = mysql.connector.connect(**db_config)
