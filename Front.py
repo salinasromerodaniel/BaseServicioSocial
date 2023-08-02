@@ -1,5 +1,5 @@
 import mysql.connector
-from database import obtener_nombres_marca, obtener_nombres_modelo, obtener_nombres_ubicacion
+from database import obtener_nombres_marca, obtener_nombres_modelo, obtener_nombres_ubicacion, obtener_info_sistema_operativo
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 
@@ -75,7 +75,8 @@ def ADispos():
         nombres_marca = obtener_nombres_marca()
         nombres_modelo = obtener_nombres_modelo()
         nombres_ubicacion = obtener_nombres_ubicacion()
-        return render_template('ADispos.html', nombres_marca=nombres_marca, nombres_modelo=nombres_modelo, nombres_ubicacion=nombres_ubicacion)
+        nombres_so = obtener_info_sistema_operativo()
+        return render_template('ADispos.html', nombres_marca=nombres_marca, nombres_modelo=nombres_modelo, nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so)
     else:
         return redirect(url_for('logout'))
     
