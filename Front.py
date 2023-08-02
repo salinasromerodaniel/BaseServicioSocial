@@ -1,4 +1,5 @@
 import mysql.connector
+from database import obtener_nombres_marca, obtener_nombres_modelo, obtener_nombres_ubicacion
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 
@@ -6,39 +7,6 @@ app = Flask(__name__)
 
 # Configuración para la sesión. Se necesita una clave secreta para firmar las cookies.
 app.secret_key = 'mi_clave_secreta'
-
-# Configura la conexión a la base de datos MySQL
-db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'admin',
-    'database': 'Inventario',
-}
-#conn = mysql.connector.connect(**db_config)
-#cursor = conn.cursor()
-
-# Función para obtener los nombres de la tabla MARCA
-def obtener_nombres_marca():
-    nombres = []
-    try:
-        # Realiza la conexión a la base de datos
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        # Ejecuta la consulta para obtener los nombres de la tabla MARCA en orden alfabético
-        cursor.execute("SELECT NOMBRE FROM MARCA ORDER BY NOMBRE")
-
-        # Obtiene los resultados de la consulta y los agrega a la lista de nombres
-        nombres = [nombre[0] for nombre in cursor.fetchall()]
-
-        # Cierra el cursor y la conexión a la base de datos
-        cursor.close()
-        conn.close()
-
-    except mysql.connector.Error as e:
-        print("Error al obtener los nombres de la tabla MARCA:", e)
-
-    return nombres
 
 
 # Simulación de usuarios y contraseñas (reemplaza esto con una base de datos en un entorno de producción)
@@ -105,7 +73,9 @@ def ADispos():
     if 'logged_in' in session and session['logged_in']:
         # El usuario está logeado, renderizamos la página con la acción "Marca".
         nombres_marca = obtener_nombres_marca()
-        return render_template('ADispos.html', nombres_marca=nombres_marca)
+        nombres_modelo = obtener_nombres_modelo()
+        nombres_ubicacion = obtener_nombres_ubicacion()
+        return render_template('ADispos.html', nombres_marca=nombres_marca, nombres_modelo=nombres_modelo, nombres_ubicacion=nombres_ubicacion)
     else:
         return redirect(url_for('logout'))
     

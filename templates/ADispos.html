@@ -105,7 +105,7 @@
                 <select id="ram_maxima" name="ram_maxima" required>
                     <option value="" disabled selected>Seleccione tamaño</option>
                     <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
-                    {% for i in range(101) %}
+                    {% for i in range(1, 101) %}
                         <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
@@ -117,6 +117,28 @@
                     <option value="" disabled selected>Seleccione una marca</option>
                     <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
                     {% for nombre in nombres_marca %}
+                        <option value="{{ nombre }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="modelo">Modelo</label>
+                <select id="modelo" name="modelo" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione un modelo</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
+                    {% for nombre in nombres_modelo %}
+                        <option value="{{ nombre }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ubicacion">Ubicación</label>
+                <select id="ubicacion" name="ubicacion" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione una ubicación</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
+                    {% for nombre in nombres_ubicacion %}
                         <option value="{{ nombre }}">{{ nombre }}</option>
                     {% endfor %}
                 </select>
