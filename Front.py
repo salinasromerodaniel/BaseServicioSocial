@@ -67,12 +67,48 @@ def activos():
     else:
         return redirect(url_for('logout'))
     
-@app.route('/activos/marca')
-def marca():
+@app.route('/activos/dispos')
+def dispos():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
     if 'logged_in' in session and session['logged_in']:
         # El usuario está logeado, renderizamos la página con la acción "Marca".
-        return render_template('Marca.html')
+        return render_template('MDispos.html')
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/activos/dispos/agregar')
+def ADispos():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        return render_template('ADispos.html')
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/activos/herramientas')
+def herramientas():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        return render_template('MHerramientas.html')
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/activos/proyectores')
+def proyectores():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        return render_template('MProyectores.html')
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/activos/libros')
+def libros():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        return render_template('MLibros.html')
     else:
         return redirect(url_for('logout'))
 
