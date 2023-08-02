@@ -14,8 +14,31 @@ db_config = {
     'password': 'admin',
     'database': 'Inventario',
 }
-conn = mysql.connector.connect(**db_config)
-cursor = conn.cursor()
+#conn = mysql.connector.connect(**db_config)
+#cursor = conn.cursor()
+
+# Función para obtener los nombres de la tabla MARCA
+def obtener_nombres_marca():
+    nombres = []
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta para obtener los nombres de la tabla MARCA en orden alfabético
+        cursor.execute("SELECT NOMBRE FROM MARCA ORDER BY NOMBRE")
+
+        # Obtiene los resultados de la consulta y los agrega a la lista de nombres
+        nombres = [nombre[0] for nombre in cursor.fetchall()]
+
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+
+    except mysql.connector.Error as e:
+        print("Error al obtener los nombres de la tabla MARCA:", e)
+
+    return nombres
 
 
 # Simulación de usuarios y contraseñas (reemplaza esto con una base de datos en un entorno de producción)
@@ -81,7 +104,8 @@ def ADispos():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
     if 'logged_in' in session and session['logged_in']:
         # El usuario está logeado, renderizamos la página con la acción "Marca".
-        return render_template('ADispos.html')
+        nombres_marca = obtener_nombres_marca()
+        return render_template('ADispos.html', nombres_marca=nombres_marca)
     else:
         return redirect(url_for('logout'))
     

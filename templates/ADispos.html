@@ -47,12 +47,12 @@
             margin-bottom: 5px;
         }
 
-        input {
+        input, select {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             width: 100%;
-            box-sizing: border-box; /* Agregamos esta propiedad */
+            box-sizing: border-box;
         }
 
         .btn-submit {
@@ -76,19 +76,50 @@
         <form action="/agregar_dispositivo" method="post">
             <div class="form-group">
                 <label for="factura">Factura</label>
-                <input type="text" id="factura" name="factura" required>
+                <input type="text" id="factura" name="factura" placeholder="NO SE ENCUENTRA">
             </div>
             <div class="form-group">
                 <label for="serial">Serial</label>
-                <input type="text" id="serial" name="serial" required>
+                <input type="text" id="serial" name="serial" placeholder="N/A">
             </div>
             <div class="form-group">
                 <label for="num_inventario">Número de Inventario</label>
-                <input type="text" id="num_inventario" name="num_inventario" required>
+                <input type="text" id="num_inventario" name="num_inventario" placeholder="N/A">
             </div>
             <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="ram_instalada">Ram instalada (GiB) </label>
+                <select id="ram_instalada" name="ram_instalada" required>
+                    <option value="" disabled selected>Seleccione tamaño</option>
+                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
+                    {% for i in range(101) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ram_maxima">Ram máxima (GiB) </label>
+                <select id="ram_maxima" name="ram_maxima" required>
+                    <option value="" disabled selected>Seleccione tamaño</option>
+                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
+                    {% for i in range(101) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="marca">Marca</label>
+                <select id="marca" name="marca" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione una marca</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
+                    {% for nombre in nombres_marca %}
+                        <option value="{{ nombre }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
