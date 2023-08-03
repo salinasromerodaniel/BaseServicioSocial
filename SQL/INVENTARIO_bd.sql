@@ -111,7 +111,7 @@ DROP TABLE IF EXISTS USUARIO_FINAL;
 CREATE TABLE ACTIVO(
     ACTIVO_ID                   DECIMAL(10, 0)    NOT NULL,
     FACTURA                     VARCHAR(100),
-    NUM_SERIAL                      VARCHAR(40),
+    NUM_SERIAL                  VARCHAR(40),
     NUM_INVENTARIO              DECIMAL(10, 0),
     TIPO                        CHAR(1)           NOT NULL,
     NOMBRE                      VARCHAR(40)       NOT NULL,
