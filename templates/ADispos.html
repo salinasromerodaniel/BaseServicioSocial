@@ -74,6 +74,7 @@
             background-color: #2980b9;
         }
     </style>
+    <script src="mi_script.js"></script>
 </head>
 <body>
     <div class="container">
@@ -92,17 +93,30 @@
                 <input type="text" id="num_inventario" name="num_inventario" placeholder="N/A">
             </div>
             <div class="form-group">
+                <label for="subtipo">Tipo de Dispositivo</label>
+                <select id="subtipo" name="subtipo" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione un Tipo</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SUBTIPO -->
+                    {% for subtipo_id, nombre in nombres_subtipo %}
+                        <option value="{{ subtipo_id }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="subtipo_id" name="subtipo_id">
+            
+            <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" id="nombre" name="nombre" required>
             </div>
             <div class="form-group">
-                <label for="so">Sistema Operativo</label>
-                <select id="so" name="so" required>
+                <label for="sistema_operativo">Sistema Operativo</label>
+                <select id="sistema_operativo" name="sistema_operativo" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione un sistema operativo</option>
-                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
-                    {% for nombre in nombres_so %}
-                        <option value="{{ nombre }}">{{ nombre }}</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SISTEMA_OPERATIVO -->
+                    {% for sistema_id, nombre, num_version, arquitectura in nombres_so %}
+                        <option value="{{ sistema_id }}" data-version="{{ num_version }}" data-arquitectura="{{ arquitectura }}">{{ nombre }} {{ num_version }} {{ arquitectura }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -162,17 +176,58 @@
                 <label for="caracteristicas">Características</label>
                 <input type="text" id="caracteristicas" name="caracteristicas" placeholder="N/A">
             </div>
+            
             <div class="form-group">
                 <label for="ubicacion">Ubicación</label>
                 <select id="ubicacion" name="ubicacion" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione una ubicación</option>
-                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
-                    {% for nombre in nombres_ubicacion %}
-                        <option value="{{ nombre }}">{{ nombre }}</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla UBICACION -->
+                    {% for ubicacion_id, nombre in nombres_ubicacion %}
+                        <option value="{{ ubicacion_id }}">{{ nombre }}</option>
                     {% endfor %}
                 </select>
             </div>
+            <input type="hidden" id="ubicacion_id" name="ubicacion_id">
+            
+            
+            <div class="form-group">
+                <label for="usuario">Usuario Final</label>
+                <select id="usuario" name="usuario" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione usuario</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla USUARIO_FINAL -->
+                    {% for usuario_id, usuario in nombres_usuarios %}
+                        <option value="{{ usuario_id }}" data-nombre="{{ usuario }}">{{ usuario }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="usuario_id" name="usuario_id">
+            
+            <div class="form-group">
+                <label for="resguardo">Responsable de resguardo</label>
+                <select id="resguardo" name="resguardo" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione responsable</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_RESGUARDO -->
+                    {% for responsable in nombres_resguardo %}
+                        <option value="{{ responsable.id }}" data-id="{{ responsable.id }}">{{ responsable.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="resguardo_id" name="resguardo_id">
+            <div class="form-group">
+                <label for="interno">Responsable interno</label>
+                <select id="interno" name="interno" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione responsable</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_INTERNO -->
+                    {% for responsable_id, nombre in nombres_interno %}
+                        <option value="{{ responsable_id }}" data-nombre="{{ nombre }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="interno_id" name="interno_id">
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
     </div>
