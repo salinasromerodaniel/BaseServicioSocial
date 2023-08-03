@@ -28,18 +28,18 @@ def obtener_nombres_marca():
 
     return nombres
 
-def obtener_nombres_modelo():
-    nombres = []
+def obtener_nombres_modelo_por_marca(marca):
+    modelos = []
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        # Ejecuta la consulta para obtener los nombres de la tabla MODELO en orden alfabético
-        cursor.execute("SELECT NOMBRE FROM MODELO ORDER BY NOMBRE")
+        # Ejecuta la consulta para obtener los nombres de la tabla MODELO filtrados por la marca
+        cursor.execute("SELECT NOMBRE FROM MODELO WHERE MARCA_ID = %s ORDER BY NOMBRE", (marca,))
 
         # Obtiene los resultados de la consulta y los agrega a la lista de nombres
-        nombres = [nombre[0] for nombre in cursor.fetchall()]
+        modelos = [nombre[0] for nombre in cursor.fetchall()]
 
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
@@ -48,7 +48,10 @@ def obtener_nombres_modelo():
     except mysql.connector.Error as e:
         print("Error al obtener los nombres de la tabla MODELO:", e)
 
-    return nombres
+    return modelos
+
+
+
 
 def obtener_nombres_subtipo():
     subtipos = []

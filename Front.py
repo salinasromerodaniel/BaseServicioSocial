@@ -1,5 +1,5 @@
 import mysql.connector
-from database import obtener_nombres_marca, obtener_nombres_modelo, obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
+from database import obtener_nombres_marca, obtener_nombres_modelo_por_marca, obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
 from database import obtener_responsables_interno, obtener_usuarios_finales
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
@@ -74,7 +74,7 @@ def ADispos():
     if 'logged_in' in session and session['logged_in']:
         # El usuario está logeado, renderizamos la página con la acción "Marca".
         nombres_marca = obtener_nombres_marca()
-        nombres_modelo = obtener_nombres_modelo()
+        nombres_modelo = obtener_nombres_modelo_por_marca(None)
         nombres_ubicacion = obtener_ubicaciones()
         nombres_so = obtener_info_sistema_operativo()
         nombres_subtipo = obtener_nombres_subtipo()
@@ -114,6 +114,12 @@ def agregar_dispositivo():
                             num_procesadores=num_procesadores, marca=marca, modelo=modelo,
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
                             usuario=usuario, resguardo=resguardo, interno=interno))
+
+@app.route('/obtener_modelos/<marca>')
+def obtener_modelos(marca):
+    modelos = obtener_nombres_modelo_por_marca(marca)
+    return jsonify({'modelos': modelos})
+
 
 @app.route('/mostrar_resultados')
 def mostrar_resultados():

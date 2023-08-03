@@ -19,6 +19,28 @@
     });
 </script>
 <script>
+// Función para cargar los modelos asociados a una marca seleccionada
+function cargarModelosPorMarca(marcaId) {
+    // Realizar una solicitud AJAX al servidor para obtener los modelos
+    $.ajax({
+        type: "GET",
+        url: "/obtener_modelos/" + marcaId,
+        success: function (response) {
+            // Si la solicitud es exitosa, actualizar el menú desplegable de modelos
+            const selectModelo = document.getElementById('modelo');
+            selectModelo.innerHTML = ''; // Limpiar las opciones existentes
+            response.modelos.forEach(function (modelo) {
+                const option = document.createElement('option');
+                option.value = modelo;
+                option.text = modelo;
+                selectModelo.appendChild(option);
+            });
+        },
+        error: function (error) {
+            console.error("Error al obtener modelos:", error);
+        }
+    });
+}
 document.addEventListener('DOMContentLoaded', function() {
     // Obtener el elemento select y el elemento oculto para almacenar el RESPONSABLE_RESGUARDO_ID
     const selectResguardo = document.getElementById('resguardo');
@@ -83,8 +105,44 @@ document.addEventListener('DOMContentLoaded', function() {
         // Almacenar el SUBTIPO_ID en el elemento oculto
         inputSubtipoId.value = selectedId;
     });
-});
 
+    // Obtener los elementos select para marca y modelo
+    const selectMarca = document.getElementById('marca');
+    const selectModelo = document.getElementById('modelo');
+
+    // Función para actualizar el menú de modelos cuando se selecciona una marca
+    function actualizarModelos() {
+        const marcaSeleccionada = selectMarca.value;
+
+        // Utilizar AJAX para enviar la marca seleccionada al servidor (ruta '/obtener_modelos') y recibir los modelos correspondientes
+        fetch(`/obtener_modelos/${marcaSeleccionada}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar el menú de modelos
+                selectModelo.innerHTML = '';
+
+                // Agregar las opciones de modelos correspondientes a la marca seleccionada
+                data.modelos.forEach(function(modelo) {
+                    const option = document.createElement('option');
+                    option.text = modelo;
+                    option.value = modelo;
+                    selectModelo.add(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener los modelos:', error);
+            });
+    }
+
+    // Agregar un evento para detectar el cambio en el menú deslizable de marca
+    selectMarca.addEventListener('change', function() {
+        actualizarModelos();
+    });
+
+    // Ejecutar la función al cargar la página para asegurarse de que el menú de modelos esté actualizado inicialmente
+    actualizarModelos();
+
+});
 </script>
 
 
