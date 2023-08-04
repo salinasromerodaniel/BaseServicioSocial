@@ -6,49 +6,74 @@ db_config = {
     'password': 'admin',
     'database': 'Inventario',
 }
-def obtener_nombres_marca():
-    nombres = []
+
+def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre, sistema_operativo,
+                           ram_instalada, ram_maxima, num_procesadores, modelo,
+                           caracteristicas, ubicacion, usuario, resguardo, interno):
+    try:
+
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Crear la consulta SQL para la inserción
+        insert_query = "INSERT INTO FORMULARIO (factura, serial, num_inventario, subtipo, nombre, sistema_operativo, ram_instalada, ram_maxima, num_procesadores, modelo, caracteristicas, ubicacion, usuario, resguardo, interno) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+        # Definir los valores para la inserción
+        values = (factura, serial, num_inventario, subtipo, nombre, sistema_operativo,
+                  ram_instalada, ram_maxima, num_procesadores, modelo,
+                  caracteristicas, ubicacion, usuario, resguardo, interno)
+
+        # Ejecutar la consulta de inserción
+        cursor.execute(insert_query, values)
+
+        # Confirmar la inserción en la base de datos
+        conn.commit()
+
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+
+        print("Inserción exitosa en la tabla FORMULARIO.")
+
+    except mysql.connector.Error as error:
+        print("Error al insertar en la tabla FORMULARIO:", error)
+
+def obtener_info_modelo():
+    info_modelo = []
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        # Ejecuta la consulta para obtener los nombres de la tabla MARCA en orden alfabético
-        cursor.execute("SELECT NOMBRE FROM MARCA ORDER BY NOMBRE")
+        # Ejecuta la consulta para obtener la información de la tabla MODELO con la unión (JOIN) a la tabla MARCA
+        cursor.execute("SELECT M.MODELO_ID, M.NOMBRE, MAR.NOMBRE FROM MODELO M JOIN MARCA MAR ON M.MARCA_ID = MAR.MARCA_ID")
 
-        # Obtiene los resultados de la consulta y los agrega a la lista de nombres
-        nombres = [nombre[0] for nombre in cursor.fetchall()]
-
-        # Cierra el cursor y la conexión a la base de datos
-        cursor.close()
-        conn.close()
-
-    except mysql.connector.Error as e:
-        print("Error al obtener los nombres de la tabla MARCA:", e)
-
-    return nombres
-
-def obtener_nombres_modelo_por_marca(marca):
-    modelos = []
-    try:
-        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        # Ejecuta la consulta para obtener los nombres de la tabla MODELO filtrados por la marca
-        cursor.execute("SELECT NOMBRE FROM MODELO WHERE MARCA_ID = %s ORDER BY NOMBRE", (marca,))
-
-        # Obtiene los resultados de la consulta y los agrega a la lista de nombres
-        modelos = [nombre[0] for nombre in cursor.fetchall()]
+        # Obtiene los resultados de la consulta y los agrega a la lista info_modelo como tuplas (MODELO_ID, NOMBRE_MODELO, NOMBRE_MARCA)
+        info_modelo = [(modelo_id, nombre_modelo, nombre_marca) for modelo_id, nombre_modelo, nombre_marca in cursor.fetchall()]
 
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
 
-    except mysql.connector.Error as e:
-        print("Error al obtener los nombres de la tabla MODELO:", e)
+        # Utilizar un conjunto para obtener las marcas únicas
+        marcas_unicas = set(nombre_marca for _, _, nombre_marca in info_modelo)
 
-    return modelos
+        # Ordenar alfabéticamente las marcas únicas
+        marcas_ordenadas = sorted(marcas_unicas)
+
+        # Crear una lista para almacenar las tuplas de (MODELO_ID, NOMBRE_MODELO, NOMBRE_MARCA) agrupadas por marca
+        info_modelo_agrupado = []
+
+        # Iterar sobre las marcas ordenadas y agregar los modelos asociados a cada marca a la lista info_modelo_agrupado
+        for marca in marcas_ordenadas:
+            modelos_de_marca = [(modelo_id, nombre_modelo, nombre_marca) for modelo_id, nombre_modelo, nombre_marca in info_modelo if nombre_marca == marca]
+            info_modelo_agrupado.append((marca, modelos_de_marca))
+
+    except mysql.connector.Error as e:
+        print("Error al obtener la información del modelo:", e)
+
+    return info_modelo_agrupado
 
 
 

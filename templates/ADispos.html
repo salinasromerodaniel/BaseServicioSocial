@@ -73,7 +73,12 @@
         .btn-submit:hover {
             background-color: #2980b9;
         }
+
+
     </style>
+    <!-- Asegúrate de tener incluida la biblioteca de jQuery antes de este script -->
+<!-- Coloca esto en la sección <head> de tu archivo HTML -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="mi_script.js"></script>
 </head>
 <body>
@@ -109,6 +114,27 @@
                 <label for="nombre">Nombre</label>
                 <input type="text" id="nombre" name="nombre" required>
             </div>
+            
+            <div class="form-group">
+                <label for="modelo">Modelo</label>
+                <!-- Código HTML en ADispos.html -->
+                <select id="modelo" name="modelo">
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Escoja un modelo</option>
+                    <!-- Iterar sobre la lista de tuplas (marca, modelos) -->
+                    {% for marca, modelos in nombres_modelo %}
+                        <!-- Usar la etiqueta <optgroup> para agrupar modelos por marca -->
+                        <optgroup label="{{ marca }}">
+                            <!-- Iterar sobre los modelos asociados a la marca -->
+                            {% for modelo_id, nombre_modelo, _ in modelos %}
+                                <!-- Usar la etiqueta <option> para mostrar el nombre del modelo -->
+                                <option value="{{ modelo_id }}">{{ nombre_modelo }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="sistema_operativo">Sistema Operativo</label>
                 <select id="sistema_operativo" name="sistema_operativo" required>
@@ -130,8 +156,29 @@
                     {% endfor %}
                 </select>
             </div>
+            
+            <div id="ram_unit_container" class="form-group">
+                <label>Seleccione la unidad de RAM máxima:</label>
+                <table>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="ram_gb" name="ram_unit" value="GB" checked>
+                        </td>
+                        <td>
+                            <label for="ram_gb">GB</label>
+                        </td>
+                        <td>
+                            <input type="checkbox" id="ram_tb" name="ram_unit" value="TB">
+                        </td>
+                        <td>
+                            <label for="ram_tb">TB</label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
             <div class="form-group">
-                <label for="ram_maxima">Ram máxima (GiB) </label>
+                <label for="ram_maxima">Tamaño de RAM máximo</label>
                 <select id="ram_maxima" name="ram_maxima" required>
                     <option value="" disabled selected>Seleccione tamaño</option>
                     <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
@@ -140,6 +187,7 @@
                     {% endfor %}
                 </select>
             </div>
+            
             <div class="form-group">
                 <label for="num_procesadores">Número de procesadores</label>
                 <select id="num_procesadores" name="num_procesadores" required>
@@ -147,28 +195,6 @@
                     <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
                     {% for i in range(0, 5) %}
                         <option value="{{ i }}">{{ i }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="marca">Marca</label>
-                <select id="marca" name="marca" required>
-                    <!-- Opción deshabilitada y seleccionada por defecto -->
-                    <option value="" disabled selected>Seleccione una marca</option>
-                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
-                    {% for nombre in nombres_marca %}
-                        <option value="{{ nombre }}">{{ nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="modelo">Modelo</label>
-                <select id="modelo" name="modelo" required>
-                    <!-- Opción deshabilitada y seleccionada por defecto -->
-                    <option value="" disabled selected>Seleccione un modelo</option>
-                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla MARCA -->
-                    {% for nombre in nombres_modelo %}
-                        <option value="{{ nombre }}">{{ nombre }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -231,5 +257,25 @@
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
     </div>
+    <script>
+        // the selector will match all input controls of type :checkbox with name="ram_unit"
+        // and attach a click event handler 
+        $("input:checkbox[name='ram_unit']").on('click', function() {
+            // in the handler, 'this' refers to the checkbox clicked on
+            var $box = $(this);
+            if ($box.is(":checked")) {
+            // the name of the box is retrieved using the .attr() method
+            // as it is assumed and expected to be immutable
+            var group = "input:checkbox[name='" + $box.attr("name") + "']";
+            // the checked state of the group/box on the other hand will change
+            // and the current value is retrieved using .prop() method
+            $(group).prop("checked", false);
+            $box.prop("checked", true);
+            } else {
+            $box.prop("checked", false);
+            }
+        });
+
+        </script>
 </body>
 </html>

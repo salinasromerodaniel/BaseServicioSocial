@@ -1,6 +1,6 @@
 import mysql.connector
-from database import obtener_nombres_marca, obtener_nombres_modelo_por_marca, obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
-from database import obtener_responsables_interno, obtener_usuarios_finales
+from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
+from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 
@@ -73,16 +73,15 @@ def ADispos():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
     if 'logged_in' in session and session['logged_in']:
         # El usuario está logeado, renderizamos la página con la acción "Marca".
-        nombres_marca = obtener_nombres_marca()
-        nombres_modelo = obtener_nombres_modelo_por_marca(None)
         nombres_ubicacion = obtener_ubicaciones()
         nombres_so = obtener_info_sistema_operativo()
         nombres_subtipo = obtener_nombres_subtipo()
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
         nombres_usuarios = obtener_usuarios_finales()
-        return render_template('ADispos.html', nombres_marca=nombres_marca, nombres_modelo=nombres_modelo,
-                                nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so, nombres_subtipo=nombres_subtipo,  
+        nombres_modelo = obtener_info_modelo()
+        return render_template('ADispos.html', nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so, 
+                               nombres_subtipo=nombres_subtipo, nombres_modelo=nombres_modelo,  
                                 nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
     else:
         return redirect(url_for('logout'))
@@ -99,26 +98,30 @@ def agregar_dispositivo():
     ram_instalada = request.form.get('ram_instalada')
     ram_maxima = request.form.get('ram_maxima')
     num_procesadores = request.form.get('num_procesadores')
-    marca = request.form.get('marca')
     modelo = request.form.get('modelo')
     caracteristicas = request.form.get('caracteristicas')
     ubicacion = request.form.get('ubicacion')
     usuario = request.form.get('usuario')
     resguardo = request.form.get('resguardo')
     interno = request.form.get('interno')
-
+    if not factura:
+        factura = "NO SE ENCUENTRA"
+    if not serial:
+        serial = "N/A"
+    if not num_inventario:
+        num_inventario = "N/A"
+    if not caracteristicas:
+        caracteristicas = "N/A"
+    if request.form.get('ram_unit') == 'TB':
+        ram_maxima = str(int(ram_maxima) * 1024)
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_resultados', factura=factura, serial=serial, num_inventario=num_inventario,
                             subtipo=subtipo, nombre=nombre, sistema_operativo=sistema_operativo,
                             ram_instalada=ram_instalada, ram_maxima=ram_maxima,
-                            num_procesadores=num_procesadores, marca=marca, modelo=modelo,
+                            num_procesadores=num_procesadores, modelo=modelo,
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
                             usuario=usuario, resguardo=resguardo, interno=interno))
 
-@app.route('/obtener_modelos/<marca>')
-def obtener_modelos(marca):
-    modelos = obtener_nombres_modelo_por_marca(marca)
-    return jsonify({'modelos': modelos})
 
 
 @app.route('/mostrar_resultados')
@@ -133,7 +136,6 @@ def mostrar_resultados():
     ram_instalada = request.args.get('ram_instalada')
     ram_maxima = request.args.get('ram_maxima')
     num_procesadores = request.args.get('num_procesadores')
-    marca = request.args.get('marca')
     modelo = request.args.get('modelo')
     caracteristicas = request.args.get('caracteristicas')
     ubicacion = request.args.get('ubicacion')
@@ -145,7 +147,7 @@ def mostrar_resultados():
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            subtipo=subtipo, nombre=nombre, sistema_operativo=sistema_operativo,
                            ram_instalada=ram_instalada, ram_maxima=ram_maxima,
-                           num_procesadores=num_procesadores, marca=marca, modelo=modelo,
+                           num_procesadores=num_procesadores, modelo=modelo,
                            caracteristicas=caracteristicas, ubicacion=ubicacion,
                            usuario=usuario, resguardo=resguardo, interno=interno)
     
