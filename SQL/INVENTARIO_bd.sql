@@ -113,18 +113,18 @@ DROP TABLE IF EXISTS USUARIO_FINAL;
 
 -- ACTIVO
 CREATE TABLE ACTIVO(
-    ACTIVO_ID                   DECIMAL(10, 0)    NOT NULL,
+    ACTIVO_ID                   INT             NOT NULL AUTO_INCREMENT,
     FACTURA                     VARCHAR(100),
     NUM_SERIAL                  VARCHAR(40),
     NUM_INVENTARIO              DECIMAL(10, 0),
-    TIPO                        CHAR(1)           NOT NULL,
-    NOMBRE                      VARCHAR(40)       NOT NULL,
-    ESTADO                      VARCHAR(20)       NOT NULL,
-    USUARIO_FINAL_ID            DECIMAL(10, 0)    NOT NULL,
-    RESPONSABLE_INTERNO_ID      DECIMAL(10, 0)    NOT NULL,
-    RESPONSABLE_RESGUARDO_ID    DECIMAL(10, 0)    NOT NULL,
-    MODELO_ID                   DECIMAL(11, 0)    NOT NULL,
-    UBICACION_ID                DECIMAL(10, 0)    NOT NULL,
+    TIPO                        CHAR(1)         NOT NULL,
+    NOMBRE                      VARCHAR(40)     NOT NULL,
+    ESTADO                      VARCHAR(20)     NOT NULL,
+    USUARIO_FINAL_ID            DECIMAL(10, 0)  NOT NULL,
+    RESPONSABLE_INTERNO_ID      DECIMAL(10, 0)  NOT NULL,
+    RESPONSABLE_RESGUARDO_ID    DECIMAL(10, 0)  NOT NULL,
+    MODELO_ID                   DECIMAL(11, 0)  NOT NULL,
+    UBICACION_ID                DECIMAL(10, 0)  NOT NULL,
     PRIMARY KEY (ACTIVO_ID)
 );
 
