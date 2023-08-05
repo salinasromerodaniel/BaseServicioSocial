@@ -1,6 +1,6 @@
 import mysql.connector
 from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
-from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo
+from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 
@@ -12,7 +12,8 @@ app.secret_key = 'mi_clave_secreta'
 
 # Simulación de usuarios y contraseñas (reemplaza esto con una base de datos en un entorno de producción)
 users = {
-    'admin': 'admin'
+    'admin': 'admin',
+    'david': 'david'
 }
 
 @app.route('/')
@@ -108,10 +109,12 @@ def agregar_dispositivo():
         factura = "NO SE ENCUENTRA"
     if not serial:
         serial = "N/A"
-    if not num_inventario:
-        num_inventario = "N/A"
     if not caracteristicas:
         caracteristicas = "N/A"
+    if num_inventario is not None and num_inventario != '':
+        num_inventario = int(num_inventario)
+    else:
+        num_inventario = None
     if request.form.get('ram_unit') == 'TB':
         ram_maxima = str(int(ram_maxima) * 1024)
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
@@ -123,25 +126,31 @@ def agregar_dispositivo():
                             usuario=usuario, resguardo=resguardo, interno=interno))
 
 
-
 @app.route('/mostrar_resultados')
 def mostrar_resultados():
     # Obtener los datos de la URL
     factura = request.args.get('factura')
     serial = request.args.get('serial')
     num_inventario = request.args.get('num_inventario')
-    subtipo = request.args.get('subtipo')
+    subtipo = int(request.args.get('subtipo'))
     nombre = request.args.get('nombre')
     sistema_operativo = request.args.get('sistema_operativo')
-    ram_instalada = request.args.get('ram_instalada')
-    ram_maxima = request.args.get('ram_maxima')
-    num_procesadores = request.args.get('num_procesadores')
-    modelo = request.args.get('modelo')
+    ram_instalada = int(request.args.get('ram_instalada'))
+    ram_maxima = int(request.args.get('ram_maxima'))
+    num_procesadores = int(request.args.get('num_procesadores'))
+    modelo = int(request.args.get('modelo'))
     caracteristicas = request.args.get('caracteristicas')
-    ubicacion = request.args.get('ubicacion')
-    usuario = request.args.get('usuario')
-    resguardo = request.args.get('resguardo')
-    interno = request.args.get('interno')
+    ubicacion = int(request.args.get('ubicacion'))
+    usuario = int(request.args.get('usuario'))
+    resguardo = int(request.args.get('resguardo'))
+    interno = int(request.args.get('interno'))
+    num_inventario = request.args.get('num_inventario')
+
+
+
+    insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
+                    ram_instalada, ram_maxima, num_procesadores, modelo,
+                    caracteristicas, ubicacion, usuario, resguardo, interno)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
@@ -159,7 +168,23 @@ def herramientas():
         return render_template('MHerramientas.html')
     else:
         return redirect(url_for('logout'))
-    
+
+@app.route('/activos/herramientas/agregar')
+def AHerramientas():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        nombres_ubicacion = obtener_ubicaciones()
+        nombres_resguardo = obtener_responsables_resguardo()
+        nombres_interno = obtener_responsables_interno()
+        nombres_usuarios = obtener_usuarios_finales()
+        nombres_modelo = obtener_info_modelo()
+        return render_template('AHerramientas.html', nombres_ubicacion=nombres_ubicacion,  
+                            nombres_modelo=nombres_modelo,  
+                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
+    else:
+        return redirect(url_for('logout'))
+
 @app.route('/activos/proyectores')
 def proyectores():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.

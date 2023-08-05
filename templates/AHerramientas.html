@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Dispositivos Inteligentes</title>
+    <title>Agregar Herramientas o consumibles</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,31 +83,24 @@
 </head>
 <body>
     <div class="container">
-        <h1>Agregar Dispositivos Inteligentes</h1>
-        <form action="/agregar_dispositivo" method="post">
+        <h1>Agregar herramientas o consumibles</h1>
+        <form action="/agregar_herramientas" method="post">
+
             <div class="form-group">
                 <label for="factura">Factura</label>
                 <input type="text" id="factura" name="factura" placeholder="NO SE ENCUENTRA">
             </div>
+
             <div class="form-group">
                 <label for="serial">Serial</label>
                 <input type="text" id="serial" name="serial" placeholder="N/A">
             </div>
+
             <div class="form-group">
                 <label for="num_inventario">Número de Inventario</label>
                 <input type="text" id="num_inventario" name="num_inventario" placeholder="N/A">
             </div>
-            <div class="form-group">
-                <label for="subtipo">Tipo de Dispositivo</label>
-                <select id="subtipo" name="subtipo" required>
-                    <!-- Opción deshabilitada y seleccionada por defecto -->
-                    <option value="" disabled selected>Seleccione un Tipo</option>
-                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SUBTIPO -->
-                    {% for subtipo_id, nombre in nombres_subtipo %}
-                        <option value="{{ subtipo_id }}">{{ nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            
             <input type="hidden" id="subtipo_id" name="subtipo_id">
             
             <div class="form-group">
@@ -136,72 +129,27 @@
             </div>
 
             <div class="form-group">
-                <label for="sistema_operativo">Sistema Operativo</label>
-                <select id="sistema_operativo" name="sistema_operativo" required>
-                    <!-- Opción deshabilitada y seleccionada por defecto -->
-                    <option value="" disabled selected>Seleccione un sistema operativo</option>
-                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SISTEMA_OPERATIVO -->
-                    {% for sistema_id, nombre, num_version, arquitectura in nombres_so %}
-                        <option value="{{ sistema_id }}" data-version="{{ num_version }}" data-arquitectura="{{ arquitectura }}">{{ nombre }} {{ num_version }} {{ arquitectura }}</option>
+                <label for="cantidad">Cantidad</label>
+                <select id="cantidad" name="cantidad" required>
+                    <option value="" disabled selected>Seleccione el número</option>
+                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
+                    {% for i in range(1, 10) %}
+                        <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="ram_instalada">Ram instalada (GiB) </label>
-                <select id="ram_instalada" name="ram_instalada" required>
-                    <option value="" disabled selected>Seleccione tamaño</option>
-                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
-                    {% for i in range(101) %}
-                        <option value="{{ i }}">{{ i }}</option>
-                    {% endfor %}
-                </select>
+                <label for="contenido">Contenido</label>
+                <input type="text" id="contenido" name="contenido" placeholder="N/A">
             </div>
-            
-            <div id="ram_unit_container" class="form-group">
-                <label>Seleccione la unidad de RAM máxima:</label>
-                <table>
-                    <tr>
-                        <td>
-                            <input type="checkbox" id="ram_gb" name="ram_unit" value="GB" checked>
-                        </td>
-                        <td>
-                            <label for="ram_gb">GB</label>
-                        </td>
-                        <td>
-                            <input type="checkbox" id="ram_tb" name="ram_unit" value="TB">
-                        </td>
-                        <td>
-                            <label for="ram_tb">TB</label>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            
+
+            <!--DATE_COMPRA deberia ser en automatico la del día de hoy? -->
+            <!--DATE_CONSUMO deberia quedar NULLs -->
+
             <div class="form-group">
-                <label for="ram_maxima">Tamaño de RAM máximo</label>
-                <select id="ram_maxima" name="ram_maxima" required>
-                    <option value="" disabled selected>Seleccione tamaño</option>
-                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
-                    {% for i in range(1, 101) %}
-                        <option value="{{ i }}">{{ i }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="num_procesadores">Número de procesadores</label>
-                <select id="num_procesadores" name="num_procesadores" required>
-                    <option value="" disabled selected>Seleccione el número</option>
-                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
-                    {% for i in range(0, 5) %}
-                        <option value="{{ i }}">{{ i }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="caracteristicas">Características</label>
-                <input type="text" id="caracteristicas" name="caracteristicas" placeholder="N/A">
+                <label for="descripcion">Características</label>
+                <input type="text" id="descripcion" name="descripcion" placeholder="N/A">
             </div>
             
             <div class="form-group">
@@ -276,6 +224,6 @@
             }
         });
 
-        </script>
+    </script>
 </body>
 </html>
