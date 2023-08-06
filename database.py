@@ -284,6 +284,7 @@ def insertar_dispoH(factura, serial, num_inventario, nombre,
         # Cerrar el cursor y la conexión
         cursor.close()
         conn.close()
-        print("Inserción exitosa en las tablas ACTIVO y DISPO_INTELIGENTE.")
+        print("Inserción exitosa en las tablas ACTIVO y HERRAMIENTA O CONSUMIBLE.")
+
     except mysql.connector.Error as error:
-        print("Error al insertar en las tablas ACTIVO y DISPO_INTELIGENTE:", error)
+        print("Error al insertar en las tablas ACTIVO y HERRAMIENTA O CONSUMIBLE:", error)
