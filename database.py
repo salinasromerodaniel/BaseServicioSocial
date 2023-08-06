@@ -265,36 +265,25 @@ def insertar_dispoH(factura, serial, num_inventario, nombre,
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-
         # Crear la consulta SQL para la inserción en la tabla ACTIVO
         insert_activo_query = "INSERT INTO ACTIVO (FACTURA, NUM_SERIAL, NUM_INVENTARIO, TIPO, NOMBRE, ESTADO, USUARIO_FINAL_ID, RESPONSABLE_INTERNO_ID, RESPONSABLE_RESGUARDO_ID, MODELO_ID, UBICACION_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
         # Definir los valores para la inserción en la tabla ACTIVO
         values_activo = (factura, serial, num_inventario, "H", nombre, "ACTIVO", usuario, interno, resguardo, modelo, ubicacion)
-
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(insert_activo_query, values_activo)
-
         # Obtener el ID generado automáticamente en la tabla ACTIVO
         activo_id = cursor.lastrowid
-
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
         insert_dispo_query = "INSERT INTO HERRAMIENTA_CONSUMIBLE (ACTIVO_ID, FECHA_COMPRA, FECHA_CONSUMO, CANTIDAD,CONTENIDO, DESCRIPCION) VALUES (%s, %s, %s, %s, %s, %s)"
-
         # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
         values_dispo = (activo_id, fecha_compra, fecha_consumo, cantidad, contenido, descripcion)
-
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
-
         # Confirmar las inserciones en la base de datos
         conn.commit()
-
         # Cerrar el cursor y la conexión
         cursor.close()
         conn.close()
-
         print("Inserción exitosa en las tablas ACTIVO y DISPO_INTELIGENTE.")
-
     except mysql.connector.Error as error:
         print("Error al insertar en las tablas ACTIVO y DISPO_INTELIGENTE:", error)

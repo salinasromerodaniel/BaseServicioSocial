@@ -1,6 +1,6 @@
 import mysql.connector
 from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
-from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI
+from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI, insertar_dispoH
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 
@@ -159,7 +159,46 @@ def mostrar_resultados():
                            num_procesadores=num_procesadores, modelo=modelo,
                            caracteristicas=caracteristicas, ubicacion=ubicacion,
                            usuario=usuario, resguardo=resguardo, interno=interno)
-    
+
+@app.route('/agregar_herramientas', methods=['POST'])
+def agregar_herramienta():
+    # Obtener los datos del formulario
+    factura = request.form.get('factura')
+    serial = request.form.get('serial')
+    num_inventario = request.form.get('num_inventario')
+    subtipo = request.form.get('subtipo')
+    nombre = request.form.get('nombre')
+    sistema_operativo = request.form.get('sistema_operativo')
+    ram_instalada = request.form.get('ram_instalada')
+    ram_maxima = request.form.get('ram_maxima')
+    num_procesadores = request.form.get('num_procesadores')
+    modelo = request.form.get('modelo')
+    caracteristicas = request.form.get('caracteristicas')
+    ubicacion = request.form.get('ubicacion')
+    usuario = request.form.get('usuario')
+    resguardo = request.form.get('resguardo')
+    interno = request.form.get('interno')
+    if not factura:
+        factura = "NO SE ENCUENTRA"
+    if not serial:
+        serial = "N/A"
+    if not caracteristicas:
+        caracteristicas = "N/A"
+    if num_inventario is not None and num_inventario != '':
+        num_inventario = int(num_inventario)
+    else:
+        num_inventario = None
+    if request.form.get('ram_unit') == 'TB':
+        ram_maxima = str(int(ram_maxima) * 1024)
+    # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
+    return redirect(url_for('mostrar_resultados', factura=factura, serial=serial, num_inventario=num_inventario,
+                            subtipo=subtipo, nombre=nombre, sistema_operativo=sistema_operativo,
+                            ram_instalada=ram_instalada, ram_maxima=ram_maxima,
+                            num_procesadores=num_procesadores, modelo=modelo,
+                            caracteristicas=caracteristicas, ubicacion=ubicacion,
+                            usuario=usuario, resguardo=resguardo, interno=interno))
+
+
 @app.route('/activos/herramientas')
 def herramientas():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
