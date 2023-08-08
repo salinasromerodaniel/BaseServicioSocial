@@ -80,6 +80,63 @@
 <!-- Coloca esto en la sección <head> de tu archivo HTML -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="mi_script.js"></script>
+    <script>
+        $(document).ready(function() {
+            var contadorSistemas = 1;
+
+            $("#agregar-sistema").click(function() {
+                contadorSistemas++;
+
+                var sistemaOriginal = $("#sistema_operativo");
+                var nuevoSistema = sistemaOriginal.clone();
+
+                nuevoSistema.attr("id", "sistema_operativo_" + contadorSistemas);
+                nuevoSistema.attr("name", "sistema_operativo_" + contadorSistemas);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoSistema.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoSistema.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoSistema.after('<button class="btn-borrar-sistema">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                sistemaOriginal.after(nuevoSistema);
+            });
+
+            // Agregar un evento para borrar el sistema operativo duplicado
+            $(document).on('click', '.btn-borrar-sistema', function() {
+                var sistemaDuplicado = $("select[name^='sistema_operativo_']").last();
+                
+                if (sistemaDuplicado.length > 0) {
+                    sistemaDuplicado.prev(".btn-borrar-sistema").remove(); // Remover el botón de borrado del sistema anterior
+                    sistemaDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                }
+            });
+
+            // Evento de envío del formulario
+            $("form").submit(function(event) {
+                event.preventDefault();
+
+                // Capturar los IDs de los sistemas operativos seleccionados en los menús desplegables duplicados
+                var sistemaIds = [];
+                $("select[name^='sistema_operativo_']").each(function() {
+                    sistemaIds.push($(this).val());
+                });
+
+                // Realizar la solicitud a la ruta del servidor
+                $.get("/mostrar_resultados", {
+                    sistema_operativo: sistemaIds.join(',') // Convertir los IDs a una cadena separada por comas
+                }, function(data) {
+                    // Resto de tu código para manejar la respuesta del servidor
+                });
+            });
+            
+        });
+
+    </script>
 </head>
 <body>
     <div class="container">
@@ -145,9 +202,19 @@
                         <option value="{{ sistema_id }}" data-version="{{ num_version }}" data-arquitectura="{{ arquitectura }}">{{ nombre }} {{ num_version }} {{ arquitectura }}</option>
                     {% endfor %}
                 </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" id="agregar-sistema">Agregar otro sistema operativo</button>
+                        </td>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" class="btn-borrar-sistema">Eliminar último sistema operativo añadido</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
-            <button type="button" id="agregar-sistema">Agregar otro sistema operativo</button>
+            
 
 
             <div class="form-group">
