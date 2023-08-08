@@ -177,7 +177,7 @@ def agregar_herramienta():
     resguardo = request.form.get('resguardo')
     interno = request.form.get('interno')
     fecha_compra = datetime.date.today()
-    fecha_consumo = None
+
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -192,19 +192,19 @@ def agregar_herramienta():
     return redirect(url_for('mostrar_resultadosH', factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, cantidad=cantidad,
                             contenido=contenido, modelo=modelo,
-                            fecha_compra=fecha_compra, fecha_consumo=fecha_consumo,
+                            fecha_compra=fecha_compra,
                             descripcion=descripcion, ubicacion=ubicacion,
                             usuario=usuario, resguardo=resguardo, interno=interno))
 
-@app.route('/mostrar_resultados')
+@app.route('/mostrar_resultadosH')
 def mostrar_resultadosH():
     # Obtener los datos de la URL
     factura = request.args.get('factura')
     serial = request.args.get('serial')
     num_inventario = request.args.get('num_inventario')
     nombre = request.args.get('nombre')
-    cantidad = int(request.form.get('cantidad'))
-    contenido = request.form.get('contenido')
+    cantidad = int(request.args.get('cantidad'))
+    contenido = request.args.get('contenido')
     modelo = int(request.args.get('modelo'))
     descripcion = request.args.get('descripcion')
     ubicacion = int(request.args.get('ubicacion'))
@@ -212,19 +212,19 @@ def mostrar_resultadosH():
     resguardo = int(request.args.get('resguardo'))
     interno = int(request.args.get('interno'))
     num_inventario = request.args.get('num_inventario')
-    #fecha_compra = datetime.date.today()
-    #fecha_consumo = None
+    fecha_compra = request.args.get('fecha_compra')
+
 
 
     insertar_dispoH(factura, serial, num_inventario, nombre,
-                    modelo, fecha_compra, fecha_consumo, cantidad, contenido,
+                    modelo, fecha_compra, cantidad, contenido,
                     descripcion, ubicacion, usuario, resguardo, interno)
 
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
+    return render_template('resultadosH.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, cantidad=cantidad,
                             contenido=contenido, modelo=modelo,
-                            fecha_compra=fecha_compra, fecha_consumo=fecha_consumo,
+                            fecha_compra=fecha_compra,
                             descripcion=descripcion, ubicacion=ubicacion,
                            usuario=usuario, resguardo=resguardo, interno=interno)
 
