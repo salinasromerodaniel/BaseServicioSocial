@@ -88,42 +88,43 @@
 
             <div class="form-group">
                 <label for="factura">Factura</label>
-                <input type="text" id="factura" name="factura" value="{{ datosDEl_libro[1] }}" readonly>
+                <input type="text" id="factura" name="factura" value="{{ libro.factura }}" readonly>
             </div>
 
             <div class="form-group">
                 <label for="serial">Serial</label>
-                <input type="text" id="serial" name="serial" value="{{ datosDEl_libro[2] }}" readonly>
+                <input type="text" id="serial" name="serial" value="{{ obtener_libroIDs[2] }}" readonly>
             </div>
+
 
             <div class="form-group">
                 <label for="num_inventario">Número de Inventario</label>
-                <input type="text" id="num_inventario" name="num_inventario" value="{{ datosDEl_libro[3] }}" readonly>
+                <input type="text" id="num_inventario" name="num_inventario" value="{{ obtener_libroIDs[3] }}" readonly>
             </div>
             
             <div class="form-group">
                 <label for="nombre">Título</label>
-                <input type="text" id="nombre" name="nombre"  value="{{ datosDEl_libro[5] }}">
+                <input type="text" id="nombre" name="nombre"  value="{{ obtener_libroIDs[5] }}">
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Autor</label>
-                <input type="text" id="autor" name="autor" value="{{ datosDEl_libro[10] }}">
+                <input type="text" id="autor" name="autor" value="{{ obtener_libroIDs[10] }}">
             </div>
 
             <div class="form-group">
                 <label for="contenido">Editorial</label>
-                <input type="text" id="editorial" name="editorial" value="{{ datosDEl_libro[7] }}">
+                <input type="text" id="editorial" name="editorial" value="{{ obtener_libroIDs[7] }}">
             </div>
 
             <div class="form-group">
                 <label for="contenido">Año</label>
-                <input type="text" id="anio" name="anio" value="{{ datosDEl_libro[9] }}">
+                <input type="text" id="anio" name="anio" value="{{ obtener_libroIDs[9] }}">
             </div>
 
             <div class="form-group">
                 <label for="contenido">Edición</label>
-                <input type="text" id="edicion" name="edicion" value="{{ datosDEl_libro[8] }}">
+                <input type="text" id="edicion" name="edicion" value="{{ obtener_libroIDs[8] }}">
             </div>
 
             <div class="form-group">
@@ -137,7 +138,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="hidden" id="ubicacion_id" name="ubicacion_id" value="{{ datosDEl_libro[14] }}">
+            <input type="hidden" id="ubicacion_id" name="ubicacion_id" value="{{ obtener_libroIDs[14] }}">
             
             <div class="form-group">
                 <label for="usuario">Usuario Final</label>
@@ -150,7 +151,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="hidden" id="usuario_id" name="usuario_id" value="{{ datosDEl_libro[11] }}">
+            <input type="hidden" id="usuario_id" name="usuario_id" value="{{ obtener_libroIDs[11] }}">
             
             <div class="form-group">
                 <label for="resguardo">Responsable de resguardo</label>
@@ -163,7 +164,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="hidden" id="resguardo_id" name="resguardo_id" value="{{ datosDEl_libro[13] }}">
+            <input type="hidden" id="resguardo_id" name="resguardo_id" value="{{ obtener_libroIDs[13] }}">
 
             <div class="form-group">
                 <label for="interno">Responsable interno</label>
@@ -176,9 +177,9 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="hidden" id="interno_id" name="interno_id" value="{{ datosDEl_libro[12] }}">
+            <input type="hidden" id="interno_id" name="interno_id" value="{{ obtener_libroIDs[12] }}">
 
-            <button class="btn-submit" type="submit">Agregar</button>
+            <button class="btn-submit" type="submit">Modificar</button>
         </form>
     </div>
     <script>

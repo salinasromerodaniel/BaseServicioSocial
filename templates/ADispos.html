@@ -144,27 +144,27 @@
             $("#agregar-almacenamiento").click(function() {
                 contadorAlmacenamiento++;
 
-                var almacenamientoOriginal = $("#ram");
-                var nuevoRam = almacenamientoOriginal.clone();
+                var almacenamientoOriginal = $("#almacenamiento");
+                var nuevoAlmacenamiento = almacenamientoOriginal.clone();
 
-                nuevoRam.attr("id", "ram_" + contadorRam);
-                nuevoRam.attr("name", "ram_" + contadorRam);
+                nuevoAlmacenamiento.attr("id", "almacenamiento_" + contadorAlmacenamiento);
+                nuevoAlmacenamiento.attr("name", "almacenamiento_" + contadorAlmacenamiento);
 
                 // Deseleccionar la opción en el nuevo sistema operativo clonado
-                nuevoRam.find("option:selected").removeAttr("selected");
+                nuevoAlmacenamiento.find("option:selected").removeAttr("selected");
                 
                 // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
-                nuevoRam.find("option:first").attr("selected", "selected");
+                nuevoAlmacenamiento.find("option:first").attr("selected", "selected");
 
                 // Agrega un botón de borrado junto al nuevo sistema operativo clonado
-                nuevoRam.after('<button class="btn-borrar-ram">Borrar</button>');
+                nuevoAlmacenamiento.after('<button class="btn-borrar-almacenamiento">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                almacenamientoOriginal.after(nuevoRam);
+                almacenamientoOriginal.after(nuevoAlmacenamiento);
                 // Agrega el ID del sistema operativo clonado a la lista
-                listaIdsRam.push("ram_" + contadorRam);
+                listaIdsAlmacenamiento.push("almacenamiento_" + contadorAlmacenamiento);
 
-                $("#lista_ids_ram").val(contadorRam);
+                $("#lista_ids_almacenamiento").val(contadorAlmacenamiento);
             });
 
             // Agregar un evento para borrar el sistema operativo duplicado
@@ -187,7 +187,18 @@
                     ramDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
                     listaIdsRam.pop();
                 }
-            }); 
+            });
+
+            // Agregar un evento para borrar el almacenamiento duplicada
+            $(document).on('click', '.btn-borrar-almacenamiento', function() {
+                var almacenamientoDuplicado = $("select[name^='almacenamiento_']").last();
+                
+                if (almacenamientoDuplicado.length > 0) {
+                    almacenamientoDuplicado.prev(".btn-borrar-almacenamiento").remove(); // Remover el botón de borrado del sistema anterior
+                    almacenamientoDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsAlmacenamiento.pop();
+                }
+            });
 
         });
 

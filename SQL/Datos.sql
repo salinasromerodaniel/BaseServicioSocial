@@ -312,10 +312,30 @@ INSERT INTO USUARIO_FINAL VALUES (8, 'SERVIDOR', 4, 4);
 -- pruebas del inner join
 SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,
        L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR,
-       A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.MODELO_ID, A.UBICACION_ID
+       A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID
 FROM ACTIVO A
 INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID
 WHERE A.ACTIVO_ID = {id_especifico}
+
+activo_id = libro[0] #no se debe mostrar para cambiar
+            factura = libro[1]#
+            num_serial = libro[2]#
+            num_inventario = libro[3]#
+            tipo = libro[4] #no se debe mostrar para cambiar
+            nombre_activo = libro[5]
+            estado = libro[6]
+            editorial = libro[7]#
+            edicion = libro[8]#
+            anio = libro[9]#
+            autor = libro[10]#
+            # Agrega los atributos de usuario final, responsable interno, responsable resguardo y ubicación si es necesario
+            usuario_final = libro[11]#
+            responsable_interno = libro[12]#
+            responsable_resguardo = libro[13]#
+            ubicacion = libro[14]#
+
+
+
 
 SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, 
     L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR 

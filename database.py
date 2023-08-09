@@ -9,7 +9,8 @@ db_config = {
 
 def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
-                    caracteristicas, ubicacion, usuario, resguardo, interno, sistema_operativo_ids, lista_ids_ram, fecha_ram):
+                    caracteristicas, ubicacion, usuario, resguardo, interno, 
+                    sistema_operativo_ids, lista_ids_ram, fecha_ram, lista_ids_almacenamiento):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
@@ -36,6 +37,10 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
         insert_dispo_ram_query = "INSERT INTO DISPO_RAM (ACTIVO_ID, RAM_ID, FECHA_COLOC) VALUES (%s, %s, %s)"
         for ram_id in lista_ids_ram:
             cursor.execute(insert_dispo_ram_query, (activo_id, ram_id, fecha_ram))
+        # Insertar en la tabla DISPO_DD para cada ID de sistema operativo
+        insert_dispo_almacenamiento_query = "INSERT INTO DISPO_DD(ACTIVO_ID, DISCO_DURO_ID) VALUES (%s, %s)"
+        for almacenamiento_id in lista_ids_almacenamiento:
+            cursor.execute(insert_dispo_almacenamiento_query, (activo_id, almacenamiento_id))
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión
@@ -428,7 +433,8 @@ def obtener_libroID(id_especifico):
         cursor = conn.cursor()
 
         # Ejecuta la consulta con el filtro para el ID específico
-        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        #cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        cursor. execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
 
         # Obtiene los resultados de la consulta y los agrega a la lista de libros
         for libro in cursor.fetchall():

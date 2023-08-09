@@ -112,16 +112,20 @@ def agregar_dispositivo():
     interno = request.form.get('interno')
     contador_so = int(request.form.get('lista_ids_sistemas'))
     contador_ram = int(request.form.get('lista_ids_ram'))
+    contador_almacenamiento = int(request.form.get('lista_ids_almacenamiento'))
     ids_so = []
     ids_ram = []
+    ids_almacenamiento = []
     if contador_so >= 1:
         for i in range (1, contador_so + 1) :
             ids_so.append(request.form.get(f'sistema_operativo_{i}'))
     if contador_ram >= 1:
         for i in range (1, contador_ram + 1) :
             ids_ram.append(request.form.get(f'ram_{i}'))
+    if contador_almacenamiento >= 1:
+        for i in range (1, contador_almacenamiento + 1) :
+            ids_almacenamiento.append(request.form.get(f'almacenamiento_{i}'))
 
-    
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -139,7 +143,8 @@ def agregar_dispositivo():
                             subtipo=subtipo, nombre=nombre,ram_instalada=ram_instalada, 
                             ram_maxima=ram_maxima,num_procesadores=num_procesadores, modelo=modelo,
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
-                            usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so, ids_ram=ids_ram, fecha_ram=fecha_ram))
+                            usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so, 
+                            ids_almacenamiento=ids_almacenamiento, ids_ram=ids_ram, fecha_ram=fecha_ram))
 
 
 @app.route('/mostrar_resultados')
@@ -163,14 +168,17 @@ def mostrar_resultados():
     num_inventario = request.args.get('num_inventario')
     lista_ids_sistemas = request.args.getlist('ids_so')
     lista_ids_ram = request.args.getlist('ids_ram')
+    lista_ids_almacenamiento = request.args.getlist('ids_almacenamiento')
     for i in range(len(lista_ids_sistemas)):
         lista_ids_sistemas[i] = int(lista_ids_sistemas[i])
     for i in range(len(lista_ids_ram)):
         lista_ids_ram[i] = int(lista_ids_ram[i])
+    for i in range(len(lista_ids_almacenamiento)):
+        lista_ids_almacenamiento[i] = int(lista_ids_almacenamiento[i])
 
-    insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
-                    ram_instalada, ram_maxima, num_procesadores, modelo,
-                    caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas, lista_ids_ram, fecha_ram)
+    insertar_dispoI(factura, serial, num_inventario, subtipo, nombre, ram_instalada, ram_maxima, num_procesadores, modelo,
+                    caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas, lista_ids_ram, fecha_ram,
+                    lista_ids_almacenamiento)
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            subtipo=subtipo, nombre=nombre,
@@ -387,12 +395,12 @@ def SLibros():
 def editar_libro(libro_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar libros
-        datosDEl_libro = obtener_libroID(libro_id)
+        obtener_libroIDs = obtener_libroID(libro_id)
         nombres_ubicacion = obtener_ubicaciones()
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
         nombres_usuarios = obtener_usuarios_finales()
-        return render_template('Ulibros.html', datosDEl_libro=datosDEl_libro, nombres_ubicacion=nombres_ubicacion,  
+        return render_template('Ulibros.html', obtener_libroIDs=obtener_libroIDs, nombres_ubicacion=nombres_ubicacion,  
                             nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
     else:
         return redirect(url_for('logout'))
