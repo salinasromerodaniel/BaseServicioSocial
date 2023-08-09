@@ -81,6 +81,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="mi_script.js"></script>
     <script>
+        var listaIdsSistemas = [];
         $(document).ready(function() {
             var contadorSistemas = 1;
 
@@ -104,6 +105,10 @@
 
                 // Agrega el nuevo sistema operativo clonado al formulario
                 sistemaOriginal.after(nuevoSistema);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsSistemas.push("sistema_operativo_" + contadorSistemas);
+
+                $("#lista_ids_sistemas").val(contadorSistemas);
             });
 
             // Agregar un evento para borrar el sistema operativo duplicado
@@ -113,27 +118,10 @@
                 if (sistemaDuplicado.length > 0) {
                     sistemaDuplicado.prev(".btn-borrar-sistema").remove(); // Remover el botón de borrado del sistema anterior
                     sistemaDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsSistemas.pop();
                 }
-            });
+            });  
 
-            // Evento de envío del formulario
-            $("form").submit(function(event) {
-                event.preventDefault();
-
-                // Capturar los IDs de los sistemas operativos seleccionados en los menús desplegables duplicados
-                var sistemaIds = [];
-                $("select[name^='sistema_operativo_']").each(function() {
-                    sistemaIds.push($(this).val());
-                });
-
-                // Realizar la solicitud a la ruta del servidor
-                $.get("/mostrar_resultados", {
-                    sistema_operativo: sistemaIds.join(',') // Convertir los IDs a una cadena separada por comas
-                }, function(data) {
-                    // Resto de tu código para manejar la respuesta del servidor
-                });
-            });
-            
         });
 
     </script>
@@ -141,7 +129,7 @@
 <body>
     <div class="container">
         <h1>Agregar Dispositivos Inteligentes</h1>
-        <form action="/agregar_dispositivo" method="post">
+        <form action="/agregar_dispositivo" method="post" id="formulario">
             <div class="form-group">
                 <label for="factura">Factura</label>
                 <input type="text" id="factura" name="factura" placeholder="NO SE ENCUENTRA">
@@ -194,7 +182,7 @@
 
             <div class="form-group">
                 <label for="sistema_operativo">Sistema Operativo</label>
-                <select id="sistema_operativo" name="sistema_operativo" required>
+                <select id="sistema_operativo" name="sistema_operativo_1" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione un sistema operativo</option>
                     <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SISTEMA_OPERATIVO -->
@@ -324,6 +312,8 @@
                 </select>
             </div>
             <input type="hidden" id="interno_id" name="interno_id">
+            <input type="hidden" name="lista_ids_sistemas" id="lista_ids_sistemas" value="1">
+
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
     </div>

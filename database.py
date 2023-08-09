@@ -30,6 +30,7 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
         cursor.execute(insert_dispo_query, values_dispo)
         # Insertar en la tabla DISPO_SO para cada ID de sistema operativo
         insert_dispo_so_query = "INSERT INTO DISPO_SO (ACTIVO_ID, SISTEMA_OPERATIVO_ID) VALUES (%s, %s)"
+
         for so_id in sistema_operativo_ids:
             cursor.execute(insert_dispo_so_query, (activo_id, so_id))
         # Confirmar las inserciones en la base de datos

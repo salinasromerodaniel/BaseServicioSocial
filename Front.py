@@ -100,12 +100,19 @@ def agregar_dispositivo():
     ram_maxima = request.form.get('ram_maxima')
     num_procesadores = request.form.get('num_procesadores')
     modelo = request.form.get('modelo')
-    sistema_operativo_ids = request.form.getlist('sistema_operativo')
     caracteristicas = request.form.get('caracteristicas')
     ubicacion = request.form.get('ubicacion')
     usuario = request.form.get('usuario')
     resguardo = request.form.get('resguardo')
     interno = request.form.get('interno')
+    contador_so = int(request.form.get('lista_ids_sistemas'))
+    ids_so = []
+    if contador_so >= 1:
+        for i in range (1, contador_so + 1) :
+            ids_so.append(request.form.get(f'sistema_operativo_{i}'))
+    for so in ids_so:
+        print(so)
+    
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -123,7 +130,7 @@ def agregar_dispositivo():
                             subtipo=subtipo, nombre=nombre,ram_instalada=ram_instalada, 
                             ram_maxima=ram_maxima,num_procesadores=num_procesadores, modelo=modelo,
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
-                            usuario=usuario, resguardo=resguardo, interno=interno, sistema_operativo_ids=sistema_operativo_ids))
+                            usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so))
 
 
 @app.route('/mostrar_resultados')
@@ -144,13 +151,13 @@ def mostrar_resultados():
     resguardo = int(request.args.get('resguardo'))
     interno = int(request.args.get('interno'))
     num_inventario = request.args.get('num_inventario')
-    # Obtener los IDs de los sistemas operativos seleccionados como una lista
-    sistema_operativo_ids = request.args.getlist('sistema_operativo')
-    # Convertir los IDs en valores enteros y hacer lo que necesites con ellos
-    sistema_operativo_ids = [int(id) for id in sistema_operativo_ids]
+    lista_ids_sistemas = request.args.getlist('ids_so')
+    for i in range(len(lista_ids_sistemas)):
+        lista_ids_sistemas[i] = int(lista_ids_sistemas[i])
+
     insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
-                    caracteristicas, ubicacion, usuario, resguardo, interno, sistema_operativo_ids)
+                    caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas)
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            subtipo=subtipo, nombre=nombre,
@@ -351,6 +358,8 @@ def mostrar_resultadosL():
                             editorial=editorial, anio=anio,
                             edicion=edicion, ubicacion=ubicacion,
                            usuario=usuario, resguardo=resguardo, interno=interno)
+
+
 
 @app.route('/personas', methods=['GET', 'POST'])
 def personas():
