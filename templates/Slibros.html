@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Libros</title>
+    <title>Lista de Libros</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -77,21 +77,42 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Libros</h1>
-        <div class="menu-item">
-            <span class="menu-icon">&#10133;</span>
-            <a href="/activos/libros/agregar">Agregar</a>
-        </div>
-        <div class="menu-item">
-            <span class="menu-icon">&#9998;</span>
-            <a href="/seleccionar_libros">Modificar</a>
-        </div>
-        <div class="menu-item">
-            <span class="menu-icon">&#128197;</span>
-            <a href="/libros/historico">Histórico</a>
-        </div>
-        <a class="btn-back" href="javascript:history.back()">&#8592;</a>
-    </div>
+    <h1>Lista de Libros</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Factura</th>
+            <th>Número de Serie</th>
+            <th>Número de Inventario</th>
+            <th>Tipo</th>
+            <th>Título</th>
+            <th>Estado</th>
+            <th>Editorial</th>
+            <th>Autor</th>
+            <th>Año</th>
+            <th>Edición</th>
+            <td>Operaciones</td> 
+        </tr>
+        {% for libro in datos_libros %}
+        <tr>
+            <td>{{ libro[0] }}</td>
+            <td>{{ libro[5] }}</td>
+            <td>{{ libro[6] }}</td>
+            <td>{{ libro[7] }}</td>
+            <td>{{ libro[8] }}</td>
+            <td>{{ libro[9] }}</td>
+            <td>{{ libro[10] }}</td>
+            <td>{{ libro[1] }}</td>
+            <td>{{ libro[4] }}</td>
+            <td>{{ libro[3] }}</td>
+            <td>{{ libro[2] }}</td>
+            <td>
+                <a href="{{ url_for('editar_libro', libro_id=libro[0]) }}" class="btn-edit">Editar</a>
+                <a href="{{ url_for('eliminar_libro', libro_id=libro[0]) }}" class="btn-delete">Eliminar</a>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

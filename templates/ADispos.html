@@ -82,8 +82,12 @@
     <script src="mi_script.js"></script>
     <script>
         var listaIdsSistemas = [];
+        var listaIdsRam = [];
+        var listaIdsAlmacenamiento = [];
         $(document).ready(function() {
             var contadorSistemas = 1;
+            var contadorRam = 1;
+            var contadorAlmacenamiento = 1;
 
             $("#agregar-sistema").click(function() {
                 contadorSistemas++;
@@ -111,6 +115,58 @@
                 $("#lista_ids_sistemas").val(contadorSistemas);
             });
 
+            $("#agregar-ram").click(function() {
+                contadorRam++;
+
+                var ramOriginal = $("#ram");
+                var nuevoRam = ramOriginal.clone();
+
+                nuevoRam.attr("id", "ram_" + contadorRam);
+                nuevoRam.attr("name", "ram_" + contadorRam);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoRam.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoRam.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoRam.after('<button class="btn-borrar-ram">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                ramOriginal.after(nuevoRam);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsRam.push("ram_" + contadorRam);
+
+                $("#lista_ids_ram").val(contadorRam);
+            });
+
+            $("#agregar-almacenamiento").click(function() {
+                contadorAlmacenamiento++;
+
+                var almacenamientoOriginal = $("#ram");
+                var nuevoRam = almacenamientoOriginal.clone();
+
+                nuevoRam.attr("id", "ram_" + contadorRam);
+                nuevoRam.attr("name", "ram_" + contadorRam);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoRam.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoRam.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoRam.after('<button class="btn-borrar-ram">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                almacenamientoOriginal.after(nuevoRam);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsRam.push("ram_" + contadorRam);
+
+                $("#lista_ids_ram").val(contadorRam);
+            });
+
             // Agregar un evento para borrar el sistema operativo duplicado
             $(document).on('click', '.btn-borrar-sistema', function() {
                 var sistemaDuplicado = $("select[name^='sistema_operativo_']").last();
@@ -120,7 +176,18 @@
                     sistemaDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
                     listaIdsSistemas.pop();
                 }
-            });  
+            });
+            
+            // Agregar un evento para borrar la ram duplicada
+            $(document).on('click', '.btn-borrar-ram', function() {
+                var ramDuplicado = $("select[name^='ram_']").last();
+                
+                if (ramDuplicado.length > 0) {
+                    ramDuplicado.prev(".btn-borrar-ram").remove(); // Remover el botón de borrado del sistema anterior
+                    ramDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsRam.pop();
+                }
+            }); 
 
         });
 
@@ -202,8 +269,40 @@
                 </table>
             </div>
 
+            <div class="form-group">
+                <label for="ram">Seleccione RAM</label>
+                <select id="ram" name="ram_1" class="form-control" onchange="actualizarCampoOculto(this)">
+                    <option value="" disabled selected>Escoja una RAM</option>
+                    {% set ram_por_marca = {} %}
+                    {% for ram_id, marca_ram, num_serie, tipo_nombre, capacidad in nombres_ram %}
+                        {% if marca_ram not in ram_por_marca %}
+                            {% set _ = ram_por_marca.update({marca_ram: []}) %}
+                        {% endif %}
+                        {% set _ = ram_por_marca[marca_ram].append((ram_id, num_serie, tipo_nombre, capacidad)) %}
+                    {% endfor %}
+                    {% for marca, rams in ram_por_marca.items() %}
+                        <optgroup label="{{ marca }}">
+                            {% for ram in rams %}
+                                <option value="{{ ram[0] }}">
+                                    Núm de Serie: {{ ram[1] }} - {{ ram[2] }} - Capacidad: {{ ram[3] }}GiB
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" id="agregar-ram">Agregar otra RAM</button>
+                        </td>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" class="btn-borrar-ram">Eliminar última RAM operativo añadido</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="hidden" id="ram_id" name="ram_id">
             
-
 
             <div class="form-group">
                 <label for="ram_instalada">Ram instalada (GiB) </label>
@@ -214,6 +313,11 @@
                         <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha_ram">Seleccione la fecha de colocación de RAM</label>
+                <input type="date" id="fecha_ram" name="fecha_ram" class="form-control">
             </div>
             
             <div id="ram_unit_container" class="form-group">
@@ -240,12 +344,49 @@
                 <label for="ram_maxima">Tamaño de RAM máximo</label>
                 <select id="ram_maxima" name="ram_maxima" required>
                     <option value="" disabled selected>Seleccione tamaño</option>
-                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
                     {% for i in range(1, 101) %}
                         <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="almacenamiento">Seleccione Almacenamiento</label>
+                <select id="almacenamiento" name="almacenamiento_1" class="form-control" onchange="actualizarCampoOculto(this)">
+                    <option value="" disabled selected>Escoja Almacenamiento</option>
+                    {% set almacenamiento_por_marca = {} %}
+                    {% for disco_id, num_serie, marca_almacenamiento, modelo, capacidad in nombres_almacenamiento %}
+                        {% if marca_almacenamiento not in almacenamiento_por_marca %}
+                            {% set _ = almacenamiento_por_marca.update({marca_almacenamiento: []}) %}
+                        {% endif %}
+                        {% set _ = almacenamiento_por_marca[marca_almacenamiento].append((disco_id, num_serie, modelo, capacidad)) %}
+                    {% endfor %}
+                    {% for marca, almacenamientos in almacenamiento_por_marca.items() %}
+                        <optgroup label="{{ marca }}">
+                            {% for almacenamiento in almacenamientos %}
+                                <option value="{{ almacenamiento[0] }}">
+                                    Núm de Serie: {{ almacenamiento[1] }} - Modelo: {{ almacenamiento[2] }} - Capacidad: {{ almacenamiento[3] }}GiB
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" id="agregar-almacenamiento">Agregar otro Almacenamiento</button>
+                        </td>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" class="btn-borrar-almacenamiento">Eliminar último Almacenamiento añadido</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="hidden" id="disco_id" name="disco_id">
+            
+            
+            
+            
             
             <div class="form-group">
                 <label for="num_procesadores">Número de procesadores</label>
@@ -257,6 +398,7 @@
                     {% endfor %}
                 </select>
             </div>
+
             <div class="form-group">
                 <label for="caracteristicas">Características</label>
                 <input type="text" id="caracteristicas" name="caracteristicas" placeholder="N/A">
@@ -313,11 +455,17 @@
             </div>
             <input type="hidden" id="interno_id" name="interno_id">
             <input type="hidden" name="lista_ids_sistemas" id="lista_ids_sistemas" value="1">
+            <input type="hidden" name="lista_ids_ram" id="lista_ids_ram" value="1">
+            <input type="hidden" name="lista_ids_almacenamiento" id="lista_ids_almacenamiento" value="1">
 
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
     </div>
     <script>
+        function actualizarCampoOculto(selectElement) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            document.getElementById('ram_id').value = selectedOption.value;
+        }
         // the selector will match all input controls of type :checkbox with name="ram_unit"
         // and attach a click event handler 
         $("input:checkbox[name='ram_unit']").on('click', function() {

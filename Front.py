@@ -1,6 +1,7 @@
 import mysql.connector
-from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo
+from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo, obtener_info_ram
 from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI, insertar_dispoH, insertar_dispoL
+from database import obtener_libros, eliminar_libros, obtener_info_almacenamiento, obtener_libroID
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 import datetime
@@ -75,6 +76,7 @@ def ADispos():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
     if 'logged_in' in session and session['logged_in']:
         # El usuario está logeado, renderizamos la página con la acción "Marca".
+        nombres_ram = obtener_info_ram()
         nombres_ubicacion = obtener_ubicaciones()
         nombres_so = obtener_info_sistema_operativo()
         nombres_subtipo = obtener_nombres_subtipo()
@@ -82,9 +84,11 @@ def ADispos():
         nombres_interno = obtener_responsables_interno()
         nombres_usuarios = obtener_usuarios_finales()
         nombres_modelo = obtener_info_modelo()
+        nombres_almacenamiento = obtener_info_almacenamiento()
         return render_template('ADispos.html', nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so, 
-                               nombres_subtipo=nombres_subtipo, nombres_modelo=nombres_modelo,  
-                                nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
+                               nombres_subtipo=nombres_subtipo, nombres_modelo=nombres_modelo, nombres_ram=nombres_ram,  
+                                nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, 
+                                nombres_almacenamiento=nombres_almacenamiento, nombres_usuarios=nombres_usuarios)
     else:
         return redirect(url_for('logout'))
     
@@ -98,6 +102,7 @@ def agregar_dispositivo():
     nombre = request.form.get('nombre')
     ram_instalada = request.form.get('ram_instalada')
     ram_maxima = request.form.get('ram_maxima')
+    fecha_ram = request.form.get('fecha_ram')
     num_procesadores = request.form.get('num_procesadores')
     modelo = request.form.get('modelo')
     caracteristicas = request.form.get('caracteristicas')
@@ -106,12 +111,16 @@ def agregar_dispositivo():
     resguardo = request.form.get('resguardo')
     interno = request.form.get('interno')
     contador_so = int(request.form.get('lista_ids_sistemas'))
+    contador_ram = int(request.form.get('lista_ids_ram'))
     ids_so = []
+    ids_ram = []
     if contador_so >= 1:
         for i in range (1, contador_so + 1) :
             ids_so.append(request.form.get(f'sistema_operativo_{i}'))
-    for so in ids_so:
-        print(so)
+    if contador_ram >= 1:
+        for i in range (1, contador_ram + 1) :
+            ids_ram.append(request.form.get(f'ram_{i}'))
+
     
     if not factura:
         factura = "NO SE ENCUENTRA"
@@ -130,7 +139,7 @@ def agregar_dispositivo():
                             subtipo=subtipo, nombre=nombre,ram_instalada=ram_instalada, 
                             ram_maxima=ram_maxima,num_procesadores=num_procesadores, modelo=modelo,
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
-                            usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so))
+                            usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so, ids_ram=ids_ram, fecha_ram=fecha_ram))
 
 
 @app.route('/mostrar_resultados')
@@ -143,6 +152,7 @@ def mostrar_resultados():
     nombre = request.args.get('nombre')
     ram_instalada = int(request.args.get('ram_instalada'))
     ram_maxima = int(request.args.get('ram_maxima'))
+    fecha_ram = (request.args.get('fecha_ram'))
     num_procesadores = int(request.args.get('num_procesadores'))
     modelo = int(request.args.get('modelo'))
     caracteristicas = request.args.get('caracteristicas')
@@ -152,19 +162,22 @@ def mostrar_resultados():
     interno = int(request.args.get('interno'))
     num_inventario = request.args.get('num_inventario')
     lista_ids_sistemas = request.args.getlist('ids_so')
+    lista_ids_ram = request.args.getlist('ids_ram')
     for i in range(len(lista_ids_sistemas)):
         lista_ids_sistemas[i] = int(lista_ids_sistemas[i])
+    for i in range(len(lista_ids_ram)):
+        lista_ids_ram[i] = int(lista_ids_ram[i])
 
     insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
-                    caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas)
+                    caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas, lista_ids_ram, fecha_ram)
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            subtipo=subtipo, nombre=nombre,
                            ram_instalada=ram_instalada, ram_maxima=ram_maxima,
                            num_procesadores=num_procesadores, modelo=modelo,
                            caracteristicas=caracteristicas, ubicacion=ubicacion,
-                           usuario=usuario, resguardo=resguardo, interno=interno)
+                           usuario=usuario, resguardo=resguardo, interno=interno, fecha_ram=fecha_ram)
 
 @app.route('/agregar_herramientas', methods=['POST'])
 def agregar_herramienta():
@@ -359,6 +372,41 @@ def mostrar_resultadosL():
                             edicion=edicion, ubicacion=ubicacion,
                            usuario=usuario, resguardo=resguardo, interno=interno)
 
+@app.route('/seleccionar_libros')
+def SLibros():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        datos_libros = obtener_libros()
+        #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
+        return render_template('Slibros.html', datos_libros=datos_libros)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/editar_libro/<int:libro_id>')
+def editar_libro(libro_id):
+    if 'logged_in' in session and session['logged_in']:
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        datosDEl_libro = obtener_libroID(libro_id)
+        nombres_ubicacion = obtener_ubicaciones()
+        nombres_resguardo = obtener_responsables_resguardo()
+        nombres_interno = obtener_responsables_interno()
+        nombres_usuarios = obtener_usuarios_finales()
+        return render_template('Ulibros.html', datosDEl_libro=datosDEl_libro, nombres_ubicacion=nombres_ubicacion,  
+                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_libro/<int:libro_id>')
+def eliminar_libro(libro_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_libros(libro_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        datos_libros = obtener_libros()
+        return render_template('Slibros.html', datos_libros=datos_libros)
+    else:
+        return redirect(url_for('logout'))
 
 
 @app.route('/personas', methods=['GET', 'POST'])
