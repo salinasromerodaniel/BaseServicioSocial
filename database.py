@@ -590,20 +590,20 @@ def obtener_libroID(id_especifico):
 
 def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
                     autor, editorial, anio, edicion,
-                     ubicacion, usuario, resguardo, interno):
+                    ubicacion, usuario, resguardo, interno):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Crear la consulta SQL para la modificacion en la tabla ACTIVO
-        update_activo_query = " UPDATE ACTIVO SET FACTURA = '%s', NUM_SERIAL = '%s', NUM_INVENTARIO = %s, NOMBRE = '%s', ESTADO = '%s', USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la modificacion en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
         values_activo = (factura, serial, num_inventario, nombre, estado, usuario, interno, resguardo, ubicacion, id_activo)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(update_activo_query, values_activo)
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
-        update_libro_query = "UPDATE LIBRO SET EDITORIAL = '%s', EDICION = '%s', ANIO = %s, AUTOR = '%s' WHERE ACTIVO_ID = %s"
+        update_libro_query = "UPDATE LIBRO SET EDITORIAL = %s, EDICION = %s, ANIO = %s, AUTOR = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
         values_libro = ( editorial, edicion, anio, autor, id_activo)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE

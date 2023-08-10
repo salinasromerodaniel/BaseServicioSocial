@@ -438,10 +438,74 @@ def editar_libro(libro_id):
 
 @app.route('/modificar_libro/<int:libro_id>', methods=['POST'])
 def modificar_libro(libro_id):
-    if 'logged_in' in session and session['logged_in']:
-        print('hola')
+    # Obtener los datos del formulario
+    factura = request.form.get('factura')
+    serial = request.form.get('serial').upper()
+    num_inventario = request.form.get('num_inventario')
+    nombre = request.form.get('nombre').upper()
+    estado = request.form.get('estado').upper()
+    autor = request.form.get('autor').upper()
+    editorial = request.form.get('editorial').upper()
+    anio = request.form.get('anio')
+    edicion = request.form.get('edicion').upper()
+    ubicacion = request.form.get('ubicacion')
+    usuario = request.form.get('usuario')
+    resguardo = request.form.get('resguardo')
+    interno = request.form.get('interno')
+    if not factura:
+        factura = "NO SE ENCUENTRA"
+    if not serial:
+        serial = "N/A"
+    if not autor:
+        autor = "N/A"
+    if not editorial:
+        editorial = "N/A"
+    if not edicion:
+        edicion = "N/A"
+    if num_inventario is not None and num_inventario != '':
+        num_inventario = int(num_inventario)
     else:
-        return redirect(url_for('logout'))
+        num_inventario = None
+    if anio is not None and anio != '':
+        anio = int(anio)
+    else:
+        anio = None
+    # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
+    return redirect(url_for('mostrar_ModificacionL', libro_id=libro_id, factura=factura, serial=serial, num_inventario=num_inventario,
+                            nombre=nombre, estado=estado, autor=autor,editorial=editorial, anio=anio,
+                            edicion=edicion, ubicacion=ubicacion,
+                            usuario=usuario, resguardo=resguardo, interno=interno))
+
+@app.route('/mostrar_ModificacionL')
+def mostrar_ModificacionL():
+    # Obtener los datos de la URL
+    id_activo = request.args.get('libro_id')
+    factura = request.args.get('factura')
+    serial = request.args.get('serial')
+    num_inventario = int(request.args.get('num_inventario'))
+    nombre = request.args.get('nombre')
+    estado = request.args.get('estado')
+    autor = request.args.get('autor')
+    editorial = request.args.get('editorial')
+    anio = int(request.args.get('anio'))
+    edicion = request.args.get('edicion')
+    ubicacion = int(request.args.get('ubicacion'))
+    usuario = int(request.args.get('usuario'))
+    resguardo = int(request.args.get('resguardo'))
+    interno = int(request.args.get('interno'))
+    num_inventario = request.args.get('num_inventario')
+
+    modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
+                    autor, editorial, anio, edicion,
+                     ubicacion, usuario, resguardo, interno)
+
+    # Renderizar la página de resultados con los datos recibidos
+    return render_template('resultadoUpdL.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
+                           nombre=nombre, estado=estado, autor=autor,
+                            editorial=editorial, anio=anio,
+                            edicion=edicion, ubicacion=ubicacion,
+                           usuario=usuario, resguardo=resguardo, interno=interno)
+
 
 @app.route('/eliminar_libro/<int:libro_id>')
 def eliminar_libro(libro_id):
