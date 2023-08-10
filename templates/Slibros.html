@@ -10,6 +10,7 @@
             background-color: #f2f2f2;
             margin: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -23,10 +24,24 @@
             max-width: 350px;
             width: 100%;
             text-align: center;
+            margin-bottom: 20px; /* Agregamos un margen inferior */
         }
 
         h1 {
-            text-align: center;
+            margin-top: 0; /* Eliminamos el margen superior para el título */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto; /* Centramos la tabla horizontalmente */
+            border: 2px solid black; /* Agregamos un borde negro a la tabla */
+        }
+
+        th, td {
+            border: 1px solid black; /* Agregamos bordes negros a las celdas */
+            padding: 8px;
+            text-align: center; /* Centramos el contenido de las celdas */
         }
 
         .menu-item {
@@ -80,35 +95,43 @@
     <h1>Lista de Libros</h1>
     <table>
         <tr>
-            <th>ID</th>
+            <!--<th>ID</th>-->
             <th>Factura</th>
             <th>Número de Serie</th>
             <th>Número de Inventario</th>
-            <th>Tipo</th>
+            <!--<th>Tipo</th>-->
             <th>Título</th>
             <th>Estado</th>
             <th>Editorial</th>
             <th>Autor</th>
             <th>Año</th>
             <th>Edición</th>
-            <td>Operaciones</td> 
+            <th>Usuario final</th>
+            <th>Responsable interno</th>
+            <th>Responsable resguardo</th>
+            <th>Ubicación</th>
+            <th>Operaciones</th> 
         </tr>
         {% for libro in datos_libros %}
         <tr>
-            <td>{{ libro[0] }}</td>
+            <!--<td>{{ libro[0] }}</td>-->
+            <td>{{ libro[1] }}</td>
+            <td>{{ libro[2] }}</td>
+            <td>{{ libro[3] }}</td>
+            <!--<td>{{ libro[4] }}</td>-->
             <td>{{ libro[5] }}</td>
             <td>{{ libro[6] }}</td>
+            <td>{{ libro[11] }}</td>
+            <td>{{ libro[14] }}</td>
+            <td>{{ libro[13] }}</td>
+            <td>{{ libro[12] }}</td>
             <td>{{ libro[7] }}</td>
             <td>{{ libro[8] }}</td>
             <td>{{ libro[9] }}</td>
             <td>{{ libro[10] }}</td>
-            <td>{{ libro[1] }}</td>
-            <td>{{ libro[4] }}</td>
-            <td>{{ libro[3] }}</td>
-            <td>{{ libro[2] }}</td>
             <td>
-                <a href="{{ url_for('editar_libro', libro_id=libro[0]) }}" class="btn-edit">Editar</a>
-                <a href="{{ url_for('eliminar_libro', libro_id=libro[0]) }}" class="btn-delete">Eliminar</a>
+                <a href="{{ url_for('editar_libro', libro_id=libro[0]) }}" class="btn-edit">Modificar</a>
+                <a href="{{ url_for('eliminar_libro', libro_id=libro[0]) }}" class="btn-delete">Dar de baja</a>
             </td>
 
         </tr>

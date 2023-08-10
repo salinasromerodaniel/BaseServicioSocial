@@ -10,7 +10,8 @@ db_config = {
 def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
                     caracteristicas, ubicacion, usuario, resguardo, interno, 
-                    sistema_operativo_ids, lista_ids_ram, fecha_ram, lista_ids_almacenamiento):
+                    sistema_operativo_ids, lista_ids_ram, fecha_ram, lista_ids_almacenamiento, lista_ids_micro, 
+                    lista_ids_tarjeta, lista_ids_puerto):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
@@ -30,25 +31,43 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
         # Insertar en la tabla DISPO_SO para cada ID de sistema operativo
-        insert_dispo_so_query = "INSERT INTO DISPO_SO (ACTIVO_ID, SISTEMA_OPERATIVO_ID) VALUES (%s, %s)"
-        for so_id in sistema_operativo_ids:
-            cursor.execute(insert_dispo_so_query, (activo_id, so_id))
-        # Insertar en la tabla DISPO_RAM para cada ID de sistema operativo
-        insert_dispo_ram_query = "INSERT INTO DISPO_RAM (ACTIVO_ID, RAM_ID, FECHA_COLOC) VALUES (%s, %s, %s)"
-        for ram_id in lista_ids_ram:
-            cursor.execute(insert_dispo_ram_query, (activo_id, ram_id, fecha_ram))
-        # Insertar en la tabla DISPO_DD para cada ID de sistema operativo
-        insert_dispo_almacenamiento_query = "INSERT INTO DISPO_DD(ACTIVO_ID, DISCO_DURO_ID) VALUES (%s, %s)"
-        for almacenamiento_id in lista_ids_almacenamiento:
-            cursor.execute(insert_dispo_almacenamiento_query, (activo_id, almacenamiento_id))
+        if sistema_operativo_ids:
+            insert_dispo_so_query = "INSERT INTO DISPO_SO (ACTIVO_ID, SISTEMA_OPERATIVO_ID) VALUES (%s, %s)"
+            for so_id in sistema_operativo_ids:
+                cursor.execute(insert_dispo_so_query, (activo_id, so_id))
+        # Insertar en la tabla DISPO_RAM para cada ID de ram
+        if lista_ids_ram:
+            insert_dispo_ram_query = "INSERT INTO DISPO_RAM (ACTIVO_ID, RAM_ID, FECHA_COLOC) VALUES (%s, %s, %s)"
+            for ram_id in lista_ids_ram:
+                cursor.execute(insert_dispo_ram_query, (activo_id, ram_id, fecha_ram))
+        # Insertar en la tabla DISPO_DD para cada ID de almacenamiento
+        if lista_ids_almacenamiento:
+            insert_dispo_almacenamiento_query = "INSERT INTO DISPO_DD(ACTIVO_ID, DISCO_DURO_ID) VALUES (%s, %s)"
+            for almacenamiento_id in lista_ids_almacenamiento:
+                cursor.execute(insert_dispo_almacenamiento_query, (activo_id, almacenamiento_id))
+        # Insertar en la tabla DISPO_MICRO para cada ID de microprocesador
+        if lista_ids_micro:
+            insert_dispo_micro_query = "INSERT INTO DISPO_MICRO(ACTIVO_ID, MICROPROCESADOR_ID) VALUES (%s, %s)"
+            for micro_id in lista_ids_micro:
+                cursor.execute(insert_dispo_micro_query, (activo_id, micro_id))
+        # Insertar en la tabla DISPO_VIDEO para cada ID de tarjeta gráfica
+        if lista_ids_tarjeta:
+            insert_dispo_tarjeta_query = "INSERT INTO DISPO_VIDEO(ACTIVO_ID, TARGETA_GARFICA_ID) VALUES (%s, %s)"
+            for tarjeta_id in lista_ids_tarjeta:
+                cursor.execute(insert_dispo_tarjeta_query, (activo_id, tarjeta_id))
+        # Insertar en la tabla DISPO_PUERTO para cada ID de PUERTO
+        if lista_ids_puerto:
+            insert_dispo_puerto_query = "INSERT INTO DISPO_PUERTO(PUERTO_ID, ACTIVO_ID) VALUES (%s, %s)"
+            for puerto_id in lista_ids_puerto:
+                cursor.execute(insert_dispo_puerto_query, (puerto_id, activo_id))
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión
         cursor.close()
         conn.close()
-        print("Inserción exitosa en las tablas ACTIVO, DISPO_INTELIGENTE y DISPO_SO.")
+        print("Inserción exitosa en las tablas.")
     except mysql.connector.Error as error:
-        print("Error al insertar en las tablas ACTIVO, DISPO_INTELIGENTE y DISPO_SO:", error)
+        print("Error al insertar en las tablas:", error)
 
 
 
@@ -107,11 +126,57 @@ def obtener_nombres_subtipo():
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
-
     except mysql.connector.Error as e:
         print("Error al obtener los subtipos:", e)
-
     return subtipos
+
+def obtener_info_lectora():
+    info_lectora = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta para obtener la información de la tabla UNIDAD_LECTORA con la unión (JOIN) a la tabla TIPO_UNIDAD_LECTORA
+        cursor.execute("SELECT LECT.UNIDAD_LECTORA_ID, TIPO.TIPO_UNIDAD_LECTORA_NOMBRE, LECT.UNIDAD_LECTORA_MODELO, LECT.UNIDAD_LECTORA_MARCA FROM UNIDAD_LECTORA LECT JOIN TIPO_UNIDAD_LECTORA TIPO ON LECT.TIPO_UNIDAD_LECTORA_ID = TIPO.TIPO_UNIDAD_LECTORA_ID")
+
+        # Obtiene los resultados de la consulta y los agrega a la lista info_lectora como tuplas
+        info_lectora = [(unidad_id, tipo_nombre, modelo, marca) for unidad_id, tipo_nombre, modelo, marca in cursor.fetchall()]
+
+        # Ordena la lista info_lectora por UNIDAD_LECTORA_MARCA
+        info_lectora = sorted(info_lectora, key=lambda x: x[3])
+
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener la información de unidad lectora:", e)
+    return info_lectora
+
+
+def obtener_nombres_puerto():
+    lista_puertos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta para obtener los atributos de la tabla PUERTO
+        cursor.execute("SELECT PUERTO_ID, PUERTO_NOMBRE FROM PUERTO ORDER BY PUERTO_NOMBRE")
+
+        # Obtiene los resultados de la consulta y los agrega a la lista de puertos
+        for puerto in cursor.fetchall():
+            puerto_id = puerto[0]
+            nombre = puerto[1]
+            lista_puertos.append((puerto_id, nombre))
+
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los puertos:", e)
+    return lista_puertos
+
 
 def obtener_ubicaciones():
     ubicaciones = []
@@ -208,6 +273,50 @@ def obtener_info_almacenamiento():
         print("Error al obtener la información de almacenamiento:", e)
     return info_almacenamiento
 
+def obtener_info_micro():
+    info_micro = []
+    try:
+        # Realiza la conexión a la base de datos (debes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta para obtener la información de la tabla MICROPROCESADOR JOIN MARCA
+        cursor.execute("SELECT MICRO.MICROPROCESADOR_ID, MICRO.NOMBRE, MICRO.ARQUITECTURA, MICRO.GENERACION, MAR.NOMBRE FROM MICROPROCESADOR MICRO JOIN MARCA MAR ON MICRO.MARCA_ID = MAR.MARCA_ID")
+        
+        # Obtiene los resultados de la consulta y los agrega a la lista info_micro como tuplas
+        info_micro = [(micro_id, nombre, arquitectura, generacion, marca) for micro_id, nombre, arquitectura, generacion, marca in cursor.fetchall()]
+        
+        # Ordena la lista info_micro por marca
+        info_micro = sorted(info_micro, key=lambda x: x[4])
+
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener la información de microprocesador:", e)
+    return info_micro
+
+def obtener_info_tarjeta():
+    info_tarjeta = []
+    try:
+        # Realiza la conexión a la base de datos (debes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta para obtener la información de la tabla TARGETA_GRAFICA JOIN TIPO_TARGETA_GRAFICA y TIPO_PCI
+        cursor.execute("SELECT TAR.TARGETA_GARFICA_ID, TAR.TARGETA_GRAFICA_MARCA, TAR.TARGETA_GRAFICA_MODELO, TIPO.TIPO_TARGETA_GRAFICA_NOMBRE, PCI.TIPO_PCI_NOMBRE FROM TARGETA_GRAFICA TAR JOIN TIPO_TARGETA_GRAFICA TIPO ON TAR.TIPO_TARGETA_GRAFICA_ID = TIPO.TIPO_TARGETA_GRAFICA_ID JOIN TIPO_PCI PCI ON TAR.TIPO_PCI_ID = PCI.TIPO_PCI_ID")
+
+        # Obtiene los resultados de la consulta y los agrega a la lista info_tarjeta como tuplas
+        info_tarjeta = [(tarjeta_id, marca, modelo, tipo_nombre, pci_nombre) for tarjeta_id, marca, modelo, tipo_nombre, pci_nombre in cursor.fetchall()]
+        
+        # Ordena la lista info_tarjeta por targeta_grafica_marca
+        info_tarjeta = sorted(info_tarjeta, key=lambda x: x[1])
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener la información de tarjeta:", e)
+    return info_tarjeta
 
 
 
@@ -379,26 +488,40 @@ def obtener_libros():
         cursor = conn.cursor()
 
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
-        cursor.execute("SELECT L.ACTIVO_ID, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO FROM LIBRO L INNER JOIN ACTIVO A ON L.ACTIVO_ID = A.ACTIVO_ID")
-
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for libro in cursor.fetchall():
-            activo_id = libro[0]#
-            editorial = libro[1]#
-            edicion = libro[2]
-            anio = libro[3]
-            autor = libro[4]#
-            factura = libro[5]#
-            num_serial = libro[6]#
-            num_inventario = libro[7]#
-            tipo = libro[8]#
-            nombre_activo = libro[9]#
-            estado = libro[10]#
-            #USUARIO_FINAL
-            #RESPONSABLE_INTERNO
-            #RESPONSABLE_RESGUARDO
-            #UBICACION
-            libros.append((activo_id, editorial, edicion, anio, autor, factura, num_serial, num_inventario, tipo, nombre_activo, estado))
+            activo_id = libro[0]
+            factura = libro[1]
+            num_serial = libro[2]
+            num_inventario = libro[3]
+            tipo = libro[4]
+            nombre_activo = libro[5]
+            estado = libro[6]
+            usuario_final_id = libro[7] #no ocupo este id, pues ocupo el nombre
+            nombre_usuario_final =libro[8]
+            responsable_interno_id = libro[9] #no ocupo este id, pues ocupo su nombre y apellidos
+            nombre_responsable_interno = libro[10]
+            APRI = libro[11]
+            AMRI = libro[12]
+            responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            responsable_resguardo_id = libro[13]  #no ocupo este id, pues ocupo su nombre y apellidos
+            nombre_responsable_resguardo = libro[14]
+            APRR = libro[15]
+            AMRR = libro[16]
+            responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            ubicacion_id = libro[17] #no ocupo este id, pues ocupo el nombre
+            nombre_ubicacion = libro[18]
+            editorial = libro[19]
+            edicion = libro[20]
+            anio = libro[21]
+            autor = libro[22]
+
+            #ver si se pueden concatenar los atributos de los responsables
+            
+            libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado,
+                           nombre_usuario_final, responsable_interno, responsable_resguardo, nombre_ubicacion,
+                           editorial, edicion, anio, autor))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -413,7 +536,8 @@ def eliminar_libros(libro_id):
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Sentencia SQL para eliminar el libro con el libro_id proporcionado
-        delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s"
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE ACTIVO SET ESTADO = 'BAJA' WHERE ACTIVO_ID = %s"
         # Ejecuta la eliminación con el libro_id proporcionado
         cursor.execute(delete_query, (libro_id,))
         # Confirma los cambios en la base de datos
@@ -462,3 +586,33 @@ def obtener_libroID(id_especifico):
     except mysql.connector.Error as e:
         print("Error al obtener los libros:", e)
     return libros
+
+
+def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
+                    autor, editorial, anio, edicion,
+                     ubicacion, usuario, resguardo, interno):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Crear la consulta SQL para la modificacion en la tabla ACTIVO
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = '%s', NUM_SERIAL = '%s', NUM_INVENTARIO = %s, NOMBRE = '%s', ESTADO = '%s', USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        # Definir los valores para la modificacion en la tabla ACTIVO
+        # el modelo simepre debe estar como N/A=id(76)
+        values_activo = (factura, serial, num_inventario, nombre, estado, usuario, interno, resguardo, ubicacion, id_activo)
+        # Ejecutar la consulta de inserción en la tabla ACTIVO
+        cursor.execute(update_activo_query, values_activo)
+        # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
+        update_libro_query = "UPDATE LIBRO SET EDITORIAL = '%s', EDICION = '%s', ANIO = %s, AUTOR = '%s' WHERE ACTIVO_ID = %s"
+        # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
+        values_libro = ( editorial, edicion, anio, autor, id_activo)
+        # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
+        cursor.execute(update_libro_query, values_libro)
+        # Confirmar las inserciones en la base de datos
+        conn.commit()
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        print("Modificación exitosa en la tabla LIBRO.")
+    except mysql.connector.Error as error:
+        print("Error al modificar en la tabla LIBRO:", error)
