@@ -396,6 +396,7 @@ def editar_libro(libro_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar libros
         obtener_libroIDs = obtener_libroID(libro_id)
+        print(obtener_libroIDs) # simimprime los datos correctos en terminal
         nombres_ubicacion = obtener_ubicaciones()
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
