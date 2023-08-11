@@ -114,26 +114,31 @@
 
                 // Deseleccionar la opción en el nuevo sistema operativo clonado
                 nuevoSistema.find("option:selected").removeAttr("selected");
-                
+
                 // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
                 nuevoSistema.find("option:first").attr("selected", "selected");
 
                 // Agrega un botón de borrado junto al nuevo sistema operativo clonado
                 nuevoSistema.after('<button class="btn-borrar-sistema">Borrar</button>');
 
-                // Agrega el nuevo sistema operativo clonado al formulario
-                sistemaOriginal.after(nuevoSistema);
+                // Encuentra el último duplicado de sistema operativo y agrega el nuevo sistema después de él
+                var ultimoSistemaDuplicado = $("select[name^='sistema_operativo_']").last();
+                nuevoSistema.insertAfter(ultimoSistemaDuplicado);
+
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsSistemas.push("sistema_operativo_" + contadorSistemas);
 
                 $("#lista_ids_sistemas").val(contadorSistemas);
             });
 
+
             $("#agregar-ram").click(function() {
                 contadorRam++;
+                console.log(contadorRam);
 
                 var ramOriginal = $("#ram");
                 var nuevoRam = ramOriginal.clone();
+                console.log(nuevoRam);
 
                 nuevoRam.attr("id", "ram_" + contadorRam);
                 nuevoRam.attr("name", "ram_" + contadorRam);
@@ -148,7 +153,10 @@
                 nuevoRam.after('<button class="btn-borrar-ram">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                ramOriginal.after(nuevoRam);
+                var ultimoRamDuplicado = $("select[name^='ram_']").last();
+                console.log(ultimoRamDuplicado);
+                //$("#ram_form").append(ultimoRamDuplicado);
+                nuevoRam.insertAfter(ultimoRamDuplicado);
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsRam.push("ram_" + contadorRam);
 
@@ -174,7 +182,8 @@
                 nuevoAlmacenamiento.after('<button class="btn-borrar-almacenamiento">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                almacenamientoOriginal.after(nuevoAlmacenamiento);
+                var ultimoAlmacenamientoDuplicado = $("select[name^='almacenamiento_']").last();
+                nuevoAlmacenamiento.insertAfter(ultimoAlmacenamientoDuplicado);
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsAlmacenamiento.push("almacenamiento_" + contadorAlmacenamiento);
 
@@ -200,7 +209,8 @@
                 nuevoMicro.after('<button class="btn-borrar-micro">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                microOriginal.after(nuevoMicro);
+                var ultimoMicroDuplicado = $("select[name^='micro_']").last();
+                nuevoMicro.insertAfter(ultimoMicroDuplicado);
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsMicro.push("micro_" + contadorMicro);
 
@@ -226,7 +236,8 @@
                 nuevoTarjeta.after('<button class="btn-borrar-tarjeta">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                tarjetaOriginal.after(nuevoTarjeta);
+                var ultimoTarjetaDuplicado = $("select[name^='tarjeta_']").last();
+                nuevoTarjeta.insertAfter(ultimoTarjetaDuplicado);
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsTarjeta.push("tarjeta_" + contadorTarjeta);
 
@@ -252,7 +263,8 @@
                 nuevoPuerto.after('<button class="btn-borrar-puerto">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                puertoOriginal.after(nuevoPuerto);
+                var ultimoPuertoDuplicado = $("select[name^='puerto_']").last();
+                nuevoPuerto.insertAfter(ultimoPuertoDuplicado);
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsPuerto.push("puerto_" + contadorPuerto);
 
@@ -278,7 +290,8 @@
                 nuevoLectora.after('<button class="btn-borrar-lectora">Borrar</button>');
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                lectoraOriginal.after(nuevoLectora);
+                var ultimoLectoraDuplicado = $("select[name^='lectora_']").last();
+                nuevoLectora.insertAfter(ultimoLectoraDuplicado);
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsLectora.push("lectora_" + contadorLectora);
 
@@ -609,7 +622,7 @@
             </div>
             <input type="hidden" id="red_id" name="red_id">
 
-            <div class="form-group">
+            <div id="ram_form" class="form-group">
                 <label for="ram" style="font-size: 25px;">RAM</label>
                 <select id="ram" name="ram_1" class="form-control" onchange="actualizarCampoOculto(this)">
                     <option value="" disabled selected>Escoja una RAM</option>
@@ -761,7 +774,7 @@
             
             
             <div class="form-group">
-                <label for="num_procesadores">Número de procesadores</label>
+                <label for="num_procesadores">Número de procesadores*</label>
                 <select id="num_procesadores" name="num_procesadores" required>
                     <option value="" disabled selected>Seleccione el número</option>
                     <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->

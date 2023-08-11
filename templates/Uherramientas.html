@@ -139,7 +139,17 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="hidden" id="modelo" name="modelo" value="{{ herramienta[16] }}">
+            
+            <div class="form-group">
+                <label for="fecha_compra">Fecha de compra</label>
+                <input type="date" id="fecha_compra" name="fecha_compra" value="{{ herramienta[7] }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha_consumo">Fecha de consumo</label>
+                <input type="date" id="fecha_consumo" name="fecha_consumo" value="{{ herramienta[8] }}">
+            </div>
+            
 
             <div class="form-group">
                 <label for="cantidad">Cantidad</label>

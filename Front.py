@@ -169,7 +169,7 @@ def agregar_dispositivo():
             ids_ip.append(ip_value)
     if contador_mac >= 1:
         for i in range(1, contador_mac + 1):
-            mac_value = request.form.get(f'mac_{i}')
+            mac_value = request.form.get(f'mac_{i}').upper()
             if not mac_value:
                 mac_value = "NO INDICADA"
             ids_mac.append(mac_value)
@@ -380,8 +380,9 @@ def editar_herramienta(herramienta_id):
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
         nombres_usuarios = obtener_usuarios_finales()
+        nombres_modelo = obtener_info_modelo()
         return render_template('Uherramientas.html', obtener_herramientaIDs=obtener_herramientaIDs, nombres_ubicacion=nombres_ubicacion,  
-                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
+                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios, nombres_modelo=nombres_modelo)
     else:
         return redirect(url_for('logout'))
 

@@ -737,8 +737,8 @@ def obtener_herramientaID(id_especifico):
             tipo = herramienta[4] #no se debe mostrar para cambiar
             nombre_activo = herramienta[5]#
             estado = herramienta[6]#
-            fecha_compra = herramienta[7]
-            fecha_consumo = herramienta[8]
+            fecha_compra = herramienta[7]#
+            fecha_consumo = herramienta[8]#
             cantidad = herramienta[9]#
             contenido = herramienta[10]#
             descripcion = herramienta[11]#
