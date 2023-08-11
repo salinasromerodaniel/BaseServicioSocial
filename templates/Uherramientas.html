@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Herramientas o Consumibles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%; /* Utilizamos un ancho relativo */
+            max-width: 400px;
+            text-align: center;
+            overflow-y: auto;
+        }
+    
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+    
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 80vh; /* Limitamos la altura del formulario */
+            overflow-y: auto;
+        }
+    
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+    
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    
+        input, select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+    
+        .btn-submit {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+    
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+
+
+    </style>
+    <!-- Asegúrate de tener incluida la biblioteca de jQuery antes de este script -->
+<!-- Coloca esto en la sección <head> de tu archivo HTML -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="mi_script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Modificar herramientas o consumibles</h1>
+        {% for herramienta in obtener_herramientaIDs %}
+        <form action="/modificar_herramienta/{{ herramienta[0] }}" method="post">
+
+            <div class="form-group">
+                <label for="factura">Factura</label>
+                <input type="text" id="factura" name="factura" value="{{ herramienta[1] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="serial">Serial</label>
+                <input type="text" id="serial" name="serial" value="{{ herramienta[2] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="num_inventario">Número de Inventario</label>
+                <input type="text" id="num_inventario" name="num_inventario" value="{{ herramienta[3] }}" pattern="[0-9]*">
+            </div>
+            
+            <input type="hidden" id="subtipo_id" name="subtipo_id">
+            
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" value="{{ herramienta[5] }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="" disabled selected>Seleccione un estado</option>
+                    <option value="ACTIVO" {% if herramienta[6] == "ACTIVO" %}selected{% endif %}>ACTIVO</option>
+                    <option value="INACTIVO" {% if herramienta[6] == "INACTIVO" %}selected{% endif %}>INACTIVO</option>
+                    <option value="BAJA" {% if herramienta[6] == "BAJA" %}selected{% endif %}>BAJA</option>
+                </select>
+                <br><br>
+            </div>
+            <input type="hidden" id="estado" name="estado" value="{{ herramienta[6] }}">
+
+            <div class="form-group">
+                <label for="modelo">Modelo</label>
+                <select id="modelo" name="modelo" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Escoja un modelo</option>
+                    <!-- Iterar sobre la lista de tuplas (marca, modelos) -->
+                    {% for marca, modelos in nombres_modelo %}
+                        <!-- Usar la etiqueta <optgroup> para agrupar modelos por marca -->
+                        <optgroup label="{{ marca }}">
+                            <!-- Iterar sobre los modelos asociados a la marca -->
+                            {% for modelo_id, nombre_modelo, _ in modelos %}
+                                <!-- Usar la etiqueta <option> para mostrar el nombre del modelo -->
+                                <option value="{{ modelo_id }}" {% if modelo_id == herramienta[16] %}selected{% endif %}>{{ nombre_modelo }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="modelo" name="modelo" value="{{ herramienta[16] }}">
+
+            <div class="form-group">
+                <label for="cantidad">Cantidad</label>
+                <select id="cantidad" name="cantidad" required>
+                    <option value="" disabled selected>Seleccione el número</option>
+                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
+                    {% for i in range(1, 11) %} {# Aumenté el rango hasta 11 #}
+                        <option value="{{ i }}" {% if i == herramienta[9] %}selected{% endif %}>{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <div class="form-group">
+                <label for="contenido">Contenido</label>
+                <input type="text" id="contenido" name="contenido" value="{{ herramienta[10] }}">
+            </div>
+
+            <!--DATE_COMPRA deberia ser en automatico la del día de hoy? -->
+            <!--DATE_CONSUMO deberia quedar NULLs -->
+
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" id="descripcion" name="descripcion" value="{{ herramienta[11] }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="ubicacion">Ubicación</label>
+                <select id="ubicacion" name="ubicacion" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione una ubicación</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla UBICACION -->
+                    {% for ubicacion_id, nombre in nombres_ubicacion %}
+                        <option value="{{ ubicacion_id }}" {% if ubicacion_id == herramienta[15] %}selected{% endif %}>{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="ubicacion_id" name="ubicacion_id">
+            
+            
+            <div class="form-group">
+                <label for="usuario">Usuario Final</label>
+                <select id="usuario" name="usuario" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione usuario</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla USUARIO_FINAL -->
+                    {% for usuario_id, usuario in nombres_usuarios %}
+                        <option value="{{ usuario_id }}" data-nombre="{{ usuario }}" {% if usuario_id == herramienta[12] %}selected{% endif %}>{{ usuario }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="usuario_id" name="usuario_id">
+            
+            
+            <div class="form-group">
+                <label for="resguardo">Responsable de resguardo</label>
+                <select id="resguardo" name="resguardo" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione responsable</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_RESGUARDO -->
+                    {% for responsable in nombres_resguardo %}
+                        <option value="{{ responsable.id }}" data-id="{{ responsable.id }}" {% if responsable.id == herramienta[14] %}selected{% endif %}>{{ responsable.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="resguardo_id" name="resguardo_id">
+            
+
+            <div class="form-group">
+                <label for="interno">Responsable interno</label>
+                <select id="interno" name="interno" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione responsable</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_INTERNO -->
+                    {% for responsable_id, nombre in nombres_interno %}
+                        <option value="{{ responsable_id }}" data-nombre="{{ nombre }}" {% if responsable_id == herramienta[13] %}selected{% endif %}>{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="interno_id" name="interno_id">
+            
+            <button class="btn-submit" type="submit">Modificar</button>
+        </form>
+        {% endfor %}
+    </div>
+    <script>
+        // the selector will match all input controls of type :checkbox with name="ram_unit"
+        // and attach a click event handler 
+        $("input:checkbox[name='ram_unit']").on('click', function() {
+            // in the handler, 'this' refers to the checkbox clicked on
+            var $box = $(this);
+            if ($box.is(":checked")) {
+            // the name of the box is retrieved using the .attr() method
+            // as it is assumed and expected to be immutable
+            var group = "input:checkbox[name='" + $box.attr("name") + "']";
+            // the checked state of the group/box on the other hand will change
+            // and the current value is retrieved using .prop() method
+            $(group).prop("checked", false);
+            $box.prop("checked", true);
+            } else {
+            $box.prop("checked", false);
+            }
+        });
+
+    </script>
+</body>
+</html>

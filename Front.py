@@ -2,7 +2,7 @@ import mysql.connector
 from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo, obtener_info_ram
 from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI, insertar_dispoH, insertar_dispoL
 from database import obtener_libros, eliminar_libros, obtener_info_almacenamiento, obtener_libroID, obtener_info_micro, obtener_info_tarjeta
-from database import obtener_nombres_puerto, modificar_dispoL, obtener_info_lectora, obtener_herramientas, obtener_info_red, eliminar_herramientas
+from database import obtener_nombres_puerto, modificar_dispoL, obtener_info_lectora, obtener_herramientas, obtener_info_red, eliminar_herramientas, obtener_herramientaID
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 import datetime
@@ -124,6 +124,9 @@ def agregar_dispositivo():
     contador_tarjeta = int(request.form.get('lista_ids_tarjeta'))
     contador_puerto = int(request.form.get('lista_ids_puerto'))
     contador_lectora = int(request.form.get('lista_ids_lectora'))
+    contador_red = int(request.form.get('lista_ids_red'))
+    contador_ip = int(request.form.get('lista_ids_ip'))
+    contador_mac = int(request.form.get('lista_ids_mac'))
     ids_so = []
     ids_ram = []
     ids_almacenamiento = []
@@ -131,6 +134,9 @@ def agregar_dispositivo():
     ids_tarjeta = []
     ids_puerto = []
     ids_lectora = []
+    ids_red = []
+    ids_ip = []
+    ids_mac = []
     if contador_so >= 1:
         for i in range (1, contador_so + 1) :
             ids_so.append(request.form.get(f'sistema_operativo_{i}'))
@@ -152,6 +158,21 @@ def agregar_dispositivo():
     if contador_lectora >= 1:
         for i in range (1, contador_lectora + 1) :
             ids_lectora.append(request.form.get(f'lectora_{i}'))
+    if contador_red >= 1:
+        for i in range (1, contador_red + 1) :
+            ids_red.append(request.form.get(f'red_{i}'))
+    if contador_ip >= 1:
+        for i in range(1, contador_ip + 1):
+            ip_value = request.form.get(f'ip_{i}')
+            if not ip_value:
+                ip_value = "NO ASIGNADA"
+            ids_ip.append(ip_value)
+    if contador_mac >= 1:
+        for i in range(1, contador_mac + 1):
+            mac_value = request.form.get(f'mac_{i}')
+            if not mac_value:
+                mac_value = "NO INDICADA"
+            ids_mac.append(mac_value)
 
     if not factura:
         factura = "NO SE ENCUENTRA"
@@ -172,7 +193,7 @@ def agregar_dispositivo():
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
                             usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so, 
                             ids_almacenamiento=ids_almacenamiento, ids_ram=ids_ram, fecha_ram=fecha_ram, ids_micro=ids_micro,
-                            ids_tarjeta=ids_tarjeta, ids_puerto=ids_puerto, ids_lectora=ids_lectora))
+                            ids_tarjeta=ids_tarjeta, ids_puerto=ids_puerto, ids_lectora=ids_lectora, ids_red=ids_red, ids_ip=ids_ip, ids_mac=ids_mac))
 
 
 @app.route('/mostrar_resultados')
@@ -201,6 +222,9 @@ def mostrar_resultados():
     lista_ids_tarjeta = request.args.getlist('ids_tarjeta')
     lista_ids_puerto = request.args.getlist('ids_puerto')
     lista_ids_lectora = request.args.getlist('ids_lectora')
+    lista_ids_red = request.args.getlist('ids_red')
+    lista_ids_ip = request.args.getlist('ids_ip')
+    lista_ids_mac = request.args.getlist('ids_mac')
     for i in range(len(lista_ids_sistemas)):
         lista_ids_sistemas[i] = int(lista_ids_sistemas[i])
     for i in range(len(lista_ids_ram)):
@@ -215,10 +239,17 @@ def mostrar_resultados():
         lista_ids_puerto[i] = int(lista_ids_puerto[i])
     for i in range(len(lista_ids_lectora)):
         lista_ids_lectora[i] = int(lista_ids_lectora[i])
+    for i in range(len(lista_ids_red)):
+        lista_ids_red[i] = int(lista_ids_red[i])
+    for i in range(len(lista_ids_ip)):
+        lista_ids_ip[i] = lista_ids_ip[i]
+    for i in range(len(lista_ids_mac)):
+        lista_ids_mac[i] = lista_ids_mac[i]
 
     insertar_dispoI(factura, serial, num_inventario, subtipo, nombre, ram_instalada, ram_maxima, num_procesadores, modelo,
                     caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas, lista_ids_ram, fecha_ram,
-                    lista_ids_almacenamiento, lista_ids_micro, lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora)
+                    lista_ids_almacenamiento, lista_ids_micro, lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora, lista_ids_red,
+                    lista_ids_ip, lista_ids_mac)
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            subtipo=subtipo, nombre=nombre,
@@ -349,7 +380,7 @@ def editar_herramienta(herramienta_id):
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
         nombres_usuarios = obtener_usuarios_finales()
-        return render_template('Uherramientass.html', obtener_herramientaIDs=obtener_herramientaIDs, nombres_ubicacion=nombres_ubicacion,  
+        return render_template('Uherramientas.html', obtener_herramientaIDs=obtener_herramientaIDs, nombres_ubicacion=nombres_ubicacion,  
                             nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
     else:
         return redirect(url_for('logout'))

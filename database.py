@@ -11,7 +11,7 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
                     caracteristicas, ubicacion, usuario, resguardo, interno, 
                     sistema_operativo_ids, lista_ids_ram, fecha_ram, lista_ids_almacenamiento, lista_ids_micro, 
-                    lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora):
+                    lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora, lista_ids_red, lista_ids_ip, lista_ids_mac):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
@@ -64,6 +64,10 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
             insert_dispo_lectora_query = "INSERT INTO DISPO_LECTORA(ACTIVO_ID, UNIDAD_LECTORA_ID) VALUES (%s, %s)"
             for lectora_id in lista_ids_lectora:
                 cursor.execute(insert_dispo_lectora_query, (activo_id, lectora_id))
+        if lista_ids_red:
+            insert_dispo_red_query = "INSERT INTO DISPOSITIVO_RED(ACTIVO_ID, INTERFAZ_RED_ID, MAC, IP) VALUES (%s, %s, %s, %s)"
+            for red_id, mac, ip in zip(lista_ids_red, lista_ids_mac, lista_ids_ip):
+                cursor.execute(insert_dispo_red_query, (activo_id, red_id, mac, ip))
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión
@@ -713,3 +717,41 @@ def eliminar_herramientas(herramienta_id):
     except mysql.connector.Error as e:
         print("Error al eliminar la herramienta:", e)
         # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
+
+def obtener_herramientaID(id_especifico):
+    herramientas = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta con el filtro para el ID específico
+        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID, A.MODELO_ID FROM ACTIVO A INNER JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        # Obtiene los resultados de la consulta y los agrega a la lista de libros
+        for herramienta in cursor.fetchall():
+            activo_id = herramienta[0] #no se debe mostrar para cambiar
+            factura = herramienta[1]#
+            num_serial = herramienta[2]#
+            num_inventario = herramienta[3]#
+            tipo = herramienta[4] #no se debe mostrar para cambiar
+            nombre_activo = herramienta[5]#
+            estado = herramienta[6]#
+            fecha_compra = herramienta[7]
+            fecha_consumo = herramienta[8]
+            cantidad = herramienta[9]#
+            contenido = herramienta[10]#
+            descripcion = herramienta[11]#
+            # Agrega los atributos de usuario final, responsable interno, responsable resguardo y ubicación si es necesario
+            usuario_final = herramienta[12]#
+            responsable_interno = herramienta[13]#
+            responsable_resguardo = herramienta[14]#
+            ubicacion = herramienta[15]#
+            modelo = herramienta[16]#
+            herramientas.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, fecha_compra, fecha_consumo, cantidad, contenido, descripcion, usuario_final, responsable_interno,responsable_resguardo, ubicacion, modelo))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener las herramientas:", e)
+    return herramientas

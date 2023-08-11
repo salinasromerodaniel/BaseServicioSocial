@@ -89,6 +89,8 @@
         var listaIdsPuerto = [];
         var listaIdsLectora = [];
         var listaIdsRed = [];
+        var listaIdsIp = [];
+        var listaIdsMac = [];
         $(document).ready(function() {
             var contadorSistemas = 1;
             var contadorRam = 1;
@@ -98,6 +100,8 @@
             var contadorPuerto = 1;
             var contadorLectora = 1;
             var contadorRed = 1;
+            var contadorIp = 1;
+            var contadorMac = 1;
 
             $("#agregar-sistema").click(function() {
                 contadorSistemas++;
@@ -283,29 +287,67 @@
 
             $("#agregar-red").click(function() {
                 contadorRed++;
+                contadorIp++;
+                contadorMac++;
 
                 var redOriginal = $("#red");
+                var ipOriginal = $("#ip");
+                var macOriginal = $("#mac");
+
                 var nuevoRed = redOriginal.clone();
+                var nuevoIp = ipOriginal.clone();
+                var nuevoMac = macOriginal.clone();
 
                 nuevoRed.attr("id", "red_" + contadorRed);
                 nuevoRed.attr("name", "red_" + contadorRed);
+                nuevoIp.attr("id", "ip_" + contadorIp);
+                nuevoIp.attr("name", "ip_" + contadorIp);
+                nuevoMac.attr("id", "mac_" + contadorMac);
+                nuevoMac.attr("name", "mac_" + contadorMac);
+
+                nuevoIp.val("");
+                nuevoMac.val("");
 
                 // Deseleccionar la opción en el nuevo sistema operativo clonado
                 nuevoRed.find("option:selected").removeAttr("selected");
-                
+                nuevoIp.find("option:selected").removeAttr("selected");
+                nuevoMac.find("option:selected").removeAttr("selected");
+
                 // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
                 nuevoRed.find("option:first").attr("selected", "selected");
+                nuevoIp.find("option:first").attr("selected", "selected");
+                nuevoMac.find("option:first").attr("selected", "selected");
 
-                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado******
                 nuevoRed.after('<button class="btn-borrar-red">Borrar</button>');
+                
+                // Encuentra el último duplicado de menú deslizable
+                var ultimoRedDuplicado = $("select[name^='red_']").last();
+
+                // Encuentra el último duplicado de caja de texto de IP
+                var ultimoIpDuplicado = $("input[name^='ip_']").last();
+
+                // Encuentra el último duplicado de caja de texto de MAC
+                var ultimoMacDuplicado = $("input[name^='mac_']").last();
 
                 // Agrega el nuevo sistema operativo clonado al formulario
-                redOriginal.after(nuevoRed);
+                nuevoRed.insertAfter(ultimoRedDuplicado);
+                nuevoIp.insertAfter(ultimoIpDuplicado);
+                nuevoMac.insertAfter(ultimoMacDuplicado);
+
                 // Agrega el ID del sistema operativo clonado a la lista
                 listaIdsRed.push("red_" + contadorRed);
+                listaIdsIp.push("ip_" + contadorIp);
+                listaIdsMac.push("mac_" + contadorMac);
 
                 $("#lista_ids_red").val(contadorRed);
+                $("#lista_ids_ip").val(contadorIp);
+                $("#lista_ids_mac").val(contadorMac);
             });
+
+
+
+
 
             // Agregar un evento para borrar el sistema operativo duplicado
             $(document).on('click', '.btn-borrar-sistema', function() {
@@ -412,17 +454,39 @@
 
             $(document).on('click', '.btn-borrar-red', function() {
                 var redDuplicado = $("select[name^='red_']").not(":first");
-                
-                if (redDuplicado.length > 0) {
+                var ipDuplicado = $("input[name^='ip_']").not(":first");
+                var macDuplicado = $("input[name^='mac_']").not(":first");
+
+                if (redDuplicado.length > 0 && ipDuplicado.length > 0 && macDuplicado.length > 0) {
                     var redDuplicado = redDuplicado.last();
+                    var ipDuplicado = ipDuplicado.last();
+                    var macDuplicado = macDuplicado.last();
+                    
+                    // Restablecer el contador para mantener la sincronización con los elementos clonados
+                    contadorIp--;
+                    contadorMac--;
+
                     redDuplicado.prev(".btn-borrar-red").remove();
+                    ipDuplicado.prev(".btn-borrar-red").remove();
+                    macDuplicado.prev(".btn-borrar-red").remove();
                     redDuplicado.remove();
-                    listaIdsRed.pop();
+                    ipDuplicado.remove();
+                    macDuplicado.remove();
+                    
+                    // Restablecer los valores en los campos ocultos
+                    $("#lista_ids_red").val(contadorRed);
+                    $("#lista_ids_ip").val(contadorIp);
+                    $("#lista_ids_mac").val(contadorMac);
                 } else {
                     var redOriginal = $("select[name='red_1']");
+                    var ipOriginal = $("input[name='ip_1']");
+                    var macOriginal = $("input[name='mac_1']");
                     redOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                    ipOriginal.val("");
+                    macOriginal.val("");
                 }
             });
+
 
         });
 
@@ -447,7 +511,7 @@
             </div>
             
             <div class="form-group">
-                <label for="subtipo">Tipo de Dispositivo</label>
+                <label for="subtipo">Tipo de Dispositivo*</label>
                 <select id="subtipo" name="subtipo" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione un Tipo</option>
@@ -460,12 +524,12 @@
             <input type="hidden" id="subtipo_id" name="subtipo_id">
             
             <div class="form-group">
-                <label for="nombre">Nombre</label>
+                <label for="nombre">Nombre*</label>
                 <input type="text" id="nombre" name="nombre" required>
             </div>
             
             <div class="form-group">
-                <label for="modelo">Modelo</label>
+                <label for="modelo">Modelo*</label>
                 <!-- Código HTML en ADispos.html -->
                 <select id="modelo" name="modelo" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
@@ -507,7 +571,7 @@
             </div>
 
             <div class="form-group">
-                <label for="red">Interfaz de Red</label>
+                <label for="red" style="font-size: 25px;">Interfaz de Red</label>
                 <select id="red" name="red_1" class="form-control">
                     <option value="" disabled selected>Escoja una Interfaz de Red</option>
                     {% set red_por_marca = {} %}
@@ -527,6 +591,11 @@
                         </optgroup>
                     {% endfor %}
                 </select>
+                <!-- Agregar caja de texto para dirección IP -->
+                <label for="ip">Dirección IPv4</label>
+                <input type="text" id="ip" name="ip_1" placeholder="NO ASIGNADA" class="form-control">
+                <label for="mac">Dirección MAC</label>
+                <input type="text" id="mac" name="mac_1" placeholder="NO INDICADA" class="form-control">
                 <table style="width: 100%;">
                     <tr>
                         <td style="width: 50%; text-align: center;">
@@ -541,7 +610,7 @@
             <input type="hidden" id="red_id" name="red_id">
 
             <div class="form-group">
-                <label for="ram">RAM</label>
+                <label for="ram" style="font-size: 25px;">RAM</label>
                 <select id="ram" name="ram_1" class="form-control" onchange="actualizarCampoOculto(this)">
                     <option value="" disabled selected>Escoja una RAM</option>
                     {% set ram_por_marca = {} %}
@@ -576,7 +645,7 @@
             
 
             <div class="form-group">
-                <label for="iram_instalada">Ram instalada (GiB) </label>
+                <label for="iram_instalada">Ram instalada (GiB)* </label>
                 <select id="iram_instalada" name="iram_instalada" required>
                     <option value="" disabled selected>Seleccione tamaño</option>
                     <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
@@ -592,7 +661,7 @@
             </div>
             
             <div id="ram_unit_container" class="form-group">
-                <label>Seleccione la unidad de RAM máxima:</label>
+                <label>Seleccione la unidad de RAM máxima</label>
                 <table>
                     <tr>
                         <td>
@@ -612,7 +681,7 @@
             </div>
             
             <div class="form-group">
-                <label for="tram_maxima">Tamaño de RAM máximo</label>
+                <label for="tram_maxima">Tamaño de RAM máximo*</label>
                 <select id="tram_maxima" name="tram_maxima" required>
                     <option value="" disabled selected>Seleccione tamaño</option>
                     {% for i in range(1, 101) %}
@@ -622,7 +691,7 @@
             </div>
 
             <div class="form-group">
-                <label for="almacenamiento">Almacenamiento</label>
+                <label for="almacenamiento" style="font-size: 25px;">Almacenamiento</label>
                 <select id="almacenamiento" name="almacenamiento_1" class="form-control">
                     <option value="" disabled selected>Escoja Almacenamiento</option>
                     {% set almacenamiento_por_marca = {} %}
@@ -656,7 +725,7 @@
             <input type="hidden" id="disco_id" name="disco_id">
             
             <div class="form-group">
-                <label for="micro">Microprocesador</label>
+                <label for="micro" style="font-size: 25px;">Microprocesador</label>
                 <select id="micro" name="micro_1" class="form-control">
                     <option value="" disabled selected>Escoja Microprocesador</option>
                     {% set micro_por_marca = {} %}
@@ -703,7 +772,7 @@
             </div>
 
             <div class="form-group">
-                <label for="tarjeta">Tarjeta Gráfica</label>
+                <label for="tarjeta" style="font-size: 25px;">Tarjeta Gráfica</label>
                 <select id="tarjeta" name="tarjeta_1" class="form-control">
                     <option value="" disabled selected>Escoja Tarjeta Gráfica</option>
                     {% set tarjeta_por_marca = {} %}
@@ -737,7 +806,7 @@
             <input type="hidden" id="tarjeta_id" name="tarjeta_id">
 
             <div class="form-group">
-                <label for="puerto">Puertos</label>
+                <label for="puerto" style="font-size: 25px;">Puertos</label>
                 <select id="puerto" name="puerto_1">
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione un Puerto</option>
@@ -760,7 +829,7 @@
             <input type="hidden" id="puerto_id" name="puerto_id">
 
             <div class="form-group">
-                <label for="lectora">Unidad Lectora</label>
+                <label for="lectora" style="font-size: 25px;">Unidad Lectora</label>
                 <select id="lectora" name="lectora_1" class="form-control">
                     <option value="" disabled selected>Escoja una Unidad Lectora</option>
                     {% set lectora_por_marca = {} %}
@@ -801,7 +870,7 @@
             </div>
             
             <div class="form-group">
-                <label for="ubicacion">Ubicación</label>
+                <label for="ubicacion">Ubicación*</label>
                 <select id="ubicacion" name="ubicacion" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione una ubicación</option>
@@ -814,7 +883,7 @@
             <input type="hidden" id="ubicacion_id" name="ubicacion_id">
             
             <div class="form-group">
-                <label for="usuario">Usuario Final</label>
+                <label for="usuario">Usuario Final*</label>
                 <select id="usuario" name="usuario" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione usuario</option>
@@ -827,7 +896,7 @@
             <input type="hidden" id="usuario_id" name="usuario_id">
             
             <div class="form-group">
-                <label for="resguardo">Responsable de resguardo</label>
+                <label for="resguardo">Responsable de resguardo*</label>
                 <select id="resguardo" name="resguardo" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione responsable</option>
@@ -839,7 +908,7 @@
             </div>
             <input type="hidden" id="resguardo_id" name="resguardo_id">
             <div class="form-group">
-                <label for="interno">Responsable interno</label>
+                <label for="interno">Responsable interno*</label>
                 <select id="interno" name="interno" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione responsable</option>
@@ -858,6 +927,8 @@
             <input type="hidden" name="lista_ids_puerto" id="lista_ids_puerto" value="1">
             <input type="hidden" name="lista_ids_lectora" id="lista_ids_lectora" value="1">
             <input type="hidden" name="lista_ids_red" id="lista_ids_red" value="1">
+            <input type="hidden" name="lista_ids_ip" id="lista_ids_ip" value="1">
+            <input type="hidden" name="lista_ids_mac" id="lista_ids_mac" value="1">
 
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
