@@ -2,7 +2,7 @@ import mysql.connector
 from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo, obtener_info_ram
 from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI, insertar_dispoH, insertar_dispoL
 from database import obtener_libros, eliminar_libros, obtener_info_almacenamiento, obtener_libroID, obtener_info_micro, obtener_info_tarjeta
-from database import obtener_nombres_puerto, modificar_dispoL, obtener_info_lectora, obtener_herramientas, obtener_info_red, eliminar_herramientas, obtener_herramientaID
+from database import obtener_nombres_puerto, modificar_dispoL, obtener_info_lectora, obtener_herramientas, obtener_info_red, eliminar_herramientas, obtener_herramientaID, modificar_dispoH
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 import datetime
@@ -386,6 +386,68 @@ def editar_herramienta(herramienta_id):
     else:
         return redirect(url_for('logout'))
 
+@app.route('/modificar_herramienta/<int:herramienta_id>', methods=['POST'])
+def modificar_herramienta(herramienta_id):
+    # Obtener los datos del formulario
+    factura = request.form.get('factura')
+    serial = request.form.get('serial').upper()
+    num_inventario = request.form.get('num_inventario')
+    nombre = request.form.get('nombre').upper()
+    estado = request.form.get('estado').upper()
+    modelo = request.form.get('modelo').upper()
+    fecha_compra = request.form.get('fecha_compra')
+    fecha_consumo = request.form.get('fecha_consumo')
+    cantidad = request.form.get('cantidad')
+    contenido = request.form.get('contenido').upper()
+    descripcion = request.form.get('descripcion').upper()
+    ubicacion = request.form.get('ubicacion')
+    usuario = request.form.get('usuario')
+    resguardo = request.form.get('resguardo')
+    interno = request.form.get('interno')
+    if not factura:
+        factura = "NO SE ENCUENTRA"
+    if not serial:
+        serial = "N/A"
+    if num_inventario is not None and num_inventario != '':
+        num_inventario = int(num_inventario)
+    else:
+        num_inventario = None
+    # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
+    return redirect(url_for('mostrar_ModificacionH', herramienta_id=herramienta_id, factura=factura, serial=serial, num_inventario=num_inventario,
+                            nombre=nombre, estado=estado, modelo=modelo,
+                            fecha_compra=fecha_compra, fecha_consumo=fecha_consumo, cantidad=cantidad, contenido=contenido, descripcion=descripcion,
+                            ubicacion=ubicacion,usuario=usuario, resguardo=resguardo, interno=interno))
+
+@app.route('/mostrar_ModificacionH')
+def mostrar_ModificacionH():
+    # Obtener los datos de la URL
+    id_activo = request.args.get('libro_id')
+    factura = request.args.get('factura')
+    serial = request.args.get('serial')
+    num_inventario = int(request.args.get('num_inventario'))
+    nombre = request.args.get('nombre')
+    estado = request.args.get('estado')
+    modelo = request.args.get('modelo')
+    fecha_compra = request.args.get('fecha_compra')
+    fecha_consumo = request.args.get('fecha_consumo')
+    cantidad = request.args.get('cantidad')
+    contenido = request.args.get('contenido')
+    descripcion = request.args.get('descripcion')
+    ubicacion = int(request.args.get('ubicacion'))
+    usuario = int(request.args.get('usuario'))
+    resguardo = int(request.args.get('resguardo'))
+    interno = int(request.args.get('interno'))
+
+    modificar_dispoH(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
+                    fecha_compra, fecha_consumo, cantidad, contenido, descripcion,
+                    ubicacion, usuario, resguardo, interno)
+
+    # Renderizar la página de resultados con los datos recibidos
+    return render_template('resultadoUpdH.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
+                           nombre=nombre, estado=estado, modelo=modelo, fecha_compra=fecha_compra, fecha_consumo=fecha_consumo,
+                            cantidad=cantidad, contenido=contenido, descripcion=descripcion, ubicacion=ubicacion,
+                           usuario=usuario, resguardo=resguardo, interno=interno)
+
 @app.route('/activos/proyectores')
 def proyectores():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
@@ -570,7 +632,7 @@ def mostrar_ModificacionL():
     usuario = int(request.args.get('usuario'))
     resguardo = int(request.args.get('resguardo'))
     interno = int(request.args.get('interno'))
-    num_inventario = request.args.get('num_inventario')
+    #num_inventario = request.args.get('num_inventario')
 
     modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
                     autor, editorial, anio, edicion,

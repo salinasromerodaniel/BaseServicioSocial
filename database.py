@@ -755,3 +755,32 @@ def obtener_herramientaID(id_especifico):
     except mysql.connector.Error as e:
         print("Error al obtener las herramientas:", e)
     return herramientas
+
+def modificar_dispoH(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
+                    fecha_compra, fecha_consumo, cantidad, contenido, descripcion,
+                    ubicacion, usuario, resguardo, interno):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Crear la consulta SQL para la modificacion en la tabla ACTIVO
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, MODELO_ID = %s, USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        # Definir los valores para la modificacion en la tabla ACTIVO
+        # el modelo simepre debe estar como N/A=id(76)
+        values_activo = (factura, serial, num_inventario, nombre, estado, modelo,  usuario, interno, resguardo, ubicacion, id_activo)
+        # Ejecutar la consulta de inserción en la tabla ACTIVO
+        cursor.execute(update_activo_query, values_activo)
+        # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
+        update_herr_query = "UPDATE HERRAMIENTA_CONSUMIBLE SET FECHA_COMPRA = %s, FECHA_CONSUMO = %s, CANTIDAD = %s, CONTENIDO = %s, DESCRIPCION = %s WHERE ACTIVO_ID = %s"
+        # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
+        values_herramienta = ( fecha_compra, fecha_consumo, cantidad, contenido, descripcion, id_activo)
+        # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
+        cursor.execute(update_herr_query, values_herramienta)
+        # Confirmar las inserciones en la base de datos
+        conn.commit()
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        print("Modificación exitosa en la tabla HERRAMIENTA_CONSUMIBLE.")
+    except mysql.connector.Error as error:
+        print("Error al modificar en la tabla HERRAMIENTA_CONSUMIBLE:", error)
