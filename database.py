@@ -11,7 +11,7 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
                     caracteristicas, ubicacion, usuario, resguardo, interno, 
                     sistema_operativo_ids, lista_ids_ram, fecha_ram, lista_ids_almacenamiento, lista_ids_micro, 
-                    lista_ids_tarjeta, lista_ids_puerto):
+                    lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
@@ -55,11 +55,15 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
             insert_dispo_tarjeta_query = "INSERT INTO DISPO_VIDEO(ACTIVO_ID, TARGETA_GARFICA_ID) VALUES (%s, %s)"
             for tarjeta_id in lista_ids_tarjeta:
                 cursor.execute(insert_dispo_tarjeta_query, (activo_id, tarjeta_id))
-        # Insertar en la tabla DISPO_PUERTO para cada ID de PUERTO
+        # Insertar en la tabla DISPO_LECTORA para cada ID de PUERTO
         if lista_ids_puerto:
             insert_dispo_puerto_query = "INSERT INTO DISPO_PUERTO(PUERTO_ID, ACTIVO_ID) VALUES (%s, %s)"
             for puerto_id in lista_ids_puerto:
                 cursor.execute(insert_dispo_puerto_query, (puerto_id, activo_id))
+        if lista_ids_lectora:
+            insert_dispo_lectora_query = "INSERT INTO DISPO_LECTORA(ACTIVO_ID, UNIDAD_LECTORA_ID) VALUES (%s, %s)"
+            for lectora_id in lista_ids_lectora:
+                cursor.execute(insert_dispo_lectora_query, (activo_id, lectora_id))
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión
@@ -152,6 +156,30 @@ def obtener_info_lectora():
     except mysql.connector.Error as e:
         print("Error al obtener la información de unidad lectora:", e)
     return info_lectora
+
+def obtener_info_red():
+    info_red = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta para obtener la información de la tabla INTERFAZ_RED con la unión (JOIN) a la tabla TIPO_INTERFAZ_RED
+        cursor.execute("SELECT INTER.INTERFAZ_RED_ID, INTER.INTERFAZ_RED_NOMBRE, INTER.INTERFAZ_RED_MODELO, INTER.INTERFAZ_RED_MARCA, INTER.INTEG_O_EXTERN, TIPO.NOMBRE FROM INTERFAZ_RED INTER JOIN TIPO_INTERFAZ_RED TIPO ON INTER.TIPO_INTERFAZ_RED_ID = TIPO.TIPO_INTERFAZ_RED_ID")
+
+        # Obtiene los resultados de la consulta y los agrega a la lista info_red como tuplas
+        info_red = [(interfaz_id, nombre, modelo, marca, integ_o_extern, tipo_nombre) for interfaz_id, nombre, modelo, marca, integ_o_extern, tipo_nombre in cursor.fetchall()]
+
+        # Ordena la lista info_red por INTERFAZ_RED_MARCA
+        info_red = sorted(info_red, key=lambda x: x[3])
+
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener la información de interfaz de red:", e)
+    return info_red
+
 
 
 def obtener_nombres_puerto():
@@ -616,3 +644,72 @@ def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
         print("Modificación exitosa en la tabla LIBRO.")
     except mysql.connector.Error as error:
         print("Error al modificar en la tabla LIBRO:", error)
+
+def obtener_herramientas():
+    herramientas = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ")
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for herramienta in cursor.fetchall():
+            activo_id = herramienta[0]
+            factura = herramienta[1]
+            num_serial = herramienta[2]
+            num_inventario = herramienta[3]
+            tipo = herramienta[4]
+            nombre_activo = herramienta[5]
+            estado = herramienta[6]
+            modelo_id = herramienta[7] #no ocupo este id, solo el nombre
+            modelo = herramienta[8]
+            usuario_final_id = herramienta[9] #no ocupo este id, pues ocupo el nombre
+            nombre_usuario_final =herramienta[10]
+            responsable_interno_id = herramienta[11] #no ocupo este id, pues ocupo su nombre y apellidos
+            nombre_responsable_interno = herramienta[12]
+            APRI = herramienta[13]
+            AMRI = herramienta[14]
+            responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            responsable_resguardo_id = herramienta[15]  #no ocupo este id, pues ocupo su nombre y apellidos
+            nombre_responsable_resguardo = herramienta[16]
+            APRR = herramienta[17]
+            AMRR = herramienta[18]
+            responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            ubicacion_id = herramienta[19] #no ocupo este id, pues ocupo el nombre
+            nombre_ubicacion = herramienta[20]
+            fecha_compra = herramienta[21]
+            fecha_consumo = herramienta[22]
+            cantidad = herramienta[23]
+            Contenido = herramienta[24]
+            descripcion = herramienta[25]
+            #ver si se pueden concatenar los atributos de los responsables
+            herramientas.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado,
+                        modelo, fecha_compra, fecha_consumo, cantidad, Contenido, descripcion,
+                        nombre_usuario_final, responsable_interno, responsable_resguardo, nombre_ubicacion))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los libros:", e)
+    return herramientas
+
+def eliminar_herramientas(herramienta_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE ACTIVO SET ESTADO = 'BAJA' WHERE ACTIVO_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (herramienta_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al eliminar la herramienta:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)

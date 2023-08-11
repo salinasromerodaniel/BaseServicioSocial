@@ -87,6 +87,8 @@
         var listaIdsMicro = [];
         var listaIdsTarjeta = [];
         var listaIdsPuerto = [];
+        var listaIdsLectora = [];
+        var listaIdsRed = [];
         $(document).ready(function() {
             var contadorSistemas = 1;
             var contadorRam = 1;
@@ -94,6 +96,8 @@
             var contadorMicro = 1;
             var contadorTarjeta = 1;
             var contadorPuerto = 1;
+            var contadorLectora = 1;
+            var contadorRed = 1;
 
             $("#agregar-sistema").click(function() {
                 contadorSistemas++;
@@ -251,6 +255,58 @@
                 $("#lista_ids_puerto").val(contadorPuerto);
             });
 
+            $("#agregar-lectora").click(function() {
+                contadorLectora++;
+
+                var lectoraOriginal = $("#lectora");
+                var nuevoLectora = lectoraOriginal.clone();
+
+                nuevoLectora.attr("id", "lectora_" + contadorLectora);
+                nuevoLectora.attr("name", "lectora_" + contadorLectora);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoLectora.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoLectora.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoLectora.after('<button class="btn-borrar-lectora">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                lectoraOriginal.after(nuevoLectora);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsLectora.push("lectora_" + contadorLectora);
+
+                $("#lista_ids_lectora").val(contadorLectora);
+            });
+
+            $("#agregar-red").click(function() {
+                contadorRed++;
+
+                var redOriginal = $("#red");
+                var nuevoRed = redOriginal.clone();
+
+                nuevoRed.attr("id", "red_" + contadorRed);
+                nuevoRed.attr("name", "red_" + contadorRed);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoRed.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoRed.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoRed.after('<button class="btn-borrar-red">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                redOriginal.after(nuevoRed);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsRed.push("red_" + contadorRed);
+
+                $("#lista_ids_red").val(contadorRed);
+            });
+
             // Agregar un evento para borrar el sistema operativo duplicado
             $(document).on('click', '.btn-borrar-sistema', function() {
                 var sistemaDuplicado = $("select[name^='sistema_operativo_']").not(":first");
@@ -340,7 +396,33 @@
                 }
             });
 
+            $(document).on('click', '.btn-borrar-lectora', function() {
+                var lectoraDuplicado = $("select[name^='lectora_']").not(":first");
+                
+                if (lectoraDuplicado.length > 0) {
+                    var lectoraDuplicado = lectoraDuplicado.last();
+                    lectoraDuplicado.prev(".btn-borrar-lectora").remove();
+                    lectoraDuplicado.remove();
+                    listaIdsLectora.pop();
+                } else {
+                    var lectoraOriginal = $("select[name='lectora_1']");
+                    lectoraOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
 
+            $(document).on('click', '.btn-borrar-red', function() {
+                var redDuplicado = $("select[name^='red_']").not(":first");
+                
+                if (redDuplicado.length > 0) {
+                    var redDuplicado = redDuplicado.last();
+                    redDuplicado.prev(".btn-borrar-red").remove();
+                    redDuplicado.remove();
+                    listaIdsRed.pop();
+                } else {
+                    var redOriginal = $("select[name='red_1']");
+                    redOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
 
         });
 
@@ -425,7 +507,41 @@
             </div>
 
             <div class="form-group">
-                <label for="ram">Seleccione RAM</label>
+                <label for="red">Interfaz de Red</label>
+                <select id="red" name="red_1" class="form-control">
+                    <option value="" disabled selected>Escoja una Interfaz de Red</option>
+                    {% set red_por_marca = {} %}
+                    {% for red_id, nombre, modelo, marca, integ_o_extern, tipo_nombre in nombres_red %}
+                        {% if marca not in red_por_marca %}
+                            {% set _ = red_por_marca.update({marca: []}) %}
+                        {% endif %}
+                        {% set _ = red_por_marca[marca].append((red_id, nombre, modelo, integ_o_extern, tipo_nombre)) %}
+                    {% endfor %}
+                    {% for marca, redes in red_por_marca.items() %}
+                        <optgroup label="{{ marca }}">
+                            {% for red in redes %}
+                                <option value="{{ red[0] }}">
+                                    {{ red[1] }} - {{ red[2] }} - Interfaz: {% if red[3]|int == 0 %}Integrada{% else %}Externa{% endif %} - {{ red[4] }}
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" id="agregar-red">Agregar otra Interfaz de Red</button>
+                        </td>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" class="btn-borrar-red">Eliminar última Interfaz de Red añadida</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="hidden" id="red_id" name="red_id">
+
+            <div class="form-group">
+                <label for="ram">RAM</label>
                 <select id="ram" name="ram_1" class="form-control" onchange="actualizarCampoOculto(this)">
                     <option value="" disabled selected>Escoja una RAM</option>
                     {% set ram_por_marca = {} %}
@@ -471,7 +587,7 @@
             </div>
 
             <div class="form-group">
-                <label for="fecha_ram">Seleccione la fecha de colocación de RAM</label>
+                <label for="fecha_ram">Fecha de colocación de RAM</label>
                 <input type="date" id="fecha_ram" name="fecha_ram" class="form-control">
             </div>
             
@@ -506,7 +622,7 @@
             </div>
 
             <div class="form-group">
-                <label for="almacenamiento">Seleccione Almacenamiento</label>
+                <label for="almacenamiento">Almacenamiento</label>
                 <select id="almacenamiento" name="almacenamiento_1" class="form-control">
                     <option value="" disabled selected>Escoja Almacenamiento</option>
                     {% set almacenamiento_por_marca = {} %}
@@ -540,7 +656,7 @@
             <input type="hidden" id="disco_id" name="disco_id">
             
             <div class="form-group">
-                <label for="micro">Seleccione Microprocesador</label>
+                <label for="micro">Microprocesador</label>
                 <select id="micro" name="micro_1" class="form-control">
                     <option value="" disabled selected>Escoja Microprocesador</option>
                     {% set micro_por_marca = {} %}
@@ -587,7 +703,7 @@
             </div>
 
             <div class="form-group">
-                <label for="tarjeta">Seleccione Tarjeta Gráfica</label>
+                <label for="tarjeta">Tarjeta Gráfica</label>
                 <select id="tarjeta" name="tarjeta_1" class="form-control">
                     <option value="" disabled selected>Escoja Tarjeta Gráfica</option>
                     {% set tarjeta_por_marca = {} %}
@@ -642,10 +758,45 @@
                 </table>
             </div>
             <input type="hidden" id="puerto_id" name="puerto_id">
+
+            <div class="form-group">
+                <label for="lectora">Unidad Lectora</label>
+                <select id="lectora" name="lectora_1" class="form-control">
+                    <option value="" disabled selected>Escoja una Unidad Lectora</option>
+                    {% set lectora_por_marca = {} %}
+                    {% for lectora_id, tipo_nombre, modelo, marca in nombres_lectora %}
+                        {% if marca not in lectora_por_marca %}
+                            {% set _ = lectora_por_marca.update({marca: []}) %}
+                        {% endif %}
+                        {% set _ = lectora_por_marca[marca].append((lectora_id, tipo_nombre, modelo)) %}
+                    {% endfor %}
+                    {% for marca, lectoras in lectora_por_marca.items() %}
+                        <optgroup label="{{ marca }}">
+                            {% for lectora in lectoras %}
+                                <option value="{{ lectora[0] }}">
+                                    Tipo: {{ lectora[1] }} - Modelo: {{ lectora[2] }}
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" id="agregar-lectora">Agregar otra Unidad Lectora</button>
+                        </td>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" class="btn-borrar-lectora">Eliminar última Unidad lectora añadida</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="hidden" id="lectora_id" name="lectora_id">
+
             
 
             <div class="form-group">
-                <label for="caracteristicas">Características</label>
+                <label for="caracteristicas">Características del activo</label>
                 <input type="text" id="caracteristicas" name="caracteristicas" placeholder="N/A">
             </div>
             
@@ -705,6 +856,8 @@
             <input type="hidden" name="lista_ids_micro" id="lista_ids_micro" value="1">
             <input type="hidden" name="lista_ids_tarjeta" id="lista_ids_tarjeta" value="1">
             <input type="hidden" name="lista_ids_puerto" id="lista_ids_puerto" value="1">
+            <input type="hidden" name="lista_ids_lectora" id="lista_ids_lectora" value="1">
+            <input type="hidden" name="lista_ids_red" id="lista_ids_red" value="1">
 
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
@@ -718,7 +871,7 @@
 
         // Establecer la fecha actual como valor por defecto en el campo de fecha
         fechaRamInput.value = fechaActual;
-        
+
         function actualizarCampoOculto(selectElement) {
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             document.getElementById('ram_id').value = selectedOption.value;

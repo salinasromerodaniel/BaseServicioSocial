@@ -2,7 +2,7 @@ import mysql.connector
 from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtener_nombres_subtipo, obtener_responsables_resguardo, obtener_info_ram
 from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI, insertar_dispoH, insertar_dispoL
 from database import obtener_libros, eliminar_libros, obtener_info_almacenamiento, obtener_libroID, obtener_info_micro, obtener_info_tarjeta
-from database import obtener_nombres_puerto, modificar_dispoL
+from database import obtener_nombres_puerto, modificar_dispoL, obtener_info_lectora, obtener_herramientas, obtener_info_red, eliminar_herramientas
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 import datetime
@@ -89,11 +89,13 @@ def ADispos():
         nombres_micro = obtener_info_micro()
         nombres_tarjeta = obtener_info_tarjeta()
         nombres_puerto = obtener_nombres_puerto()
+        nombres_lectora = obtener_info_lectora()
+        nombres_red = obtener_info_red()
         return render_template('ADispos.html', nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so, 
                                nombres_subtipo=nombres_subtipo, nombres_modelo=nombres_modelo, nombres_ram=nombres_ram,  
                                 nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, 
                                 nombres_almacenamiento=nombres_almacenamiento, nombres_usuarios=nombres_usuarios, nombres_micro=nombres_micro,
-                                nombres_tarjeta=nombres_tarjeta, nombres_puerto=nombres_puerto)
+                                nombres_tarjeta=nombres_tarjeta, nombres_puerto=nombres_puerto, nombres_lectora=nombres_lectora, nombres_red=nombres_red)
     else:
         return redirect(url_for('logout'))
     
@@ -102,7 +104,7 @@ def agregar_dispositivo():
     # Obtener los datos del formulario
     factura = request.form.get('factura')
     serial = request.form.get('serial').upper()
-    num_inventario = request.form.get('num_inventario')#Verificar que siempre reciba solo numeros
+    num_inventario = request.form.get('num_inventario')
     subtipo = request.form.get('subtipo')
     nombre = request.form.get('nombre').upper()
     ram_instalada = request.form.get('iram_instalada')
@@ -121,12 +123,14 @@ def agregar_dispositivo():
     contador_micro = int(request.form.get('lista_ids_micro'))
     contador_tarjeta = int(request.form.get('lista_ids_tarjeta'))
     contador_puerto = int(request.form.get('lista_ids_puerto'))
+    contador_lectora = int(request.form.get('lista_ids_lectora'))
     ids_so = []
     ids_ram = []
     ids_almacenamiento = []
     ids_micro = []
     ids_tarjeta = []
     ids_puerto = []
+    ids_lectora = []
     if contador_so >= 1:
         for i in range (1, contador_so + 1) :
             ids_so.append(request.form.get(f'sistema_operativo_{i}'))
@@ -145,6 +149,9 @@ def agregar_dispositivo():
     if contador_puerto >= 1:
         for i in range (1, contador_puerto + 1) :
             ids_puerto.append(request.form.get(f'puerto_{i}'))
+    if contador_lectora >= 1:
+        for i in range (1, contador_lectora + 1) :
+            ids_lectora.append(request.form.get(f'lectora_{i}'))
 
     if not factura:
         factura = "NO SE ENCUENTRA"
@@ -165,7 +172,7 @@ def agregar_dispositivo():
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
                             usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so, 
                             ids_almacenamiento=ids_almacenamiento, ids_ram=ids_ram, fecha_ram=fecha_ram, ids_micro=ids_micro,
-                            ids_tarjeta=ids_tarjeta, ids_puerto=ids_puerto))
+                            ids_tarjeta=ids_tarjeta, ids_puerto=ids_puerto, ids_lectora=ids_lectora))
 
 
 @app.route('/mostrar_resultados')
@@ -193,6 +200,7 @@ def mostrar_resultados():
     lista_ids_micro = request.args.getlist('ids_micro')
     lista_ids_tarjeta = request.args.getlist('ids_tarjeta')
     lista_ids_puerto = request.args.getlist('ids_puerto')
+    lista_ids_lectora = request.args.getlist('ids_lectora')
     for i in range(len(lista_ids_sistemas)):
         lista_ids_sistemas[i] = int(lista_ids_sistemas[i])
     for i in range(len(lista_ids_ram)):
@@ -205,10 +213,12 @@ def mostrar_resultados():
         lista_ids_tarjeta[i] = int(lista_ids_tarjeta[i])
     for i in range(len(lista_ids_puerto)):
         lista_ids_puerto[i] = int(lista_ids_puerto[i])
+    for i in range(len(lista_ids_lectora)):
+        lista_ids_lectora[i] = int(lista_ids_lectora[i])
 
     insertar_dispoI(factura, serial, num_inventario, subtipo, nombre, ram_instalada, ram_maxima, num_procesadores, modelo,
                     caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas, lista_ids_ram, fecha_ram,
-                    lista_ids_almacenamiento, lista_ids_micro, lista_ids_tarjeta, lista_ids_puerto)
+                    lista_ids_almacenamiento, lista_ids_micro, lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora)
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            subtipo=subtipo, nombre=nombre,
@@ -305,6 +315,41 @@ def AHerramientas():
         nombres_modelo = obtener_info_modelo()
         return render_template('AHerramientas.html', nombres_ubicacion=nombres_ubicacion,  
                             nombres_modelo=nombres_modelo,  
+                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/seleccionar_herramientas')
+def SHerramientas():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        datos_herramientas = obtener_herramientas()
+        #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
+        return render_template('Sherramientas.html', datos_herramientas=datos_herramientas)
+
+@app.route('/eliminar_herramienta/<int:herramienta_id>')
+def eliminar_herramienta(herramienta_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_herramientas(herramienta_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        datos_herramientas = obtener_herramientas()
+        return render_template('Sherramientas.html', datos_herramientas=datos_herramientas)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/editar_herramienta/<int:herramienta_id>')
+def editar_herramienta(herramienta_id):
+    if 'logged_in' in session and session['logged_in']:
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        obtener_herramientaIDs = obtener_herramientaID(herramienta_id)
+        #print(obtener_libroIDs) # si mimprime los datos correctos en terminal
+        nombres_ubicacion = obtener_ubicaciones()
+        nombres_resguardo = obtener_responsables_resguardo()
+        nombres_interno = obtener_responsables_interno()
+        nombres_usuarios = obtener_usuarios_finales()
+        return render_template('Uherramientass.html', obtener_herramientaIDs=obtener_herramientaIDs, nombres_ubicacion=nombres_ubicacion,  
                             nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios)
     else:
         return redirect(url_for('logout'))
