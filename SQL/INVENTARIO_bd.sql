@@ -140,12 +140,13 @@ CREATE TABLE DISCO_DURO(
     PRIMARY KEY (DISCO_DURO_ID)
 );
 
--- DISPOSITIVO_DD
+-- DISPOSITIVO_DD (OPERANTE ES EL BIT DE SI ESTÁ ACTIVO)
 CREATE TABLE DISPO_DD(
     DISPO_DD_ID         INT             NOT NULL AUTO_INCREMENT, 
     ACTIVO_ID           INT             NOT NULL,
     DISCO_DURO_ID       INT             NOT NULL,
     FECHA_COLOC     DATE                NOT NULL,
+    OPERANTE            BIT             NOT NULL,
     PRIMARY KEY (DISPO_DD_ID)
 );
 
@@ -166,6 +167,7 @@ CREATE TABLE DISPO_LECTORA(
     ACTIVO_ID           INT             NOT NULL,
     UNIDAD_LECTORA_ID   INT             NOT NULL,
     FECHA_COLOC     DATE                NOT NULL,
+    OPERANTE            BIT             NOT NULL,
     PRIMARY KEY (DISPO_LECTORA_ID)
 );
 
@@ -175,6 +177,7 @@ CREATE TABLE DISPO_MICRO(
     ACTIVO_ID       INT     NOT NULL,
     MICROPROCESADOR_ID INT  NOT NULL,
     FECHA_COLOC     DATE    NOT NULL,
+    OPERANTE        BIT     NOT NULL,
     PRIMARY KEY (DISPO_MICRO_ID)
 );
 
@@ -184,6 +187,7 @@ CREATE TABLE DISPO_PUERTO(
     PUERTO_ID       INT             NOT NULL,
     ACTIVO_ID       INT             NOT NULL,
     FECHA_COLOC     DATE            NOT NULL,
+    OPERANTE        BIT             NOT NULL,
     PRIMARY KEY (DISPO_PUERTO_ID)
 );
 
@@ -193,6 +197,7 @@ CREATE TABLE DISPO_RAM(
     ACTIVO_ID       INT             NOT NULL,
     RAM_ID          INT             NOT NULL,
     FECHA_COLOC     DATE              NOT NULL,
+    OPERANTE        BIT             NOT NULL,
     PRIMARY KEY (DISPO_RAM_ID)
 );
 
@@ -204,6 +209,7 @@ CREATE TABLE DISPOSITIVO_RED(
     MAC                    VARCHAR(30),
     IP                     VARCHAR(15),
     FECHA_COLOC            DATE              NOT NULL,
+    OPERANTE               BIT             NOT NULL,
     PRIMARY KEY (DISPOSITIVO_RED_ID)
 );
 
@@ -213,6 +219,7 @@ CREATE TABLE DISPO_SO(
     ACTIVO_ID               INT             NOT NULL,
     SISTEMA_OPERATIVO_ID    INT             NULL,
     FECHA_COLOC             DATE              NOT NULL,
+    OPERANTE                BIT             NOT NULL,
     PRIMARY KEY (DISPO_SO_ID)
 );
 
@@ -221,6 +228,8 @@ CREATE TABLE DISPO_VIDEO(
     DISPO_VIDEO_ID          INT             NOT NULL AUTO_INCREMENT,
     ACTIVO_ID               INT             NOT NULL,
     TARGETA_GARFICA_ID      INT             NOT NULL,
+    FECHA_COLOC             DATE              NOT NULL,
+    OPERANTE                BIT             NOT NULL,
     PRIMARY KEY (DISPO_VIDEO_ID)
 );
 
@@ -264,6 +273,7 @@ CREATE TABLE HISTORICO_ACTIVO_RESPONSABLE(
     FECHA_CAMBIO_RESGUARDO             DATE             NOT NULL,
     RESPONSABLE_RESGUARDO_ID           INT              NOT NULL,
     ACTIVO_ID                          INT              NOT NULL,
+    OPERANTE                           BIT             NOT NULL,
     PRIMARY KEY (HISTORICO_ACTIVO_RESPONSABLE_ID)
 );
 
@@ -273,6 +283,7 @@ CREATE TABLE HISTORICO_ACTIVO_RESPONSABLE_INTERNO(
     FECHA_PRESTAMO                         DATE             NOT NULL,
     RESPONSABLE_INTERNO_ID                 INT              NOT NULL,
     ACTIVO_ID                              INT              NOT NULL,
+    OPERANTE                               BIT             NOT NULL,
     PRIMARY KEY (HISTORICO_ACTIVO_RESPONSABLE_INT_ID)
 );
 
@@ -291,6 +302,7 @@ CREATE TABLE HISTORICO_ACTIVO_USUARIO(
     FECHA_PRESTAMO                 DATE             NOT NULL,
     USUARIO_FINAL_ID               INT              NOT NULL,
     ACTIVO_ID                      INT              NOT NULL,
+    OPERANTE                       BIT              NOT NULL,
     PRIMARY KEY (HISTORICO_ACTIVO_USUARIO_ID)
 );
 
