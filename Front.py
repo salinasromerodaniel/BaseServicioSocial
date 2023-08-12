@@ -448,14 +448,6 @@ def mostrar_ModificacionH():
                             cantidad=cantidad, contenido=contenido, descripcion=descripcion, ubicacion=ubicacion,
                            usuario=usuario, resguardo=resguardo, interno=interno)
 
-@app.route('/activos/proyectores')
-def proyectores():
-    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
-    if 'logged_in' in session and session['logged_in']:
-        # El usuario está logeado, renderizamos la página con la acción "Marca".
-        return render_template('MProyectores.html')
-    else:
-        return redirect(url_for('logout'))
     
 @app.route('/activos/libros')
 def libros():
