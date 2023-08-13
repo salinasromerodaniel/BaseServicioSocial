@@ -9,7 +9,7 @@ db_config = {
 
 def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
                     ram_instalada, ram_maxima, num_procesadores, modelo,
-                    caracteristicas, ubicacion, usuario, resguardo, interno, 
+                    caracteristicas, ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno, 
                     sistema_operativo_ids, lista_ids_ram, fecha_ram, lista_ids_almacenamiento, lista_ids_micro, 
                     lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora, lista_ids_red, lista_ids_ip, lista_ids_mac):
     try:
@@ -17,9 +17,9 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Crear la consulta SQL para la inserción en la tabla ACTIVO
-        insert_activo_query = "INSERT INTO ACTIVO (FACTURA, NUM_SERIAL, NUM_INVENTARIO, TIPO, NOMBRE, ESTADO, USUARIO_FINAL_ID, RESPONSABLE_INTERNO_ID, RESPONSABLE_RESGUARDO_ID, MODELO_ID, UBICACION_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        insert_activo_query = "INSERT INTO ACTIVO (FACTURA, NUM_SERIAL, NUM_INVENTARIO, TIPO, NOMBRE, ESTADO, MODELO_ID) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         # Definir los valores para la inserción en la tabla ACTIVO
-        values_activo = (factura, serial, num_inventario, "I", nombre, "ACTIVO", usuario, interno, resguardo, modelo, ubicacion)
+        values_activo = (factura, serial, num_inventario, "I", nombre, "ACTIVO", modelo)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(insert_activo_query, values_activo)
         # Obtener el ID generado automáticamente en la tabla ACTIVO
@@ -32,42 +32,58 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
         cursor.execute(insert_dispo_query, values_dispo)
         # Insertar en la tabla DISPO_SO para cada ID de sistema operativo
         if sistema_operativo_ids:
-            insert_dispo_so_query = "INSERT INTO DISPO_SO (ACTIVO_ID, SISTEMA_OPERATIVO_ID) VALUES (%s, %s)"
+            insert_dispo_so_query = "INSERT INTO DISPO_SO (ACTIVO_ID, SISTEMA_OPERATIVO_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for so_id in sistema_operativo_ids:
-                cursor.execute(insert_dispo_so_query, (activo_id, so_id))
+                cursor.execute(insert_dispo_so_query, (activo_id, so_id, fecha_ram, 1))
         # Insertar en la tabla DISPO_RAM para cada ID de ram
         if lista_ids_ram:
-            insert_dispo_ram_query = "INSERT INTO DISPO_RAM (ACTIVO_ID, RAM_ID, FECHA_COLOC) VALUES (%s, %s, %s)"
+            insert_dispo_ram_query = "INSERT INTO DISPO_RAM (ACTIVO_ID, RAM_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for ram_id in lista_ids_ram:
-                cursor.execute(insert_dispo_ram_query, (activo_id, ram_id, fecha_ram))
+                cursor.execute(insert_dispo_ram_query, (activo_id, ram_id, fecha_ram, 1))
         # Insertar en la tabla DISPO_DD para cada ID de almacenamiento
         if lista_ids_almacenamiento:
-            insert_dispo_almacenamiento_query = "INSERT INTO DISPO_DD(ACTIVO_ID, DISCO_DURO_ID) VALUES (%s, %s)"
+            insert_dispo_almacenamiento_query = "INSERT INTO DISPO_DD(ACTIVO_ID, DISCO_DURO_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for almacenamiento_id in lista_ids_almacenamiento:
-                cursor.execute(insert_dispo_almacenamiento_query, (activo_id, almacenamiento_id))
+                cursor.execute(insert_dispo_almacenamiento_query, (activo_id, almacenamiento_id, fecha_ram, 1))
         # Insertar en la tabla DISPO_MICRO para cada ID de microprocesador
         if lista_ids_micro:
-            insert_dispo_micro_query = "INSERT INTO DISPO_MICRO(ACTIVO_ID, MICROPROCESADOR_ID) VALUES (%s, %s)"
+            insert_dispo_micro_query = "INSERT INTO DISPO_MICRO(ACTIVO_ID, MICROPROCESADOR_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for micro_id in lista_ids_micro:
-                cursor.execute(insert_dispo_micro_query, (activo_id, micro_id))
+                cursor.execute(insert_dispo_micro_query, (activo_id, micro_id, fecha_ram, 1))
         # Insertar en la tabla DISPO_VIDEO para cada ID de tarjeta gráfica
         if lista_ids_tarjeta:
-            insert_dispo_tarjeta_query = "INSERT INTO DISPO_VIDEO(ACTIVO_ID, TARGETA_GARFICA_ID) VALUES (%s, %s)"
+            insert_dispo_tarjeta_query = "INSERT INTO DISPO_VIDEO(ACTIVO_ID, TARGETA_GARFICA_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for tarjeta_id in lista_ids_tarjeta:
-                cursor.execute(insert_dispo_tarjeta_query, (activo_id, tarjeta_id))
+                cursor.execute(insert_dispo_tarjeta_query, (activo_id, tarjeta_id, fecha_ram, 1))
         # Insertar en la tabla DISPO_LECTORA para cada ID de PUERTO
         if lista_ids_puerto:
-            insert_dispo_puerto_query = "INSERT INTO DISPO_PUERTO(PUERTO_ID, ACTIVO_ID) VALUES (%s, %s)"
+            insert_dispo_puerto_query = "INSERT INTO DISPO_PUERTO(PUERTO_ID, ACTIVO_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for puerto_id in lista_ids_puerto:
-                cursor.execute(insert_dispo_puerto_query, (puerto_id, activo_id))
+                cursor.execute(insert_dispo_puerto_query, (puerto_id, activo_id, fecha_ram, 1))
         if lista_ids_lectora:
-            insert_dispo_lectora_query = "INSERT INTO DISPO_LECTORA(ACTIVO_ID, UNIDAD_LECTORA_ID) VALUES (%s, %s)"
+            insert_dispo_lectora_query = "INSERT INTO DISPO_LECTORA(ACTIVO_ID, UNIDAD_LECTORA_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
             for lectora_id in lista_ids_lectora:
-                cursor.execute(insert_dispo_lectora_query, (activo_id, lectora_id))
+                cursor.execute(insert_dispo_lectora_query, (activo_id, lectora_id, fecha_ram, 1))
         if lista_ids_red:
-            insert_dispo_red_query = "INSERT INTO DISPOSITIVO_RED(ACTIVO_ID, INTERFAZ_RED_ID, MAC, IP) VALUES (%s, %s, %s, %s)"
+            insert_dispo_red_query = "INSERT INTO DISPOSITIVO_RED(ACTIVO_ID, INTERFAZ_RED_ID, MAC, IP, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s, %s, %s)"
             for red_id, mac, ip in zip(lista_ids_red, lista_ids_mac, lista_ids_ip):
-                cursor.execute(insert_dispo_red_query, (activo_id, red_id, mac, ip))
+                cursor.execute(insert_dispo_red_query, (activo_id, red_id, mac, ip, fecha_ram, 1))
+        
+        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID) VALUES (%s, %s, %s)"    
+        cursor.execute(insert_dispo_ubicacion_query, (fecha_ram, ubicacion, activo_id))
+        
+        if lista_ids_usuario:
+            insert_dispo_usuario_query = "INSERT INTO HISTORICO_ACTIVO_USUARIO(FECHA_PRESTAMO, USUARIO_FINAL_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+            for usuario_id in lista_ids_usuario:
+                cursor.execute(insert_dispo_usuario_query, (fecha_ram, usuario_id, activo_id, 1))
+        if lista_ids_resguardo:       
+            insert_dispo_resguardo_query = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE(FECHA_CAMBIO_RESGUARDO, RESPONSABLE_RESGUARDO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+            for resguardo_id in lista_ids_resguardo:
+                cursor.execute(insert_dispo_resguardo_query, (fecha_ram, resguardo_id, activo_id, 1))
+        if lista_ids_interno:
+            insert_dispo_interno_query = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE_INTERNO(FECHA_PRESTAMO, RESPONSABLE_INTERNO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+            for interno_id in lista_ids_interno:
+                cursor.execute(insert_dispo_interno_query, (fecha_ram, interno_id, activo_id, 1))
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión

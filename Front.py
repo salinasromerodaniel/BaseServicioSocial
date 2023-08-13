@@ -114,9 +114,6 @@ def agregar_dispositivo():
     modelo = request.form.get('modelo')
     caracteristicas = request.form.get('caracteristicas').upper()
     ubicacion = request.form.get('ubicacion')
-    usuario = request.form.get('usuario')
-    resguardo = request.form.get('resguardo')
-    interno = request.form.get('interno')
     contador_so = int(request.form.get('lista_ids_sistemas'))
     contador_ram = int(request.form.get('lista_ids_ram'))
     contador_almacenamiento = int(request.form.get('lista_ids_almacenamiento'))
@@ -127,6 +124,9 @@ def agregar_dispositivo():
     contador_red = int(request.form.get('lista_ids_red'))
     contador_ip = int(request.form.get('lista_ids_ip'))
     contador_mac = int(request.form.get('lista_ids_mac'))
+    contador_resguardo = int(request.form.get('lista_ids_resguardo'))
+    contador_interno = int(request.form.get('lista_ids_interno'))
+    contador_usuario = int(request.form.get('lista_ids_usuario'))
     ids_so = []
     ids_ram = []
     ids_almacenamiento = []
@@ -137,6 +137,9 @@ def agregar_dispositivo():
     ids_red = []
     ids_ip = []
     ids_mac = []
+    ids_resguardo = []
+    ids_interno = []
+    ids_usuario = []
     if contador_so >= 1:
         for i in range (1, contador_so + 1) :
             ids_so.append(request.form.get(f'sistema_operativo_{i}'))
@@ -161,6 +164,15 @@ def agregar_dispositivo():
     if contador_red >= 1:
         for i in range (1, contador_red + 1) :
             ids_red.append(request.form.get(f'red_{i}'))
+    if contador_resguardo >= 1:
+        for i in range (1, contador_resguardo + 1) :
+            ids_resguardo.append(request.form.get(f'resguardo_{i}'))
+    if contador_interno >= 1:
+        for i in range (1, contador_interno + 1) :
+            ids_interno.append(request.form.get(f'interno_{i}'))
+    if contador_usuario >= 1:
+        for i in range (1, contador_usuario + 1) :
+            ids_usuario.append(request.form.get(f'usuario_{i}'))
     if contador_ip >= 1:
         for i in range(1, contador_ip + 1):
             ip_value = request.form.get(f'ip_{i}')
@@ -191,7 +203,7 @@ def agregar_dispositivo():
                             subtipo=subtipo, nombre=nombre,ram_instalada=ram_instalada, 
                             ram_maxima=ram_maxima,num_procesadores=num_procesadores, modelo=modelo,
                             caracteristicas=caracteristicas, ubicacion=ubicacion,
-                            usuario=usuario, resguardo=resguardo, interno=interno, ids_so=ids_so, 
+                            ids_usuario=ids_usuario, ids_resguardo=ids_resguardo, ids_interno=ids_interno, ids_so=ids_so, 
                             ids_almacenamiento=ids_almacenamiento, ids_ram=ids_ram, fecha_ram=fecha_ram, ids_micro=ids_micro,
                             ids_tarjeta=ids_tarjeta, ids_puerto=ids_puerto, ids_lectora=ids_lectora, ids_red=ids_red, ids_ip=ids_ip, ids_mac=ids_mac))
 
@@ -211,9 +223,6 @@ def mostrar_resultados():
     modelo = int(request.args.get('modelo'))
     caracteristicas = request.args.get('caracteristicas')
     ubicacion = int(request.args.get('ubicacion'))
-    usuario = int(request.args.get('usuario'))
-    resguardo = int(request.args.get('resguardo'))
-    interno = int(request.args.get('interno'))
     num_inventario = request.args.get('num_inventario')
     lista_ids_sistemas = request.args.getlist('ids_so')
     lista_ids_ram = request.args.getlist('ids_ram')
@@ -225,6 +234,9 @@ def mostrar_resultados():
     lista_ids_red = request.args.getlist('ids_red')
     lista_ids_ip = request.args.getlist('ids_ip')
     lista_ids_mac = request.args.getlist('ids_mac')
+    lista_ids_resguardo = request.args.getlist('ids_resguardo')
+    lista_ids_interno = request.args.getlist('ids_interno')
+    lista_ids_usuario = request.args.getlist('ids_usuario')
     for i in range(len(lista_ids_sistemas)):
         lista_ids_sistemas[i] = int(lista_ids_sistemas[i])
     for i in range(len(lista_ids_ram)):
@@ -245,9 +257,15 @@ def mostrar_resultados():
         lista_ids_ip[i] = lista_ids_ip[i]
     for i in range(len(lista_ids_mac)):
         lista_ids_mac[i] = lista_ids_mac[i]
+    for i in range(len(lista_ids_resguardo)):
+        lista_ids_resguardo[i] = lista_ids_resguardo[i]
+    for i in range(len(lista_ids_interno)):
+        lista_ids_interno[i] = lista_ids_interno[i]
+    for i in range(len(lista_ids_usuario)):
+        lista_ids_usuario[i] = lista_ids_usuario[i]
 
     insertar_dispoI(factura, serial, num_inventario, subtipo, nombre, ram_instalada, ram_maxima, num_procesadores, modelo,
-                    caracteristicas, ubicacion, usuario, resguardo, interno, lista_ids_sistemas, lista_ids_ram, fecha_ram,
+                    caracteristicas, ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno, lista_ids_sistemas, lista_ids_ram, fecha_ram,
                     lista_ids_almacenamiento, lista_ids_micro, lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora, lista_ids_red,
                     lista_ids_ip, lista_ids_mac)
     # Renderizar la página de resultados con los datos recibidos
@@ -255,8 +273,7 @@ def mostrar_resultados():
                            subtipo=subtipo, nombre=nombre,
                            ram_instalada=ram_instalada, ram_maxima=ram_maxima,
                            num_procesadores=num_procesadores, modelo=modelo,
-                           caracteristicas=caracteristicas, ubicacion=ubicacion,
-                           usuario=usuario, resguardo=resguardo, interno=interno, fecha_ram=fecha_ram)
+                           caracteristicas=caracteristicas, ubicacion=ubicacion, fecha_ram=fecha_ram)
 
 @app.route('/agregar_herramientas', methods=['POST'])
 def agregar_herramienta():
