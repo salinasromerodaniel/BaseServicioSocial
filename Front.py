@@ -3,6 +3,7 @@ from database import obtener_ubicaciones, obtener_info_sistema_operativo, obtene
 from database import obtener_responsables_interno, obtener_usuarios_finales, obtener_info_modelo, insertar_dispoI, insertar_dispoH, insertar_dispoL
 from database import obtener_libros, eliminar_libros, obtener_info_almacenamiento, obtener_libroID, obtener_info_micro, obtener_info_tarjeta
 from database import obtener_nombres_puerto, modificar_dispoL, obtener_info_lectora, obtener_herramientas, obtener_info_red, eliminar_herramientas, obtener_herramientaID, modificar_dispoH
+from database import obtener_dispos
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
 import datetime
@@ -275,6 +276,15 @@ def mostrar_resultados():
                            num_procesadores=num_procesadores, modelo=modelo,
                            caracteristicas=caracteristicas, ubicacion=ubicacion, fecha_ram=fecha_ram)
 
+@app.route('/seleccionar_dispos')
+def SDispos():
+    # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
+    if 'logged_in' in session and session['logged_in']:
+        # El usuario está logeado, renderizamos la página con la acción "Marca".
+        datos_dispos = obtener_dispos()
+        #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
+        return render_template('Sdispos.html', datos_dispos=datos_dispos)
+
 @app.route('/agregar_herramientas', methods=['POST'])
 def agregar_herramienta():
     # Obtener los datos del formulario
@@ -286,11 +296,23 @@ def agregar_herramienta():
     contenido = request.form.get('contenido').upper()
     modelo = request.form.get('modelo')
     descripcion = request.form.get('descripcion').upper()
-    ubicacion = request.form.get('ubicacion')
-    usuario = request.form.get('usuario')
-    resguardo = request.form.get('resguardo')
-    interno = request.form.get('interno')
     fecha_compra = datetime.date.today()
+    ubicacion = request.form.get('ubicacion')
+    contador_resguardo = int(request.form.get('lista_ids_resguardo'))
+    contador_interno = int(request.form.get('lista_ids_interno'))
+    contador_usuario = int(request.form.get('lista_ids_usuario'))
+    ids_resguardo = []
+    ids_interno = []
+    ids_usuario = []
+    if contador_resguardo >= 1:
+        for i in range (1, contador_resguardo + 1) :
+            ids_resguardo.append(request.form.get(f'resguardo_{i}'))
+    if contador_interno >= 1:
+        for i in range (1, contador_interno + 1) :
+            ids_interno.append(request.form.get(f'interno_{i}'))
+    if contador_usuario >= 1:
+        for i in range (1, contador_usuario + 1) :
+            ids_usuario.append(request.form.get(f'usuario_{i}'))
 
     if not factura:
         factura = "NO SE ENCUENTRA"
@@ -308,7 +330,7 @@ def agregar_herramienta():
                             contenido=contenido, modelo=modelo,
                             fecha_compra=fecha_compra,
                             descripcion=descripcion, ubicacion=ubicacion,
-                            usuario=usuario, resguardo=resguardo, interno=interno))
+                            ids_usuario=ids_usuario, ids_resguardo=ids_resguardo, ids_interno=ids_interno))
 
 @app.route('/mostrar_resultadosH')
 def mostrar_resultadosH():
@@ -322,23 +344,28 @@ def mostrar_resultadosH():
     modelo = int(request.args.get('modelo'))
     descripcion = request.args.get('descripcion')
     ubicacion = int(request.args.get('ubicacion'))
-    usuario = int(request.args.get('usuario'))
-    resguardo = int(request.args.get('resguardo'))
-    interno = int(request.args.get('interno'))
     num_inventario = request.args.get('num_inventario')
     fecha_compra = request.args.get('fecha_compra')
+    lista_ids_resguardo = request.args.getlist('ids_resguardo')
+    lista_ids_interno = request.args.getlist('ids_interno')
+    lista_ids_usuario = request.args.getlist('ids_usuario')
+    for i in range(len(lista_ids_resguardo)):
+        lista_ids_resguardo[i] = lista_ids_resguardo[i]
+    for i in range(len(lista_ids_interno)):
+        lista_ids_interno[i] = lista_ids_interno[i]
+    for i in range(len(lista_ids_usuario)):
+        lista_ids_usuario[i] = lista_ids_usuario[i]
 
     insertar_dispoH(factura, serial, num_inventario, nombre,
                     modelo, fecha_compra, cantidad, contenido,
-                    descripcion, ubicacion, usuario, resguardo, interno)
+                    descripcion, ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultadosH.html', factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, cantidad=cantidad,
                             contenido=contenido, modelo=modelo,
                             fecha_compra=fecha_compra,
-                            descripcion=descripcion, ubicacion=ubicacion,
-                           usuario=usuario, resguardo=resguardo, interno=interno)
+                            descripcion=descripcion)
 
 
 
