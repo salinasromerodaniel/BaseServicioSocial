@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu</title>
+    <title>Personas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,6 +22,7 @@
             padding: 20px;
             max-width: 350px;
             width: 100%;
+            text-align: center;
         }
 
         h1 {
@@ -51,27 +52,55 @@
         .menu-icon {
             margin-right: 10px;
         }
+
+        .btn-back {
+            display: block;
+            margin: 20px auto 0;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            width: 40px;
+            height: 40px;
+            line-height: 1;
+            font-size: 24px;
+        }
+
+        .btn-back:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Menu</h1>
+        <h1>Personas</h1>
         <div class="menu-item">
-            <span class="menu-icon">&#128194;</span>
-            <a href="/activos">Activos</a>
+            <span class="menu-icon">&#127968;</span>
+            <a href="/personas/edificio">Edificio</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#128218;</span>
+            <a href="/personas/titulo">Título de la persona</a>
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">&#9876;</span>
+            <a href="/personas/division">División</a>
         </div>
         <div class="menu-item">
             <span class="menu-icon">&#128100;</span>
-            <a href="/personas">Personas</a>
+            <a href="/personas/perfil">Perfil</a>
         </div>
         <div class="menu-item">
-            <span class="menu-icon">&#128197;</span>
-            <a href="/catalogos">Catálogos</a>
+            <span class="menu-icon">&#128105;</span>
+            <a href="/personas/sector">Sector</a>
         </div>
-        <div class="menu-item">
-            <span class="menu-icon">&#128682;</span>
-            <a href="/logout">Logout</a>
-        </div>
+
+        <a class="btn-back" href="javascript:history.back()">&#8592;</a>
     </div>
 </body>
 </html>

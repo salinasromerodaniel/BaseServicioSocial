@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Libros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px; /* Agregamos un margen inferior */
+        }
+
+        h1 {
+            margin-top: 0; /* Eliminamos el margen superior para el título */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto; /* Centramos la tabla horizontalmente */
+            border: 2px solid black; /* Agregamos un borde negro a la tabla */
+        }
+
+        th, td {
+            border: 1px solid black; /* Agregamos bordes negros a las celdas */
+            padding: 8px;
+            text-align: center; /* Centramos el contenido de las celdas */
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .menu-item a:hover {
+            text-decoration: underline;
+        }
+
+        .menu-icon {
+            margin-right: 10px;
+        }
+
+        .btn-back {
+            display: block;
+            margin: 20px auto 0;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            width: 40px;
+            height: 40px;
+            line-height: 1;
+            font-size: 24px;
+        }
+
+        .btn-back:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Disposotivos inteligentes</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Factura</th>
+            <th>Número de Serie</th>
+            <th>Número de Inventario</th>
+            <!--<th>Tipo</th>-->
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>subtipo</th>
+            <th>Modelo</th>
+            <th>Número de procesadores</th>
+            <th>RAM instalada</th>
+            <th>RAM máxima</th>
+            <th>Características</th>
+            <th>Operaciones</th> 
+        </tr>
+        {% for dispo in datos_dispos %}
+        <tr>
+            <!--<td>{{ dispo[0] }}</td>-->
+            <td>{{ dispo[1] }}</td>
+            <td>{{ dispo[2] }}</td>
+            <td>{{ dispo[3] }}</td>
+            <!--<td>{{ dispo[4] }}</td>-->
+            <td>{{ dispo[5] }}</td>
+            <td>{{ dispo[6] }}</td>
+            <td>{{ dispo[12] }}</td>
+            <td>{{ dispo[7] }}</td>
+            <td>{{ dispo[9] }}</td>
+            <td>{{ dispo[10] }}</td>
+            <td>{{ dispo[11] }}</td>
+            <td>{{ dispo[8] }}</td>
+            <td>
+                <a href="{{ url_for('editar_dispo', dispo_id=dispo[0]) }}" class="btn-edit">Modificar</a>
+                <a href="{{ url_for('eliminar_dispo', dispo_id=dispo[0]) }}" class="btn-delete">Dar de baja</a>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

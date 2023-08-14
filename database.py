@@ -511,17 +511,17 @@ def insertar_dispoH(factura, serial, num_inventario, nombre,
 
 def insertar_dispoL(factura, serial, num_inventario, nombre,
                     autor, editorial, anio, edicion,
-                     ubicacion, usuario, resguardo, interno):
+                     ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno, fecha_compra):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
         # Crear la consulta SQL para la inserción en la tabla ACTIVO
-        insert_activo_query = "INSERT INTO ACTIVO (FACTURA, NUM_SERIAL, NUM_INVENTARIO, TIPO, NOMBRE, ESTADO, USUARIO_FINAL_ID, RESPONSABLE_INTERNO_ID, RESPONSABLE_RESGUARDO_ID, MODELO_ID, UBICACION_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        insert_activo_query = "INSERT INTO ACTIVO (FACTURA, NUM_SERIAL, NUM_INVENTARIO, TIPO, NOMBRE, ESTADO, MODELO_ID) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         # Definir los valores para la inserción en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
-        values_activo = (factura, serial, num_inventario, "L", nombre, "ACTIVO", usuario, interno, resguardo, 76, ubicacion)
+        values_activo = (factura, serial, num_inventario, "L", nombre, "ACTIVO", 76)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(insert_activo_query, values_activo)
         # Obtener el ID generado automáticamente en la tabla ACTIVO
@@ -533,6 +533,20 @@ def insertar_dispoL(factura, serial, num_inventario, nombre,
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
         # Confirmar las inserciones en la base de datos
+        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID) VALUES (%s, %s, %s)"    
+        cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id))
+        if lista_ids_usuario:
+            insert_dispo_usuario_query = "INSERT INTO HISTORICO_ACTIVO_USUARIO(FECHA_PRESTAMO, USUARIO_FINAL_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+            for usuario_id in lista_ids_usuario:
+                cursor.execute(insert_dispo_usuario_query, (fecha_compra, usuario_id, activo_id, 1))
+        if lista_ids_resguardo:       
+            insert_dispo_resguardo_query = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE(FECHA_CAMBIO_RESGUARDO, RESPONSABLE_RESGUARDO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+            for resguardo_id in lista_ids_resguardo:
+                cursor.execute(insert_dispo_resguardo_query, (fecha_compra, resguardo_id, activo_id, 1))
+        if lista_ids_interno:
+            insert_dispo_interno_query = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE_INTERNO(FECHA_PRESTAMO, RESPONSABLE_INTERNO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+            for interno_id in lista_ids_interno:
+                cursor.execute(insert_dispo_interno_query, (fecha_compra, interno_id, activo_id, 1))
         conn.commit()
         # Cerrar el cursor y la conexión
         cursor.close()
@@ -823,7 +837,9 @@ def obtener_dispos():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO, FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO, FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for dispo in cursor.fetchall():
             activo_id = dispo[0]
@@ -831,36 +847,242 @@ def obtener_dispos():
             num_serial = dispo[2]
             num_inventario = dispo[3]
             tipo = dispo[4]
-            nombre_activo = herramienta[5]
-            estado = herramienta[6]
-            modelo_id = herramienta[7] #no ocupo este id, solo el nombre
-            modelo = herramienta[8]
-            usuario_final_id = herramienta[9] #no ocupo este id, pues ocupo el nombre
-            nombre_usuario_final =herramienta[10]
-            responsable_interno_id = herramienta[11] #no ocupo este id, pues ocupo su nombre y apellidos
-            nombre_responsable_interno = herramienta[12]
-            APRI = herramienta[13]
-            AMRI = herramienta[14]
-            responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
-            responsable_resguardo_id = herramienta[15]  #no ocupo este id, pues ocupo su nombre y apellidos
-            nombre_responsable_resguardo = herramienta[16]
-            APRR = herramienta[17]
-            AMRR = herramienta[18]
-            responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
-            ubicacion_id = herramienta[19] #no ocupo este id, pues ocupo el nombre
-            nombre_ubicacion = herramienta[20]
-            fecha_compra = herramienta[21]
-            fecha_consumo = herramienta[22]
-            cantidad = herramienta[23]
-            Contenido = herramienta[24]
-            descripcion = herramienta[25]
+            nombre_activo = dispo[5]
+            estado = dispo[6]
+            modelo_id = dispo[7] #no ocupo este id, solo el nombre
+            modelo = dispo[8]
+            caracteristicas = dispo[9]
+            num_procesadores = dispo[10]
+            ram_instalada = dispo[11]
+            ram_maxima = dispo[12]
+            subtipo_id = dispo[13]#no ocupo este id, pues ocupo el nombre
+            subtipo = dispo[14]
             #ver si se pueden concatenar los atributos de los responsables
             dispos.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado,
-                        modelo, fecha_compra, fecha_consumo, cantidad, Contenido, descripcion,
-                        nombre_usuario_final, responsable_interno, responsable_resguardo, nombre_ubicacion))
+                        modelo, caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
-        print("Error al obtener los libros:", e)
+        print("Error al obtener los dispositivos:", e)
     return dispos
+
+def eliminar_dispos(dispo_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE ACTIVO SET ESTADO = 'BAJA' WHERE ACTIVO_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (dispo_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al eliminar el dispositivo:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
+def obtener_dispoID(id_especifico):
+    dispos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Ejecuta la consulta con el filtro para el ID específico
+        #cursor. execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,  DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX, DI.SUBTIPO_ID FROM ACTIVO A INNER JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,  A.MODELO_ID, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX, DI.SUBTIPO_ID FROM ACTIVO A INNER JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico};")
+        # Obtiene los resultados de la consulta y los agrega a la lista de libros
+        for dispo in cursor.fetchall():
+            activo_id = dispo[0] #no se debe mostrar para cambiar
+            factura = dispo[1]
+            num_serial = dispo[2]
+            num_inventario = dispo[3]
+            tipo = dispo[4] #no se debe mostrar para cambiar
+            nombre_activo = dispo[5]
+            estado = dispo[6]
+            modelo = dispo[7]
+            caracteristicas = dispo[8]
+            num_procesadores = dispo[9]#
+            ram_instalada = dispo[10]#
+            ram_maxima = dispo[11]#
+            subtipo =  dispo[12]#
+            dispos.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, modelo,
+                           caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los dispos:", e)
+    return dispos
+
+def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
+                    caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Crear la consulta SQL para la modificacion en la tabla ACTIVO
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        # Definir los valores para la modificacion en la tabla ACTIVO
+        # el modelo simepre debe estar como N/A=id(76)
+        values_activo = (factura, serial, num_inventario, nombre, estado, usuario, interno, resguardo, ubicacion, id_activo)
+        # Ejecutar la consulta de inserción en la tabla ACTIVO
+        cursor.execute(update_activo_query, values_activo)
+        # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
+        update_libro_query = "UPDATE LIBRO SET EDITORIAL = %s, EDICION = %s, ANIO = %s, AUTOR = %s WHERE ACTIVO_ID = %s"
+        # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
+        values_libro = ( editorial, edicion, anio, autor, id_activo)
+        # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
+        cursor.execute(update_libro_query, values_libro)
+        # Confirmar las inserciones en la base de datos
+        conn.commit()
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        print("Modificación exitosa en la tabla LIBRO.")
+    except mysql.connector.Error as error:
+        print("Error al modificar en la tabla LIBRO:", error)
+
+
+def obtener_edificio():
+    edificios = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT EDIFICIO_ID, NOMBRE FROM EDIFICIO ORDER BY NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for edificio in cursor.fetchall():
+            edificio_id = edificio[0]
+            nombre = edificio[1]
+            edificios.append((edificio_id, nombre))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los edificios:", e)
+    return edificios
+
+def obtener_titulo():
+    titulos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT TITULO_ID, NOMBRE, ABREVIATURA FROM TITULO ORDER BY NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for titulo in cursor.fetchall():
+           titulo_id = titulo[0]
+           nombre = titulo[1]
+           abreviatura = titulo[2]
+           titulos.append((titulo_id, nombre, abreviatura))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los titulos:", e)
+    return titulos
+
+def obtener_division():
+    divisiones = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT DIVISION_ID, ACRONIMO, NOMBRE FROM DIVISION ORDER BY NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for division in cursor.fetchall():
+           division_id = division[0]
+           acronimo = division[1]
+           nombre = division[2]
+           divisiones.append((division_id, acronimo, nombre))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los titulos:", e)
+    return divisiones
+
+def obtener_perfil():
+    perfiles = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT PERFIL_USUARIO_ID, PERFIL_USUARIO_NOMBRE FROM PERFIL ORDER BY PERFIL_USUARIO_NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for perfil in cursor.fetchall():
+           perfil_id = perfil[0]
+           nombre = perfil[1]
+           perfiles.append((perfil_id, nombre))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los titulos:", e)
+    return perfiles
+
+def obtener_sector():
+    sectores = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT SECTOR_ID, NOMBRE FROM SECTOR ORDER BY NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for sector in cursor.fetchall():
+           sector_id = sector[0]
+           nombre = sector[1]
+           sectores.append((sector_id, nombre))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los sectores:", e)
+    return sectores
+
+def obtener_marca():
+    marcas = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT MARCA_ID, NOMBRE FROM MARCA ORDER BY NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for marca in cursor.fetchall():
+           marca_id = marca[0]
+           nombre = marca[1]
+           marcas.append((marca_id, nombre))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener las marcas:", e)
+    return marcas
+
+def obtener_micro():
+    micro = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT MICRO.MICROPROCESADOR_ID, MICRO.NOMBRE, MICRO.ARQUITECTURA, MICRO.GENERACION, MAR.NOMBRE FROM MICROPROCESADOR MICRO JOIN MARCA MAR ON MICRO.MARCA_ID = MAR.MARCA_ID")
+        micro= cursor.fetchall()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener las marcas:", e)
+    return micro

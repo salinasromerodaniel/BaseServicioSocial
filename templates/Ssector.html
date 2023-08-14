@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Sectores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px; /* Agregamos padding para separar del borde del viewport */
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid black;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .menu-item a:hover {
+            text-decoration: underline;
+        }
+
+        .menu-icon {
+            margin-right: 10px;
+        }
+
+        .btn-back {
+            display: block;
+            margin: 20px auto 0;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            width: 40px;
+            height: 40px;
+            line-height: 1;
+            font-size: 24px;
+        }
+
+        .btn-back:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Sectores</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Operaciones</th> 
+            </tr>
+            {% for sector in datos_sector %}
+            <tr>
+                <td>{{ sector[0] }}</td>
+                <td>{{ sector[1] }}</td>
+                <td>
+                    <a href="/activos/dispos" class="btn-edit">Modificar</a>
+                    <a href="/activos/dispos" class="btn-delete">Dar de baja</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
