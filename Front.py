@@ -314,8 +314,8 @@ def modificar_dispo(dispo_id):
     modelo = request.form.get('modelo')
     caracteristicas = request.form.get('caracterisiticas')
     num_procesadores = request.form.get('num_procesadores')
-    ram_instalada = request.form.get('ram_instalada')
-    ram_maxima = request.form.get('ram_maxima')
+    ram_instalada = request.form.get('iram_instalada')
+    ram_maxima = request.form.get('tram_maxima')
     subtipo = request.form.get('subtipo')
     if not factura:
         factura = "NO SE ENCUENTRA"
@@ -325,6 +325,15 @@ def modificar_dispo(dispo_id):
         num_inventario = int(num_inventario)
     else:
         num_inventario = None
+    
+    if ram_instalada is not None and ram_instalada != '':
+        ram_instalada = int(ram_instalada)
+    else:
+        ram_instalada = None
+    if  ram_maxima is not None and  ram_maxima != '':
+         ram_maxima = int( ram_maxima)
+    else:
+         ram_maxima = None
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionD', dispo_id=dispo_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, modelo=modelo, caracteristicas=caracteristicas, num_procesadores=num_procesadores,
@@ -333,7 +342,7 @@ def modificar_dispo(dispo_id):
 @app.route('/mostrar_ModificacionD')
 def mostrar_ModificacionD():
     # Obtener los datos de la URL
-    id_activo = request.args.get('libro_id')
+    id_activo = request.args.get('dispo_id')
     factura = request.args.get('factura')
     serial = request.args.get('serial')
     num_inventario = int(request.args.get('num_inventario'))
@@ -488,7 +497,7 @@ def editar_herramienta(herramienta_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar libros
         obtener_herramientaIDs = obtener_herramientaID(herramienta_id)
-        #print(obtener_libroIDs) # si mimprime los datos correctos en terminal
+        #print(obtener_libroIDs) # no debería haber4 problema si los busco
         nombres_ubicacion = obtener_ubicaciones()
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
@@ -513,10 +522,10 @@ def modificar_herramienta(herramienta_id):
     cantidad = request.form.get('cantidad')
     contenido = request.form.get('contenido').upper()
     descripcion = request.form.get('descripcion').upper()
-    ubicacion = request.form.get('ubicacion')
-    usuario = request.form.get('usuario')
-    resguardo = request.form.get('resguardo')
-    interno = request.form.get('interno')
+    #ubicacion = request.form.get('ubicacion')
+    #usuario = request.form.get('usuario')
+    #resguardo = request.form.get('resguardo')
+    #interno = request.form.get('interno')
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -528,13 +537,12 @@ def modificar_herramienta(herramienta_id):
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionH', herramienta_id=herramienta_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, modelo=modelo,
-                            fecha_compra=fecha_compra, fecha_consumo=fecha_consumo, cantidad=cantidad, contenido=contenido, descripcion=descripcion,
-                            ubicacion=ubicacion,usuario=usuario, resguardo=resguardo, interno=interno))
+                            fecha_compra=fecha_compra, fecha_consumo=fecha_consumo, cantidad=cantidad, contenido=contenido, descripcion=descripcion))
 
 @app.route('/mostrar_ModificacionH')
 def mostrar_ModificacionH():
     # Obtener los datos de la URL
-    id_activo = request.args.get('libro_id')
+    id_activo = request.args.get('herramienta_id')
     factura = request.args.get('factura')
     serial = request.args.get('serial')
     num_inventario = int(request.args.get('num_inventario'))
@@ -546,20 +554,18 @@ def mostrar_ModificacionH():
     cantidad = request.args.get('cantidad')
     contenido = request.args.get('contenido')
     descripcion = request.args.get('descripcion')
-    ubicacion = int(request.args.get('ubicacion'))
-    usuario = int(request.args.get('usuario'))
-    resguardo = int(request.args.get('resguardo'))
-    interno = int(request.args.get('interno'))
+    #ubicacion = int(request.args.get('ubicacion'))
+    #usuario = int(request.args.get('usuario'))
+    #resguardo = int(request.args.get('resguardo'))
+    #interno = int(request.args.get('interno'))
 
     modificar_dispoH(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
-                    fecha_compra, fecha_consumo, cantidad, contenido, descripcion,
-                    ubicacion, usuario, resguardo, interno)
+                    fecha_compra, fecha_consumo, cantidad, contenido, descripcion)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultadoUpdH.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, estado=estado, modelo=modelo, fecha_compra=fecha_compra, fecha_consumo=fecha_consumo,
-                            cantidad=cantidad, contenido=contenido, descripcion=descripcion, ubicacion=ubicacion,
-                           usuario=usuario, resguardo=resguardo, interno=interno)
+                            cantidad=cantidad, contenido=contenido, descripcion=descripcion)
 
     
 @app.route('/activos/libros')
@@ -689,7 +695,7 @@ def editar_libro(libro_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar libros
         obtener_libroIDs = obtener_libroID(libro_id)
-        #print(obtener_libroIDs) # si mimprime los datos correctos en terminal
+        #print(obtener_libroIDs) # no debe de haber problema si se llama
         nombres_ubicacion = obtener_ubicaciones()
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
@@ -711,10 +717,10 @@ def modificar_libro(libro_id):
     editorial = request.form.get('editorial').upper()
     anio = request.form.get('anio')
     edicion = request.form.get('edicion').upper()
-    ubicacion = request.form.get('ubicacion')
-    usuario = request.form.get('usuario')
-    resguardo = request.form.get('resguardo')
-    interno = request.form.get('interno')
+    #ubicacion = request.form.get('ubicacion')
+    #usuario = request.form.get('usuario')
+    #resguardo = request.form.get('resguardo')
+    #interno = request.form.get('interno')
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -736,8 +742,7 @@ def modificar_libro(libro_id):
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionL', libro_id=libro_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, autor=autor,editorial=editorial, anio=anio,
-                            edicion=edicion, ubicacion=ubicacion,
-                            usuario=usuario, resguardo=resguardo, interno=interno))
+                            edicion=edicion))
 
 @app.route('/mostrar_ModificacionL')
 def mostrar_ModificacionL():
@@ -752,22 +757,20 @@ def mostrar_ModificacionL():
     editorial = request.args.get('editorial')
     anio = int(request.args.get('anio'))
     edicion = request.args.get('edicion')
-    ubicacion = int(request.args.get('ubicacion'))
-    usuario = int(request.args.get('usuario'))
-    resguardo = int(request.args.get('resguardo'))
-    interno = int(request.args.get('interno'))
+    #ubicacion = int(request.args.get('ubicacion'))
+    #usuario = int(request.args.get('usuario'))
+    #resguardo = int(request.args.get('resguardo'))
+    #interno = int(request.args.get('interno'))
     #num_inventario = request.args.get('num_inventario')
 
     modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
-                    autor, editorial, anio, edicion,
-                     ubicacion, usuario, resguardo, interno)
+                    autor, editorial, anio, edicion)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultadoUpdL.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, estado=estado, autor=autor,
                             editorial=editorial, anio=anio,
-                            edicion=edicion, ubicacion=ubicacion,
-                           usuario=usuario, resguardo=resguardo, interno=interno)
+                            edicion=edicion)
 
 
 @app.route('/eliminar_libro/<int:libro_id>')
@@ -866,6 +869,63 @@ def micro():
         return render_template('Smicro.html', datos_micro=datos_micro)
     else:
         return redirect(url_for('logout'))
+
+@app.route('/activos/busqueda', methods=['GET', 'POST'])
+def busquedaD():
+    if 'logged_in' in session and session['logged_in']:
+        datos_busqueda = busqueda_dispos()
+        datos_procesados = []  # Lista para almacenar los resultados procesados
+        
+        for row in datos_busqueda:
+            ram_ids = row[11]  # Obtener los RAM_ID concatenados
+            so_ids = row[12]
+            video_ids = row[13]
+            ram_info_list = []  # Lista para almacenar la información de RAM
+            so_info_list = []
+            video_info_list = []
+            
+            if ram_ids:
+                ram_id_list = ram_ids.split(",")  # Separar los IDs si no están vacíos
+                
+                for ram_id in ram_id_list:
+                    ram_info = consulta_ram(ram_id)  # Obtener la información de RAM
+                    ram_info_list.append(ram_info)  # Agregar la información a la lista
+            if so_ids:
+                so_id_list = so_ids.split(",")  # Separar los IDs si no están vacíos
+                
+                for so_id in so_id_list:
+                    so_info = consulta_so(so_id)  # Obtener la información de RAM
+                    so_info_list.append(so_info)
+            if video_ids:
+                video_id_list = video_ids.split(",")  # Separar los IDs si no están vacíos
+                
+                for video_id in video_id_list:
+                    video_info = consulta_video(video_id)  # Obtener la información de RAM
+                    video_info_list.append(video_info)
+            
+            row_dict = {
+                "FACTURA": row[0],
+                "NUM_SERIAL": row[1],
+                "NUM_INVENTARIO": row[2],
+                "ACTIVO_NOMBRE": row[3],
+                "ESTADO": row[4],
+                "MODELO_NOMBRE": row[5],
+                "CARACTERISTICAS": row[6],
+                "NUM_PROCESADORES": row[7],
+                "RAM_INSTALADA": row[8],
+                "RAM_MAX": row[9],
+                "SUBTIPO_NOMBRE": row[10],
+                "RAM_INFO": "-\n".join(ram_info_list) if ram_info_list else "",  # Unir la información de RAM con saltos de línea
+                "SO_INFO": "-\n".join(so_info_list) if so_info_list else "",
+                "VIDEO_INFO": "-\n".join(video_info_list) if video_info_list else ""
+            }
+            datos_procesados.append(row_dict)
+        
+        return render_template('SBdispos.html', datos_procesados=datos_procesados)
+    else:
+        return redirect(url_for('logout'))
+
+
 
 
 ##############################  M A I N ############################################################################

@@ -565,7 +565,8 @@ def obtener_libros():
         cursor = conn.cursor()
 
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for libro in cursor.fetchall():
             activo_id = libro[0]
@@ -575,29 +576,28 @@ def obtener_libros():
             tipo = libro[4]
             nombre_activo = libro[5]
             estado = libro[6]
-            usuario_final_id = libro[7] #no ocupo este id, pues ocupo el nombre
-            nombre_usuario_final =libro[8]
-            responsable_interno_id = libro[9] #no ocupo este id, pues ocupo su nombre y apellidos
-            nombre_responsable_interno = libro[10]
-            APRI = libro[11]
-            AMRI = libro[12]
-            responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
-            responsable_resguardo_id = libro[13]  #no ocupo este id, pues ocupo su nombre y apellidos
-            nombre_responsable_resguardo = libro[14]
-            APRR = libro[15]
-            AMRR = libro[16]
-            responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
-            ubicacion_id = libro[17] #no ocupo este id, pues ocupo el nombre
-            nombre_ubicacion = libro[18]
-            editorial = libro[19]
-            edicion = libro[20]
-            anio = libro[21]
-            autor = libro[22]
+            #usuario_final_id = libro[7] #no ocupo este id, pues ocupo el nombre
+            #nombre_usuario_final =libro[8]
+            #responsable_interno_id = libro[9] #no ocupo este id, pues ocupo su nombre y apellidos
+            #nombre_responsable_interno = libro[10]
+            #APRI = libro[11]
+            #AMRI = libro[12]
+            #responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            #responsable_resguardo_id = libro[13]  #no ocupo este id, pues ocupo su nombre y apellidos
+            #nombre_responsable_resguardo = libro[14]
+            #APRR = libro[15]
+            #AMRR = libro[16]
+            #responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            #ubicacion_id = libro[17] #no ocupo este id, pues ocupo el nombre
+            #nombre_ubicacion = libro[18]
+            editorial = libro[7]
+            edicion = libro[8]
+            anio = libro[9]
+            autor = libro[10]
 
             #ver si se pueden concatenar los atributos de los responsables
             
             libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado,
-                           nombre_usuario_final, responsable_interno, responsable_resguardo, nombre_ubicacion,
                            editorial, edicion, anio, autor))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
@@ -634,9 +634,8 @@ def obtener_libroID(id_especifico):
         cursor = conn.cursor()
 
         # Ejecuta la consulta con el filtro para el ID específico
-        #cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
-        cursor. execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
-
+        #cursor. execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A  INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID  WHERE A.ACTIVO_ID = {id_especifico}")
         # Obtiene los resultados de la consulta y los agrega a la lista de libros
         for libro in cursor.fetchall():
             activo_id = libro[0] #no se debe mostrar para cambiar
@@ -651,11 +650,11 @@ def obtener_libroID(id_especifico):
             anio = libro[9]#
             autor = libro[10]#
             # Agrega los atributos de usuario final, responsable interno, responsable resguardo y ubicación si es necesario
-            usuario_final = libro[11]#
-            responsable_interno = libro[12]#
-            responsable_resguardo = libro[13]#
-            ubicacion = libro[14]#
-            libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, editorial, edicion, anio, autor, usuario_final, responsable_interno,responsable_resguardo, ubicacion))
+            #usuario_final = libro[11]#
+            #responsable_interno = libro[12]#
+            #responsable_resguardo = libro[13]#
+            #ubicacion = libro[14]#
+            libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, editorial, edicion, anio, autor))
         
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
@@ -666,17 +665,17 @@ def obtener_libroID(id_especifico):
 
 
 def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
-                    autor, editorial, anio, edicion,
-                    ubicacion, usuario, resguardo, interno):
+                    autor, editorial, anio, edicion):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Crear la consulta SQL para la modificacion en la tabla ACTIVO
-        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la modificacion en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
-        values_activo = (factura, serial, num_inventario, nombre, estado, usuario, interno, resguardo, ubicacion, id_activo)
+        #values_activo = (factura, serial, num_inventario, nombre, estado, usuario, interno, resguardo, ubicacion, id_activo)# ya no se ocupa porque se quitaron unos atributos
+        values_activo = (factura, serial, num_inventario, nombre, estado, id_activo)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(update_activo_query, values_activo)
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
@@ -702,7 +701,8 @@ def obtener_herramientas():
         cursor = conn.cursor()
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ")
+        #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for herramienta in cursor.fetchall():
             activo_id = herramienta[0]
@@ -714,29 +714,28 @@ def obtener_herramientas():
             estado = herramienta[6]
             modelo_id = herramienta[7] #no ocupo este id, solo el nombre
             modelo = herramienta[8]
-            usuario_final_id = herramienta[9] #no ocupo este id, pues ocupo el nombre
-            nombre_usuario_final =herramienta[10]
-            responsable_interno_id = herramienta[11] #no ocupo este id, pues ocupo su nombre y apellidos
-            nombre_responsable_interno = herramienta[12]
-            APRI = herramienta[13]
-            AMRI = herramienta[14]
-            responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
-            responsable_resguardo_id = herramienta[15]  #no ocupo este id, pues ocupo su nombre y apellidos
-            nombre_responsable_resguardo = herramienta[16]
-            APRR = herramienta[17]
-            AMRR = herramienta[18]
-            responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
-            ubicacion_id = herramienta[19] #no ocupo este id, pues ocupo el nombre
-            nombre_ubicacion = herramienta[20]
-            fecha_compra = herramienta[21]
-            fecha_consumo = herramienta[22]
-            cantidad = herramienta[23]
-            Contenido = herramienta[24]
-            descripcion = herramienta[25]
+            #usuario_final_id = herramienta[9] #no ocupo este id, pues ocupo el nombre
+            #nombre_usuario_final =herramienta[10]
+            #responsable_interno_id = herramienta[11] #no ocupo este id, pues ocupo su nombre y apellidos
+            #nombre_responsable_interno = herramienta[12]
+            #APRI = herramienta[13]
+            #AMRI = herramienta[14]
+            #responsable_interno = nombre_responsable_interno + ' ' + APRI + ' ' + AMRI #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            #responsable_resguardo_id = herramienta[15]  #no ocupo este id, pues ocupo su nombre y apellidos
+            #nombre_responsable_resguardo = herramienta[16]
+            #APRR = herramienta[17]
+            #AMRR = herramienta[18]
+            #responsable_resguardo = nombre_responsable_resguardo + ' ' + APRR + ' ' + AMRR #CONCATENACION DE LOS 3 VALORES ANTERIORES
+            #ubicacion_id = herramienta[19] #no ocupo este id, pues ocupo el nombre
+            #nombre_ubicacion = herramienta[20]
+            fecha_compra = herramienta[9]
+            fecha_consumo = herramienta[10]
+            cantidad = herramienta[11]
+            Contenido = herramienta[12]
+            descripcion = herramienta[13]
             #ver si se pueden concatenar los atributos de los responsables
             herramientas.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado,
-                        modelo, fecha_compra, fecha_consumo, cantidad, Contenido, descripcion,
-                        nombre_usuario_final, responsable_interno, responsable_resguardo, nombre_ubicacion))
+                        modelo, fecha_compra, fecha_consumo, cantidad, Contenido, descripcion))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -772,7 +771,8 @@ def obtener_herramientaID(id_especifico):
         cursor = conn.cursor()
 
         # Ejecuta la consulta con el filtro para el ID específico
-        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID, A.MODELO_ID FROM ACTIVO A INNER JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        #cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID, A.MODELO_ID FROM ACTIVO A INNER JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
+        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION, A.MODELO_ID FROM ACTIVO A  INNER JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
         # Obtiene los resultados de la consulta y los agrega a la lista de libros
         for herramienta in cursor.fetchall():
             activo_id = herramienta[0] #no se debe mostrar para cambiar
@@ -788,12 +788,12 @@ def obtener_herramientaID(id_especifico):
             contenido = herramienta[10]#
             descripcion = herramienta[11]#
             # Agrega los atributos de usuario final, responsable interno, responsable resguardo y ubicación si es necesario
-            usuario_final = herramienta[12]#
-            responsable_interno = herramienta[13]#
-            responsable_resguardo = herramienta[14]#
-            ubicacion = herramienta[15]#
-            modelo = herramienta[16]#
-            herramientas.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, fecha_compra, fecha_consumo, cantidad, contenido, descripcion, usuario_final, responsable_interno,responsable_resguardo, ubicacion, modelo))
+            #usuario_final = herramienta[12]#
+            #responsable_interno = herramienta[13]#
+            #responsable_resguardo = herramienta[14]#
+            #ubicacion = herramienta[15]#
+            modelo = herramienta[12]#
+            herramientas.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, fecha_compra, fecha_consumo, cantidad, contenido, descripcion,  modelo))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -802,17 +802,16 @@ def obtener_herramientaID(id_especifico):
     return herramientas
 
 def modificar_dispoH(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
-                    fecha_compra, fecha_consumo, cantidad, contenido, descripcion,
-                    ubicacion, usuario, resguardo, interno):
+                    fecha_compra, fecha_consumo, cantidad, contenido, descripcion):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Crear la consulta SQL para la modificacion en la tabla ACTIVO
-        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, MODELO_ID = %s, USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, MODELO_ID = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la modificacion en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
-        values_activo = (factura, serial, num_inventario, nombre, estado, modelo,  usuario, interno, resguardo, ubicacion, id_activo)
+        values_activo = (factura, serial, num_inventario, nombre, estado, modelo, id_activo)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(update_activo_query, values_activo)
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
@@ -907,10 +906,10 @@ def obtener_dispoID(id_especifico):
             estado = dispo[6]
             modelo = dispo[7]
             caracteristicas = dispo[8]
-            num_procesadores = dispo[9]#
-            ram_instalada = dispo[10]#
-            ram_maxima = dispo[11]#
-            subtipo =  dispo[12]#
+            num_procesadores = dispo[9]
+            ram_instalada = dispo[10]
+            ram_maxima = dispo[11]
+            subtipo =  dispo[12]
             dispos.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, modelo,
                            caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo))
         # Cierra el cursor y la conexión a la base de datos
@@ -920,33 +919,33 @@ def obtener_dispoID(id_especifico):
         print("Error al obtener los dispos:", e)
     return dispos
 
-def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
+def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Crear la consulta SQL para la modificacion en la tabla ACTIVO
-        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, USUARIO_FINAL_ID = %s, RESPONSABLE_INTERNO_ID = %s, RESPONSABLE_RESGUARDO_ID = %s, UBICACION_ID = %s WHERE ACTIVO_ID = %s"
+        update_activo_query = " UPDATE ACTIVO SET FACTURA = %s, NUM_SERIAL = %s, NUM_INVENTARIO = %s, NOMBRE = %s, ESTADO = %s, MODELO_ID = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la modificacion en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
-        values_activo = (factura, serial, num_inventario, nombre, estado, usuario, interno, resguardo, ubicacion, id_activo)
+        values_activo = (factura, serial, num_inventario, nombre, estado, modelo, id_activo)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(update_activo_query, values_activo)
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
-        update_libro_query = "UPDATE LIBRO SET EDITORIAL = %s, EDICION = %s, ANIO = %s, AUTOR = %s WHERE ACTIVO_ID = %s"
+        update_dispo_query = "UPDATE DISPO_INTELIIGENTE SET CARACTERISTICAS = %s, NUM_PROCESADORES = %s, RAM_INSTALADA = %s, RAM_MAX = %s, SUBTIPO_ID = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
-        values_libro = ( editorial, edicion, anio, autor, id_activo)
+        values_dispo = ( caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, id_activo)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
-        cursor.execute(update_libro_query, values_libro)
+        cursor.execute(update_dispo_query, values_dispo)
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión
         cursor.close()
         conn.close()
-        print("Modificación exitosa en la tabla LIBRO.")
+        print("Modificación exitosa en la tabla DISPO_INTELIGENTE.")
     except mysql.connector.Error as error:
-        print("Error al modificar en la tabla LIBRO:", error)
+        print("Error al modificar en la tabla DISPO_INTELIGENTE:", error)
 
 
 def obtener_edificio():
@@ -1086,3 +1085,107 @@ def obtener_micro():
     except mysql.connector.Error as e:
         print("Error al obtener las marcas:", e)
     return micro
+
+def busqueda_dispos():
+    dispos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla ACTIVO, MODELO, DISPO_INTELIIGENTE y SUBTIPO,
+        # y los RAM_ID, SISTEMA_OPERATIVO_ID y TARGETA_GARFICA_ID concatenados
+        cursor.execute("""
+            SELECT A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.NOMBRE AS ACTIVO_NOMBRE, A.ESTADO, M.NOMBRE AS MODELO_NOMBRE, 
+                DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX, S.NOMBRE AS SUBTIPO_NOMBRE,
+                GROUP_CONCAT(DISTINCT DR.RAM_ID) AS RAM_ID_CONCAT,
+                GROUP_CONCAT(DISTINCT DSO.SISTEMA_OPERATIVO_ID) AS SO_ID_CONCAT,
+                GROUP_CONCAT(DISTINCT DV.TARGETA_GARFICA_ID) AS VIDEO_ID_CONCAT
+            FROM ACTIVO A 
+            JOIN MODELO M ON A.MODELO_ID = M.MODELO_ID 
+            JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID 
+            JOIN SUBTIPO S ON DI.SUBTIPO_ID = S.SUBTIPO_ID 
+            LEFT JOIN DISPO_RAM DR ON A.ACTIVO_ID = DR.ACTIVO_ID AND DR.OPERANTE = 1
+            LEFT JOIN DISPO_SO DSO ON A.ACTIVO_ID = DSO.ACTIVO_ID AND DSO.OPERANTE = 1
+            LEFT JOIN DISPO_VIDEO DV ON A.ACTIVO_ID = DV.ACTIVO_ID AND DV.OPERANTE = 1
+            WHERE A.TIPO = 'I'
+            GROUP BY A.ACTIVO_ID
+        """)
+        dispos = cursor.fetchall()  # Obtener todos los resultados de la consulta
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los dispositivos:", e)
+    return dispos
+
+
+
+def consulta_ram(ram_id):
+    ram_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT RAM.MARCA, RAM.NUM_SERIE, RAM.CAPACIDAD, TIPO_RAM.NOMBRE AS TIPO_RAM_NOMBRE FROM RAM JOIN TIPO_RAM ON RAM.TIPO_RAM_ID = TIPO_RAM.TIPO_RAM_ID WHERE RAM.RAM_ID = %s", (ram_id,))
+        ram_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if ram_data:
+            ram_info = f"{ram_data['MARCA']} {ram_data['NUM_SERIE']} {ram_data['CAPACIDAD']}GiB {ram_data['TIPO_RAM_NOMBRE']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de RAM:", e)
+    return ram_info
+
+def consulta_so(so_id):
+    so_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT TIPO.NOMBRE, SO.NUM_VERSION, SO.ARQUITECTURA FROM SISTEMA_OPERATIVO SO JOIN TIPO_SO TIPO ON SO.TIPO_SO_ID = TIPO.TIPO_SO_ID WHERE SO.SISTEMA_OPERATIVO_ID = %s", (so_id,))
+        so_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if so_data:
+            so_info = f"{so_data['NOMBRE']} {so_data['NUM_VERSION']}, {so_data['ARQUITECTURA']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de SISTEMA OPERATIVO:", e)
+    return so_info
+
+def consulta_video(video_id):
+    video_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT TAR.TARGETA_GRAFICA_MARCA, TAR.TARGETA_GRAFICA_MODELO, TIPO.TIPO_TARGETA_GRAFICA_NOMBRE, PCI.TIPO_PCI_NOMBRE FROM TARGETA_GRAFICA TAR JOIN TIPO_TARGETA_GRAFICA TIPO ON TAR.TIPO_TARGETA_GRAFICA_ID = TIPO.TIPO_TARGETA_GRAFICA_ID JOIN TIPO_PCI PCI ON TAR.TIPO_PCI_ID = PCI.TIPO_PCI_ID WHERE TAR.TARGETA_GARFICA_ID = %s", (video_id,))
+        video_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if video_data:
+            video_info = f"{video_data['TARGETA_GRAFICA_MARCA']} {video_data['TARGETA_GRAFICA_MODELO']} {video_data['TIPO_TARGETA_GRAFICA_NOMBRE']} {video_data['TIPO_PCI_NOMBRE']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de video:", e)
+    return video_info
+
+def consulta_puerto(video_id):
+    video_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT TAR.TARGETA_GRAFICA_MARCA, TAR.TARGETA_GRAFICA_MODELO, TIPO.TIPO_TARGETA_GRAFICA_NOMBRE, PCI.TIPO_PCI_NOMBRE FROM TARGETA_GRAFICA TAR JOIN TIPO_TARGETA_GRAFICA TIPO ON TAR.TIPO_TARGETA_GRAFICA_ID = TIPO.TIPO_TARGETA_GRAFICA_ID JOIN TIPO_PCI PCI ON TAR.TIPO_PCI_ID = PCI.TIPO_PCI_ID WHERE TAR.TARGETA_GARFICA_ID = %s", (video_id,))
+        video_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if video_data:
+            video_info = f"{video_data['TARGETA_GRAFICA_MARCA']} {video_data['TARGETA_GRAFICA_MODELO']} {video_data['TIPO_TARGETA_GRAFICA_NOMBRE']} {video_data['TIPO_PCI_NOMBRE']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de video:", e)
+    return video_info
+
+

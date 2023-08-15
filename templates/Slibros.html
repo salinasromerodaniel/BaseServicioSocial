@@ -102,14 +102,15 @@
             <!--<th>Tipo</th>-->
             <th>Título</th>
             <th>Estado</th>
+
             <th>Editorial</th>
             <th>Autor</th>
             <th>Año</th>
             <th>Edición</th>
-            <th>Usuario final</th>
-            <th>Responsable interno</th>
-            <th>Responsable resguardo</th>
-            <th>Ubicación</th>
+            <!--<th>Usuario final</th>-->
+            <!--<th>Responsable interno</th>-->
+            <!--<th>Responsable resguardo</th>-->
+            <!--<th>Ubicación</th>-->
             <th>Operaciones</th> 
         </tr>
         {% for libro in datos_libros %}
@@ -121,14 +122,15 @@
             <!--<td>{{ libro[4] }}</td>-->
             <td>{{ libro[5] }}</td>
             <td>{{ libro[6] }}</td>
-            <td>{{ libro[11] }}</td>
-            <td>{{ libro[14] }}</td>
-            <td>{{ libro[13] }}</td>
-            <td>{{ libro[12] }}</td>
+
             <td>{{ libro[7] }}</td>
-            <td>{{ libro[8] }}</td>
-            <td>{{ libro[9] }}</td>
             <td>{{ libro[10] }}</td>
+            <td>{{ libro[9] }}</td>
+            <td>{{ libro[8] }}</td>
+            <!--<td>{{ libro[7] }}</td>-->
+            <!--<td>{{ libro[8] }}</td>-->
+            <!--<td>{{ libro[9] }}</td>-->
+            <!--<td>{{ libro[10] }}</td>-->
             <td>
                 <a href="{{ url_for('editar_libro', libro_id=libro[0]) }}" class="btn-edit">Modificar</a>
                 <a href="{{ url_for('eliminar_libro', libro_id=libro[0]) }}" class="btn-delete">Dar de baja</a>

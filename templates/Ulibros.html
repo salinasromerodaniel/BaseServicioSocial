@@ -141,60 +141,7 @@
                     <input type="text" id="edicion" name="edicion" value="{{ libro[8] }}">
                 </div>
 
-                <div class="form-group">
-                    <label for="ubicacion">Ubicación</label>
-                    <select id="ubicacion" name="ubicacion" required>
-                        <!-- Opción deshabilitada y seleccionada por defecto -->
-                        <option value="" disabled selected>Seleccione una ubicación</option>
-                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla UBICACION -->
-                        {% for ubicacion_id, nombre in nombres_ubicacion %}
-                             <option value="{{ ubicacion_id }}" {% if ubicacion_id == libro[14] %}selected{% endif %}>{{ nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <input type="hidden" id="ubicacion_id" name="ubicacion_id">
                 
-                <div class="form-group">
-                    <label for="usuario">Usuario Final</label>
-                    <select id="usuario" name="usuario" required>
-                        <!-- Opción deshabilitada y seleccionada por defecto -->
-                        <option value="" disabled selected>Seleccione usuario</option>
-                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla USUARIO_FINAL -->
-                        {% for usuario_id, usuario in nombres_usuarios %}
-                            <option value="{{ usuario_id }}" data-nombre="{{ usuario }}"
-                            {% if usuario_id == libro[11] %}selected{% endif %}>{{ usuario }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <input type="hidden" id="usuario_id" name="usuario_id">
-                
-                <div class="form-group">
-                    <label for="resguardo">Responsable de resguardo</label>
-                    <select id="resguardo" name="resguardo" required>
-                        <!-- Opción deshabilitada y seleccionada por defecto -->
-                        <option value="" disabled selected>Seleccione responsable</option>
-                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_RESGUARDO -->
-                        {% for responsable in nombres_resguardo %}
-                            <option value="{{ responsable.id }}" data-id="{{ responsable.id }}"
-                            {% if responsable.id == libro[13] %}selected{% endif %}>{{ responsable.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <input type="hidden" id="resguardo_id" name="resguardo_id">
-
-                <div class="form-group">
-                    <label for="interno">Responsable interno</label>
-                    <select id="interno" name="interno" required>
-                        <!-- Opción deshabilitada y seleccionada por defecto -->
-                        <option value="" disabled selected>Seleccione responsable</option>
-                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_INTERNO -->
-                        {% for responsable_id, nombre in nombres_interno %}
-                            <option value="{{ responsable_id }}" data-nombre="{{ nombre }}"
-                            {% if responsable_id == libro[12] %}selected{% endif %}>{{ nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <input type="hidden" id="interno_id" name="interno_id">
             
             <button class="btn-submit" type="submit">Modificar</button>
         </form>

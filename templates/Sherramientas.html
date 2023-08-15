@@ -108,10 +108,10 @@
             <th>Cantidad</th>
             <th>Contenido</th>
             <th>Descripción</th>
-            <th>Usuario final</th>
-            <th>Responsable interno</th>
-            <th>Responsable resguardo</th>
-            <th>Ubicación</th>
+            <!--<th>Usuario final</th>-->
+            <!--<th>Responsable interno</th>-->
+            <!--<th>Responsable resguardo</th>-->
+            <!--<th>Ubicación</th>-->
             <th>Operaciones</th> 
         </tr>
         {% for herramienta in datos_herramientas %}
@@ -129,10 +129,10 @@
             <td>{{ herramienta[10] }}</td>
             <td>{{ herramienta[11] }}</td>
             <td>{{ herramienta[12] }}</td>
-            <td>{{ herramienta[13] }}</td>
-            <td>{{ herramienta[14] }}</td>
-            <td>{{ herramienta[15] }}</td>
-            <td>{{ herramienta[16] }}</td>
+            <!--<td>{{ herramienta[13] }}</td>-->
+            <!--<td>{{ herramienta[14] }}</td>-->
+            <!--<td>{{ herramienta[15] }}</td>-->
+            <!--<td>{{ herramienta[16] }}</td>-->
             <td>
                 <a href="{{ url_for('editar_herramienta', herramienta_id=herramienta[0]) }}" class="btn-delete">Modificar</a>
                 <a href="{{ url_for('eliminar_herramienta', herramienta_id=herramienta[0]) }}" class="btn-delete">Dar de baja</a>
