@@ -654,6 +654,8 @@ def obtener_libroID(id_especifico):
             #responsable_interno = libro[12]#
             #responsable_resguardo = libro[13]#
             #ubicacion = libro[14]#
+            if num_inventario is None:
+                num_inventario = ''
             libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, editorial, edicion, anio, autor))
         
         # Cierra el cursor y la conexión a la base de datos
@@ -787,12 +789,15 @@ def obtener_herramientaID(id_especifico):
             cantidad = herramienta[9]#
             contenido = herramienta[10]#
             descripcion = herramienta[11]#
+
             # Agrega los atributos de usuario final, responsable interno, responsable resguardo y ubicación si es necesario
             #usuario_final = herramienta[12]#
             #responsable_interno = herramienta[13]#
             #responsable_resguardo = herramienta[14]#
             #ubicacion = herramienta[15]#
             modelo = herramienta[12]#
+            if num_inventario is None:
+                num_inventario = ''
             herramientas.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, fecha_compra, fecha_consumo, cantidad, contenido, descripcion,  modelo))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
@@ -910,6 +915,8 @@ def obtener_dispoID(id_especifico):
             ram_instalada = dispo[10]
             ram_maxima = dispo[11]
             subtipo =  dispo[12]
+            if num_inventario is None:
+                num_inventario = ''
             dispos.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, modelo,
                            caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo))
         # Cierra el cursor y la conexión a la base de datos
@@ -1093,13 +1100,17 @@ def busqueda_dispos():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         # Ejecuta la consulta para obtener los atributos de la tabla ACTIVO, MODELO, DISPO_INTELIIGENTE y SUBTIPO,
-        # y los RAM_ID, SISTEMA_OPERATIVO_ID y TARGETA_GARFICA_ID concatenados
+        # y los RAM_ID, SISTEMA_OPERATIVO_ID, TARGETA_GARFICA_ID, PUERTO_ID, MICROPROCESADOR_ID, DISCO_DURO_ID y UNIDAD_LECTORA_ID concatenados
         cursor.execute("""
             SELECT A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.NOMBRE AS ACTIVO_NOMBRE, A.ESTADO, M.NOMBRE AS MODELO_NOMBRE, 
                 DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX, S.NOMBRE AS SUBTIPO_NOMBRE,
                 GROUP_CONCAT(DISTINCT DR.RAM_ID) AS RAM_ID_CONCAT,
                 GROUP_CONCAT(DISTINCT DSO.SISTEMA_OPERATIVO_ID) AS SO_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DV.TARGETA_GARFICA_ID) AS VIDEO_ID_CONCAT
+                GROUP_CONCAT(DISTINCT DV.TARGETA_GARFICA_ID) AS VIDEO_ID_CONCAT,
+                GROUP_CONCAT(DISTINCT DP.PUERTO_ID) AS PUERTO_ID_CONCAT,
+                GROUP_CONCAT(DISTINCT DM.MICROPROCESADOR_ID) AS MICROPROCESADOR_ID_CONCAT,
+                GROUP_CONCAT(DISTINCT DD.DISCO_DURO_ID) AS DISCO_DURO_ID_CONCAT,
+                GROUP_CONCAT(DISTINCT DL.UNIDAD_LECTORA_ID) AS UNIDAD_LECTORA_ID_CONCAT
             FROM ACTIVO A 
             JOIN MODELO M ON A.MODELO_ID = M.MODELO_ID 
             JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID 
@@ -1107,6 +1118,10 @@ def busqueda_dispos():
             LEFT JOIN DISPO_RAM DR ON A.ACTIVO_ID = DR.ACTIVO_ID AND DR.OPERANTE = 1
             LEFT JOIN DISPO_SO DSO ON A.ACTIVO_ID = DSO.ACTIVO_ID AND DSO.OPERANTE = 1
             LEFT JOIN DISPO_VIDEO DV ON A.ACTIVO_ID = DV.ACTIVO_ID AND DV.OPERANTE = 1
+            LEFT JOIN DISPO_PUERTO DP ON A.ACTIVO_ID = DP.ACTIVO_ID AND DP.OPERANTE = 1
+            LEFT JOIN DISPO_MICRO DM ON A.ACTIVO_ID = DM.ACTIVO_ID AND DM.OPERANTE = 1
+            LEFT JOIN DISPO_DD DD ON A.ACTIVO_ID = DD.ACTIVO_ID AND DD.OPERANTE = 1
+            LEFT JOIN DISPO_LECTORA DL ON A.ACTIVO_ID = DL.ACTIVO_ID AND DL.OPERANTE = 1
             WHERE A.TIPO = 'I'
             GROUP BY A.ACTIVO_ID
         """)
@@ -1171,21 +1186,71 @@ def consulta_video(video_id):
         print("Error al obtener información de video:", e)
     return video_info
 
-def consulta_puerto(video_id):
-    video_info = ""
+def consulta_puerto(puerto_id):
+    puerto_info = ""
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT TAR.TARGETA_GRAFICA_MARCA, TAR.TARGETA_GRAFICA_MODELO, TIPO.TIPO_TARGETA_GRAFICA_NOMBRE, PCI.TIPO_PCI_NOMBRE FROM TARGETA_GRAFICA TAR JOIN TIPO_TARGETA_GRAFICA TIPO ON TAR.TIPO_TARGETA_GRAFICA_ID = TIPO.TIPO_TARGETA_GRAFICA_ID JOIN TIPO_PCI PCI ON TAR.TIPO_PCI_ID = PCI.TIPO_PCI_ID WHERE TAR.TARGETA_GARFICA_ID = %s", (video_id,))
-        video_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        cursor.execute("SELECT PUERTO_NOMBRE FROM PUERTO WHERE PUERTO_ID = %s", (puerto_id,))
+        puerto_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
-        if video_data:
-            video_info = f"{video_data['TARGETA_GRAFICA_MARCA']} {video_data['TARGETA_GRAFICA_MODELO']} {video_data['TIPO_TARGETA_GRAFICA_NOMBRE']} {video_data['TIPO_PCI_NOMBRE']}\n"
+        if puerto_data:
+            puerto_info = f"{puerto_data['PUERTO_NOMBRE']}\n"
         
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
-        print("Error al obtener información de video:", e)
-    return video_info
+        print("Error al obtener información de puerto:", e)
+    return puerto_info
 
+def consulta_micro(micro_id):
+    micro_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT MICRO.NOMBRE, MICRO.ARQUITECTURA, MICRO.GENERACION, MAR.NOMBRE AS MARCA_NOMBRE FROM MICROPROCESADOR MICRO JOIN MARCA MAR ON MICRO.MARCA_ID = MAR.MARCA_ID WHERE MICRO.MICROPROCESADOR_ID = %s", (micro_id,))
+        micro_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if micro_data:
+            micro_info = f"{micro_data['NOMBRE']} {micro_data['ARQUITECTURA']} {micro_data['GENERACION']} {micro_data['MARCA_NOMBRE']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de microprocesador:", e)
+    return micro_info
+
+def consulta_almacenamiento(almacenamiento_id):
+    almacenamiento_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT NUMERO_SERIE, DISCO_DURO_MARCA, DISCO_DURO_MODELO, DISCO_DURO_CAPACIDAD FROM DISCO_DURO WHERE DISCO_DURO_ID = %s", (almacenamiento_id,))
+        almacenamiento_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if almacenamiento_data:
+            almacenamiento_info = f"{almacenamiento_data['NUMERO_SERIE']} {almacenamiento_data['DISCO_DURO_MARCA']} {almacenamiento_data['DISCO_DURO_MODELO']} {almacenamiento_data['DISCO_DURO_CAPACIDAD']}GiB\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de microprocesador:", e)
+    return almacenamiento_info
+
+def consulta_lectora(lectora_id):
+    lectora_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT TIPO.TIPO_UNIDAD_LECTORA_NOMBRE, LECT.UNIDAD_LECTORA_MODELO, LECT.UNIDAD_LECTORA_MARCA FROM UNIDAD_LECTORA LECT JOIN TIPO_UNIDAD_LECTORA TIPO ON LECT.TIPO_UNIDAD_LECTORA_ID = TIPO.TIPO_UNIDAD_LECTORA_ID WHERE LECT.UNIDAD_LECTORA_ID = %s", (lectora_id,))
+        lectora_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if lectora_data:
+            lectora_info = f"{lectora_data['TIPO_UNIDAD_LECTORA_NOMBRE']} {lectora_data['UNIDAD_LECTORA_MODELO']} {lectora_data['UNIDAD_LECTORA_MARCA']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de lectora:", e)
+    return lectora_info
 

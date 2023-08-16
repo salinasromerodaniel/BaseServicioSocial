@@ -78,13 +78,17 @@
                     <th>ESTADO</th>
                     <th>MODELO_NOMBRE</th>
                     <th>CARACTERISTICAS</th>
-                    <th>NUM_PROCESADORES</th>
-                    <th>RAM_INSTALADA</th>
-                    <th>RAM_MAX</th>
-                    <th>SUBTIPO_NOMBRE</th>
-                    <th>RAM INFO</th> <!-- Cambia RAM_ID a RAM_INFO -->
-                    <th>SO INFO</th>
-                    <th>TARJETA DE VIDEO INFO</th>
+                    <th>NÚM. DE PROCESADORES</th>
+                    <th>RAM INSTALADA (GiB)</th>
+                    <th>RAM MÁXIMA (GiB)</th>
+                    <th>SUBTIPO</th>
+                    <th>RAMS</th> <!-- Cambia RAM_ID a RAM_INFO -->
+                    <th>SISTEMAS OPERATIVOS</th>
+                    <th>TARJETAS DE VIDEO INFO</th>
+                    <th>PUERTOS</th>
+                    <th>MICROPROCESADORES</th>
+                    <th>ALMACENAMIENTO</th>
+                    <th>UNIDADES LECTORAS</th>
                 </tr>
                 {% for row in datos_procesados %}
                 <tr>
@@ -102,6 +106,10 @@
                     <td>{{ row['RAM_INFO'] }}</td> <!-- Cambia el acceso a RAM_INFO -->
                     <td>{{ row['SO_INFO'] }}</td>
                     <td>{{ row['VIDEO_INFO'] }}</td>
+                    <td>{{ row['PUERTO_INFO'] }}</td>
+                    <td>{{ row['MICRO_INFO'] }}</td>
+                    <td>{{ row['ALMACENAMIENTO_INFO'] }}</td>
+                    <td>{{ row['LECTORA_INFO'] }}</td>
                 </tr>
                 {% endfor %}
             </table>

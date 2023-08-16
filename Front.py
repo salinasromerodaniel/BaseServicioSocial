@@ -345,7 +345,7 @@ def mostrar_ModificacionD():
     id_activo = request.args.get('dispo_id')
     factura = request.args.get('factura')
     serial = request.args.get('serial')
-    num_inventario = int(request.args.get('num_inventario'))
+    num_inventario = request.args.get('num_inventario')
     nombre = request.args.get('nombre')
     estado = request.args.get('estado')
     modelo = int(request.args.get('modelo'))
@@ -545,7 +545,7 @@ def mostrar_ModificacionH():
     id_activo = request.args.get('herramienta_id')
     factura = request.args.get('factura')
     serial = request.args.get('serial')
-    num_inventario = int(request.args.get('num_inventario'))
+    num_inventario = request.args.get('num_inventario')
     nombre = request.args.get('nombre')
     estado = request.args.get('estado')
     modelo = request.args.get('modelo')
@@ -750,7 +750,7 @@ def mostrar_ModificacionL():
     id_activo = request.args.get('libro_id')
     factura = request.args.get('factura')
     serial = request.args.get('serial')
-    num_inventario = int(request.args.get('num_inventario'))
+    num_inventario = request.args.get('num_inventario')
     nombre = request.args.get('nombre')
     estado = request.args.get('estado')
     autor = request.args.get('autor')
@@ -880,28 +880,54 @@ def busquedaD():
             ram_ids = row[11]  # Obtener los RAM_ID concatenados
             so_ids = row[12]
             video_ids = row[13]
+            puerto_ids = row[14]
+            micro_ids = row[15]
+            almacenamiento_ids = row[16]
+            lectora_ids = row[17]
+
             ram_info_list = []  # Lista para almacenar la información de RAM
             so_info_list = []
             video_info_list = []
+            puerto_info_list = []
+            micro_info_list = []
+            almacenamiento_info_list = []
+            lectora_info_list = []
             
             if ram_ids:
                 ram_id_list = ram_ids.split(",")  # Separar los IDs si no están vacíos
-                
                 for ram_id in ram_id_list:
                     ram_info = consulta_ram(ram_id)  # Obtener la información de RAM
                     ram_info_list.append(ram_info)  # Agregar la información a la lista
             if so_ids:
                 so_id_list = so_ids.split(",")  # Separar los IDs si no están vacíos
-                
                 for so_id in so_id_list:
                     so_info = consulta_so(so_id)  # Obtener la información de RAM
                     so_info_list.append(so_info)
             if video_ids:
                 video_id_list = video_ids.split(",")  # Separar los IDs si no están vacíos
-                
                 for video_id in video_id_list:
                     video_info = consulta_video(video_id)  # Obtener la información de RAM
                     video_info_list.append(video_info)
+            if puerto_ids:
+                puerto_id_list = puerto_ids.split(",")  # Separar los IDs si no están vacíos
+                for puerto_id in puerto_id_list:
+                    puerto_info = consulta_puerto(puerto_id)  # Obtener la información de RAM
+                    puerto_info_list.append(puerto_info)
+            if micro_ids:
+                micro_id_list = micro_ids.split(",")  # Separar los IDs si no están vacíos
+                for micro_id in micro_id_list:
+                    micro_info = consulta_micro(micro_id)  # Obtener la información de RAM
+                    micro_info_list.append(micro_info)
+            if almacenamiento_ids:
+                almacenamiento_id_list = almacenamiento_ids.split(",")  # Separar los IDs si no están vacíos
+                for almacenamiento_id in almacenamiento_id_list:
+                    almacenamiento_info = consulta_almacenamiento(almacenamiento_id)  # Obtener la información de RAM
+                    almacenamiento_info_list.append(almacenamiento_info)
+            if lectora_ids:
+                lectora_id_list = lectora_ids.split(",")  # Separar los IDs si no están vacíos
+                for lectora_id in lectora_id_list:
+                    lectora_info = consulta_lectora(lectora_id)  # Obtener la información de RAM
+                    lectora_info_list.append(lectora_info)
             
             row_dict = {
                 "FACTURA": row[0],
@@ -917,7 +943,11 @@ def busquedaD():
                 "SUBTIPO_NOMBRE": row[10],
                 "RAM_INFO": "-\n".join(ram_info_list) if ram_info_list else "",  # Unir la información de RAM con saltos de línea
                 "SO_INFO": "-\n".join(so_info_list) if so_info_list else "",
-                "VIDEO_INFO": "-\n".join(video_info_list) if video_info_list else ""
+                "VIDEO_INFO": "-\n".join(video_info_list) if video_info_list else "",
+                "PUERTO_INFO": "-\n".join(puerto_info_list) if puerto_info_list else "",
+                "MICRO_INFO": "-\n".join(micro_info_list) if micro_info_list else "",
+                "ALMACENAMIENTO_INFO": "-\n".join(almacenamiento_info_list) if almacenamiento_info_list else "",
+                "LECTORA_INFO": "-\n".join(lectora_info_list) if lectora_info_list else ""
             }
             datos_procesados.append(row_dict)
         
