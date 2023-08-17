@@ -1101,13 +1101,16 @@ def obtener_micro():
         print("Error al obtener las marcas:", e)
     return micro
 
-def busqueda_dispos():
+
+
+def busqueda_dispos(diccionario=None):
     dispos = []
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        
-        cursor.execute("""
+
+        # Construye la consulta SQL base
+        query = """
             SELECT A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.NOMBRE AS ACTIVO_NOMBRE, A.ESTADO, M.NOMBRE AS MODELO_NOMBRE, 
                 DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX, S.NOMBRE AS SUBTIPO_NOMBRE,
                 (SELECT GROUP_CONCAT(DR.RAM_ID) FROM DISPO_RAM DR WHERE A.ACTIVO_ID = DR.ACTIVO_ID AND DR.OPERANTE = 1) AS RAM_ID_CONCAT,
@@ -1125,15 +1128,35 @@ def busqueda_dispos():
             JOIN MODELO M ON A.MODELO_ID = M.MODELO_ID 
             JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID 
             JOIN SUBTIPO S ON DI.SUBTIPO_ID = S.SUBTIPO_ID
-            GROUP BY A.ACTIVO_ID
-        """)
+            WHERE 
+        """
+        cantidad = len(diccionario)
+        print(diccionario)
+        if cantidad == 0:
+            query += " 1"
+        else:
+            for i, (clave, valor) in enumerate(diccionario.items()):
+                if isinstance(valor, str):
+                    query += f" {clave} = \"{valor}\""
+                elif isinstance(valor, int):
+                    query += f" {clave} = {valor}"
+                    
+                if i < len(diccionario) - 1:
+                    query += " AND "
         
+        print(query)
+        
+        query += " GROUP BY A.ACTIVO_ID"
+        cursor.execute(query)
+
         dispos = cursor.fetchall()
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al obtener los dispositivos:", e)
     return dispos
+
+
 
 
 def consulta_ram(ram_id):
@@ -1322,3 +1345,141 @@ def consulta_interno(interno_id):
     except mysql.connector.Error as e:
         print("Error al obtener información de resguardo:", e)
     return interno_info
+
+def obtener_historicoUB(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute("""SELECT
+                            A.ACTIVO_ID,     
+                            A.NOMBRE AS NOMBRE_ACTIVO,
+                            HUB.FECHA_CAMBIO,
+                            U.NOMBRE AS NOMBRE_UBICACION,
+                            HUB.OPERANTE
+                        FROM ACTIVO A
+                        JOIN HISTORICO_ACTIVO_UBICACION HUB ON A.ACTIVO_ID = HUB.ACTIVO_ID
+                        JOIN UBICACION U ON HUB.UBICACION_ID = U.UBICACION_ID
+                        WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            fecha_cambio = historico[2]
+            ubicacion = historico[3]
+            operante = historico[4]
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, ubicacion, operante))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los HISTORICOS de ubicación:", e)
+    return historicos
+
+def obtener_historicoUF(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute("""SELECT
+                            A.ACTIVO_ID,
+                            A.NOMBRE AS NOMBRE_ACTIVO,
+                            HFU.FECHA_PRESTAMO,
+                            UF.NOMBRE AS NOMBRE_USUARIO_FINAL,
+                            HFU.OPERANTE
+                        FROM ACTIVO A
+                        JOIN HISTORICO_ACTIVO_USUARIO HFU ON A.ACTIVO_ID = HFU.ACTIVO_ID
+                        JOIN USUARIO_FINAL UF ON HFU.USUARIO_FINAL_ID = UF.USUARIO_FINAL_ID
+                        WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            fecha_cambio = historico[2]
+            usuario = historico[3]
+            operante = historico[4]
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, usuario, operante))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los HISTORICOS de usuario:", e)
+    return historicos
+
+def obtener_historicoRR(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                HR.FECHA_CAMBIO_RESGUARDO,
+                                RR.NOMBRE AS NOMBRE_RESPONSABLE,
+                                RR.AP_PATERNO,
+                                RR.AP_MATERNO,
+                                HR.OPERANTE
+                            FROM ACTIVO A
+                            JOIN HISTORICO_ACTIVO_RESPONSABLE HR ON A.ACTIVO_ID = HR.ACTIVO_ID
+                            JOIN RESPONSABLE_RESGUARDO RR ON HR.RESPONSABLE_RESGUARDO_ID = RR.RESPONSABLE_RESGUARDO_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            fecha_cambio = historico[2]
+            nrr = historico[3]
+            aprr = historico[4]
+            amrr = historico[5]
+            operante = historico[6] 
+            responsable = nrr + ' ' + aprr + ' ' + amrr
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, responsable, operante))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los HISTORICOS de responsableR:", e)
+    return historicos
+
+def obtener_historicoRI(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute("""SELECT
+                            A.ACTIVO_ID,
+                            A.NOMBRE AS NOMBRE_ACTIVO,
+                            HRI.FECHA_PRESTAMO,
+                            RI.NOMBRE AS NOMBRE_RESPONSABLE_INTERNO,
+                            RI.AP_PATERNO,
+                            RI.AP_MATERNO,
+                            HRI.OPERANTE
+                        FROM ACTIVO A
+                        JOIN HISTORICO_ACTIVO_RESPONSABLE_INTERNO HRI ON A.ACTIVO_ID = HRI.ACTIVO_ID
+                        JOIN RESPONSABLE_INTERNO RI ON HRI.RESPONSABLE_INTERNO_ID = RI.RESPONSABLE_INTERNO_ID
+                        WHERE A.ACTIVO_ID = %s """, (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            fecha_cambio = historico[2]
+            nri = historico[3]
+            apri = historico[4]
+            amri = historico[5]
+            operante = historico[6] 
+            responsable = nri + ' ' + apri + ' ' + amri
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, responsable, operante))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los HISTORICOS de responsableI:", e)
+    return historicos

@@ -891,9 +891,33 @@ def micro():
 @app.route('/activos/busqueda', methods=['GET', 'POST'])
 def busquedaD():
     if 'logged_in' in session and session['logged_in']:
-        datos_busqueda = busqueda_dispos()
+        diccionario = {}
+        nombres_ubicacion = obtener_ubicaciones()
+        nombres_modelo = obtener_info_modelo()
+        # Obtener los parámetros del formulario
+        modelo = request.form.get('modelo')
+        num_serial = request.form.get('num_serial')
+        num_inventario_str = request.form.get('num_inventario')
+        estado = request.form.get('estado')
+        ubicacion_str = request.form.get('ubicacion')
+        print(num_serial)
+        if modelo:
+            modelo = int(modelo)
+            diccionario["A.modelo_id"] = modelo
+        if num_serial:
+            diccionario["A.num_serial"] = num_serial
+        if num_inventario_str:
+            num_inventario_str = int(num_inventario_str)
+            diccionario["A.num_inventario"] = num_inventario_str
+        if estado:
+            diccionario["A.estado"] = estado
+        if ubicacion_str:
+            ubicacion_str = int(ubicacion_str)
+            diccionario["UBICACION_ID_CONCAT"] = ubicacion_str
+        print(diccionario)
+
+        datos_busqueda = busqueda_dispos(diccionario)
         datos_procesados = []  # Lista para almacenar los resultados procesados
-        
         for row in datos_busqueda:
             ram_ids = row[11]  # Obtener los RAM_ID concatenados
             so_ids = row[12]
@@ -918,7 +942,6 @@ def busquedaD():
             ubicacion_info_list = []
             resguardo_info_list = []
             interno_info_list = []
-            
             if ram_ids:
                 ram_id_list = ram_ids.split(",")  # Separar los IDs si no están vacíos
                 for ram_id in ram_id_list:
@@ -1000,11 +1023,25 @@ def busquedaD():
                 "INTERNO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else ""
             }
             datos_procesados.append(row_dict)
-        
-        return render_template('SBdispos.html', datos_procesados=datos_procesados)
+        return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)
     else:
         return redirect(url_for('logout'))
 
+
+@app.route('/historico_activo/<int:activo_id>')
+def historico_activo(activo_id):
+    if 'logged_in' in session and session['logged_in']:
+        # se deben obtener los datos para poder redirigir a seleccionar Historicos
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+        print(historico_Rinterno)
+        
+        return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+    else:
+        return redirect(url_for('logout'))
 
 ##############################  M A I N ############################################################################
 if __name__=='__main__':

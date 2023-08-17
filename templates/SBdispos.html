@@ -102,22 +102,39 @@
             cursor: pointer;
         }
     </style>
+    
+    
 </head>
 <body>
     
     <div class="container">
         <h1>Resultados de Búsqueda</h1>
         <div class="search-form">
-            <form method="GET" action="">
+            <form  method="POST" action="/activos/busqueda">
                 
-                <label for="modelo">Modelo:</label>
-                <input type="text" id="modelo" name="modelo">
-                
+                <label for="modelo">Modelo</label>
+                <!-- Código HTML en ADispos.html -->
+                <select id="modelo" name="modelo">
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Escoja un modelo</option>
+                    <!-- Iterar sobre la lista de tuplas (marca, modelos) -->
+                    {% for marca, modelos in nombres_modelo %}
+                        <!-- Usar la etiqueta <optgroup> para agrupar modelos por marca -->
+                        <optgroup label="{{ marca }}">
+                            <!-- Iterar sobre los modelos asociados a la marca -->
+                            {% for modelo_id, nombre_modelo, _ in modelos %}
+                                <!-- Usar la etiqueta <option> para mostrar el nombre del modelo -->
+                                <option value="{{ modelo_id }}">{{ nombre_modelo }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+
                 <label for="num_serial">Núm. de Serie:</label>
                 <input type="text" id="num_serial" name="num_serial">
                 
                 <label for="num_inventario">Inventario:</label>
-                <input type="text" id="num_inventario" name="num_inventario">
+                <input type="text" id="num_inventario" name="num_inventario" pattern="[0-9]*" title="Ingrese solo números">
                 
                 <label for="estado">Estado:</label>
                 <select id="estado" name="estado">
@@ -125,16 +142,26 @@
                     <option value="ACTIVO">ACTIVO</option>
                     <option value="INACTIVO">INACTIVO</option>
                     <option value="BAJA">BAJA</option>
+                    <option value="PRESTAMO">PRÉSTAMO</option>
                 </select>
                 <br>
-                <label for="ubicacion">Ubicación:</label>
-                <input type="text" id="ubicacion" name="ubicacion">
+                <label for="ubicacion">Ubicación</label>
+                <select id="ubicacion" name="ubicacion">
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione una ubicación</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla UBICACION -->
+                    {% for ubicacion_id, nombre in nombres_ubicacion %}
+                        <option value="{{ ubicacion_id }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" id="ubicacion_id" name="ubicacion_id">
                 
                 <button type="submit">Buscar</button>
             </form>
         </div>
+
         <div class="table-container">
-            <table>
+            <table id="data-table">
                 <tr>
                     <th>NÚM. DE INVENTARIO</th>
                     <th>NÚM. DE SERIE</th>
@@ -158,7 +185,7 @@
                     <th>UBICACIÓN</th>
                     <th>RESGUARDANTES</th>
                     <th>RESPONSABLES INTERNOS</th>
-                </tr>
+                </tr class="data-row">
                 {% for row in datos_procesados %}
                 <tr>
                     <td>{{ row['NUM_INVENTARIO'] }}</td>
@@ -187,7 +214,7 @@
                 {% endfor %}
             </table>
         </div>
-        <a class="btn-back" href="javascript:history.back()">&#8592;</a>
+        <a class="btn-back" href="/activos/dispos">&#8592;</a>
     </div>
 </body>
 </html>

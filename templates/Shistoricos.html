@@ -92,53 +92,80 @@
     </style>
 </head>
 <body>
-    <h1>Lista de Libros</h1>
+    <h1>Historico de ubicaciones</h1>
     <table>
         <tr>
             <!--<th>ID</th>-->
-            <th>Factura</th>
-            <th>Número de Serie</th>
-            <th>Número de Inventario</th>
-            <!--<th>Tipo</th>-->
-            <th>Título</th>
-            <th>Estado</th>
-
-            <th>Editorial</th>
-            <th>Autor</th>
-            <th>Año</th>
-            <th>Edición</th>
-            <th>Cantidad</th>
-            <!--<th>Usuario final</th>-->
-            <!--<th>Responsable interno</th>-->
-            <!--<th>Responsable resguardo</th>-->
-            <!--<th>Ubicación</th>-->
+            <th>Ubicacion</th>
+            <th>Fecha de cambio</th>
+            <th>Operante</th>
             <th>Operaciones</th> 
         </tr>
-        {% for libro in datos_libros %}
+        {% for historico in historico_ubicaciones %}
         <tr>
-            <!--<td>{{ libro[0] }}</td>-->
-            <td>{{ libro[1] }}</td>
-            <td>{{ libro[2] }}</td>
-            <td>{{ libro[3] }}</td>
-            <!--<td>{{ libro[4] }}</td>-->
-            <td>{{ libro[5] }}</td>
-            <td>{{ libro[6] }}</td>
-
-            <td>{{ libro[7] }}</td>
-            <td>{{ libro[10] }}</td>
-            <td>{{ libro[9] }}</td>
-            <td>{{ libro[8] }}</td>
-            <td>{{ libro[11] }}</td>
-            <!--<td>{{ libro[7] }}</td>-->
-            <!--<td>{{ libro[8] }}</td>-->
-            <!--<td>{{ libro[9] }}</td>-->
-            <!--<td>{{ libro[10] }}</td>-->
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[3] }}</td>
+            <td>{{ historico[2] }}</td>
             <td>
-                <a href="{{ url_for('editar_libro', libro_id=libro[0]) }}" class="btn-edit">Modificar</a>
-                <a href="{{ url_for('eliminar_libro', libro_id=libro[0]) }}" class="btn-delete">Dar de baja</a>
-                <a href="{{ url_for('historico_activo', activo_id=libro[0]) }}" class="btn-delete">Historico</a>
+                {% if historico[4] == 1 %}
+                    ACTIVO
+                {% else %}
+                    INACTIVO
+                {% endif %}
             </td>
+            <td><!-- FALTAN LAS OPERACIONES --></td>
+        </tr>
+        {% endfor %}
+    </table>
 
+    <h1><br>Historico de responsables de resguardo</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Resguardante</th>
+            <th>Fecha de cambio</th>
+            <th>Operante</th>
+            <th>Operaciones</th> 
+        </tr>
+        {% for historico in historico_resguardante %}
+        <tr>
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[3] }}</td>
+            <td>{{ historico[2] }}</td>
+            <td>
+                {% if historico[4] == 1 %}
+                    ACTIVO
+                {% else %}
+                    INACTIVO
+                {% endif %}
+            </td>
+            <td><!-- FALTAN LAS OPERACIONES --></td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <h1><br>Historico de responsables internos</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Responsable interno</th>
+            <th>Fecha de cambio</th>
+            <th>Operante</th>
+            <th>Operaciones</th> 
+        </tr>
+        {% for historico in historico_Rinterno %}
+        <tr>
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[3] }}</td>
+            <td>{{ historico[2] }}</td>
+            <td>
+                {% if historico[4] == 1 %}
+                    ACTIVO
+                {% else %}
+                    INACTIVO
+                {% endif %}
+            </td>
+            <td><!-- FALTAN LAS OPERACIONES --></td>
         </tr>
         {% endfor %}
     </table>
