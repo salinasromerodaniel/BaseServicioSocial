@@ -93,8 +93,6 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
     except mysql.connector.Error as error:
         print("Error al insertar en las tablas:", error)
 
-
-
 def obtener_info_modelo():
     info_modelo = []
     try:
@@ -200,8 +198,6 @@ def obtener_info_red():
         print("Error al obtener la información de interfaz de red:", e)
     return info_red
 
-
-
 def obtener_nombres_puerto():
     lista_puertos = []
     try:
@@ -224,7 +220,6 @@ def obtener_nombres_puerto():
     except mysql.connector.Error as e:
         print("Error al obtener los puertos:", e)
     return lista_puertos
-
 
 def obtener_ubicaciones():
     ubicaciones = []
@@ -250,9 +245,6 @@ def obtener_ubicaciones():
         print("Error al obtener las ubicaciones:", e)
 
     return ubicaciones
-
-
-
 
 def obtener_info_sistema_operativo():
     info_sistema_operativo = []
@@ -365,8 +357,6 @@ def obtener_info_tarjeta():
     except mysql.connector.Error as e:
         print("Error al obtener la información de tarjeta:", e)
     return info_tarjeta
-
-
 
 def obtener_responsables_resguardo():
     responsables = []
@@ -1101,8 +1091,6 @@ def obtener_micro():
         print("Error al obtener las marcas:", e)
     return micro
 
-
-
 def busqueda_dispos(diccionario=None):
     dispos = []
     try:
@@ -1155,9 +1143,6 @@ def busqueda_dispos(diccionario=None):
     except mysql.connector.Error as e:
         print("Error al obtener los dispositivos:", e)
     return dispos
-
-
-
 
 def consulta_ram(ram_id):
     ram_info = ""

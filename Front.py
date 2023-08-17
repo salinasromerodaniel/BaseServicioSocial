@@ -447,8 +447,6 @@ def mostrar_resultadosH():
                             fecha_compra=fecha_compra,
                             descripcion=descripcion)
 
-
-
 @app.route('/activos/herramientas')
 def herramientas():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
@@ -572,7 +570,6 @@ def mostrar_ModificacionH():
     return render_template('resultadoUpdH.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, estado=estado, modelo=modelo, fecha_compra=fecha_compra, fecha_consumo=fecha_consumo,
                             cantidad=cantidad, contenido=contenido, descripcion=descripcion)
-
     
 @app.route('/activos/libros')
 def libros():
@@ -802,8 +799,6 @@ def eliminar_libro(libro_id):
     else:
         return redirect(url_for('logout'))
 
-
-
 @app.route('/personas', methods=['GET', 'POST'])
 def personas():
     if 'logged_in' in session and session['logged_in']:
@@ -821,6 +816,7 @@ def edificio():
         return render_template('Sedificio.html', datos_edificio=datos_edificio)
     else:
         return redirect(url_for('logout'))
+    
 @app.route('/personas/titulo', methods=['GET', 'POST'])
 def titulo():
     # Comprobamos si el usuario está logeado. Si no, lo redirigimos al inicio de sesión.
@@ -1026,7 +1022,6 @@ def busquedaD():
         return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)
     else:
         return redirect(url_for('logout'))
-
 
 @app.route('/historico_activo/<int:activo_id>')
 def historico_activo(activo_id):
