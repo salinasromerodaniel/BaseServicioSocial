@@ -338,6 +338,7 @@ CREATE TABLE LIBRO(
     EDICION      VARCHAR(40),
     ANIO         INT,
     AUTOR        VARCHAR(500)      NOT NULL,
+    CANTIDAD     INT               NOT NULL,
     PRIMARY KEY (ACTIVO_ID)
 );
 

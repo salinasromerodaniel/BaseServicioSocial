@@ -264,6 +264,17 @@
             </div>
 
             <div class="form-group">
+                <label for="cantidad">Cantidad</label>
+                <select id="cantidad" name="cantidad" required>
+                    <option value="" disabled selected>Seleccione el número</option>
+                    <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
+                    {% for i in range(1, 101) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="ubicacion">Ubicación*</label>
                 <select id="ubicacion" name="ubicacion" required>
                     <!-- Opción deshabilitada y seleccionada por defecto -->

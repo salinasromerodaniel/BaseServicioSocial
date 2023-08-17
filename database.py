@@ -510,7 +510,7 @@ def insertar_dispoH(factura, serial, num_inventario, nombre,
         print("Error al insertar en las tablas ACTIVO y HERRAMIENTA O CONSUMIBLE:", error)
 
 def insertar_dispoL(factura, serial, num_inventario, nombre,
-                    autor, editorial, anio, edicion,
+                    autor, editorial, anio, edicion, cantidad,
                      ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno, fecha_compra):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
@@ -527,9 +527,9 @@ def insertar_dispoL(factura, serial, num_inventario, nombre,
         # Obtener el ID generado automáticamente en la tabla ACTIVO
         activo_id = cursor.lastrowid
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
-        insert_dispo_query = "INSERT LIBRO (ACTIVO_ID, EDITORIAL, EDICION, ANIO, AUTOR) VALUES (%s, %s, %s, %s, %s)"
+        insert_dispo_query = "INSERT LIBRO (ACTIVO_ID, EDITORIAL, EDICION, ANIO, AUTOR, CANTIDAD) VALUES (%s, %s, %s, %s, %s, %s)"
         # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
-        values_dispo = (activo_id, editorial, edicion, anio, autor)
+        values_dispo = (activo_id, editorial, edicion, anio, autor, cantidad)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
         # Confirmar las inserciones en la base de datos
@@ -566,7 +566,7 @@ def obtener_libros():
 
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, L.CANTIDAD FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for libro in cursor.fetchall():
             activo_id = libro[0]
@@ -594,11 +594,12 @@ def obtener_libros():
             edicion = libro[8]
             anio = libro[9]
             autor = libro[10]
+            cantidad = libro[11]
 
             #ver si se pueden concatenar los atributos de los responsables
             
             libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado,
-                           editorial, edicion, anio, autor))
+                           editorial, edicion, anio, autor, cantidad))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -635,7 +636,7 @@ def obtener_libroID(id_especifico):
 
         # Ejecuta la consulta con el filtro para el ID específico
         #cursor. execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, A.USUARIO_FINAL_ID, A.RESPONSABLE_INTERNO_ID, A.RESPONSABLE_RESGUARDO_ID, A.UBICACION_ID FROM ACTIVO A INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ACTIVO_ID = {id_especifico}")
-        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A  INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID  WHERE A.ACTIVO_ID = {id_especifico}")
+        cursor.execute(f"SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, L.CANTIDAD FROM ACTIVO A  INNER JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID  WHERE A.ACTIVO_ID = {id_especifico}")
         # Obtiene los resultados de la consulta y los agrega a la lista de libros
         for libro in cursor.fetchall():
             activo_id = libro[0] #no se debe mostrar para cambiar
@@ -649,6 +650,7 @@ def obtener_libroID(id_especifico):
             edicion = libro[8]#
             anio = libro[9]#
             autor = libro[10]#
+            cantidad = libro[11]#
             # Agrega los atributos de usuario final, responsable interno, responsable resguardo y ubicación si es necesario
             #usuario_final = libro[11]#
             #responsable_interno = libro[12]#
@@ -656,7 +658,7 @@ def obtener_libroID(id_especifico):
             #ubicacion = libro[14]#
             if num_inventario is None:
                 num_inventario = ''
-            libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, editorial, edicion, anio, autor))
+            libros.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, editorial, edicion, anio, autor, cantidad))
         
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
@@ -667,7 +669,7 @@ def obtener_libroID(id_especifico):
 
 
 def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
-                    autor, editorial, anio, edicion):
+                    autor, editorial, anio, edicion, cantidad):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
@@ -681,9 +683,9 @@ def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(update_activo_query, values_activo)
         # Crear la consulta SQL para la inserción en la tabla DISPO_INTELIGENTE
-        update_libro_query = "UPDATE LIBRO SET EDITORIAL = %s, EDICION = %s, ANIO = %s, AUTOR = %s WHERE ACTIVO_ID = %s"
+        update_libro_query = "UPDATE LIBRO SET EDITORIAL = %s, EDICION = %s, ANIO = %s, AUTOR = %s, CANTIDAD = %s WHERE ACTIVO_ID = %s"
         # Definir los valores para la inserción en la tabla DISPO_INTELIGENTE
-        values_libro = ( editorial, edicion, anio, autor, id_activo)
+        values_libro = ( editorial, edicion, anio, autor, cantidad, id_activo)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(update_libro_query, values_libro)
         # Confirmar las inserciones en la base de datos

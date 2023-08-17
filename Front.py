@@ -603,6 +603,7 @@ def agregar_libros():
     editorial = request.form.get('editorial').upper()
     anio = request.form.get('anio')
     edicion = request.form.get('edicion').upper()
+    cantidad = request.form.get('cantidad')
     fecha_compra = datetime.date.today()
     ubicacion = request.form.get('ubicacion')
     contador_resguardo = int(request.form.get('lista_ids_resguardo'))
@@ -639,9 +640,13 @@ def agregar_libros():
         anio = int(anio)
     else:
         anio = None
+    if cantidad is not None and cantidad != '':
+        cantidad = int(cantidad)
+    else:
+        cantidad = None
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_resultadosL', factura=factura, serial=serial, num_inventario=num_inventario,
-                            nombre=nombre, autor=autor,editorial=editorial, anio=anio,
+                            nombre=nombre, autor=autor,editorial=editorial, anio=anio, cantidad=cantidad,
                             edicion=edicion, ubicacion=ubicacion,
                             ids_usuario=ids_usuario, ids_resguardo=ids_resguardo, interno=ids_interno, fecha_compra=fecha_compra))
 
@@ -656,6 +661,7 @@ def mostrar_resultadosL():
     editorial = request.args.get('editorial')
     anio = int(request.args.get('anio'))
     edicion = request.args.get('edicion')
+    cantidad = request.args.get('cantidad')
     num_inventario = request.args.get('num_inventario')
     fecha_compra = request.args.get('fecha_compra')
     ubicacion = int(request.args.get('ubicacion'))
@@ -670,12 +676,12 @@ def mostrar_resultadosL():
         lista_ids_usuario[i] = lista_ids_usuario[i]
 
     insertar_dispoL(factura, serial, num_inventario, nombre,
-                    autor, editorial, anio, edicion,
+                    autor, editorial, anio, edicion, cantidad,
                      ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno, fecha_compra)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultadosL.html', factura=factura, serial=serial, num_inventario=num_inventario,
-                           nombre=nombre, autor=autor,
+                           nombre=nombre, autor=autor, cantidad=cantidad,
                             editorial=editorial, anio=anio,
                             edicion=edicion)
 
@@ -717,6 +723,7 @@ def modificar_libro(libro_id):
     editorial = request.form.get('editorial').upper()
     anio = request.form.get('anio')
     edicion = request.form.get('edicion').upper()
+    cantidad = request.form.get('cantidad')
     #ubicacion = request.form.get('ubicacion')
     #usuario = request.form.get('usuario')
     #resguardo = request.form.get('resguardo')
@@ -739,10 +746,14 @@ def modificar_libro(libro_id):
         anio = int(anio)
     else:
         anio = None
+    if cantidad is not None and cantidad != '':
+        cantidad = int(cantidad)
+    else:
+        cantidad = None
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionL', libro_id=libro_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, autor=autor,editorial=editorial, anio=anio,
-                            edicion=edicion))
+                            edicion=edicion, cantidad=cantidad))
 
 @app.route('/mostrar_ModificacionL')
 def mostrar_ModificacionL():
@@ -757,6 +768,7 @@ def mostrar_ModificacionL():
     editorial = request.args.get('editorial')
     anio = int(request.args.get('anio'))
     edicion = request.args.get('edicion')
+    cantidad = request.args.get('cantidad')
     #ubicacion = int(request.args.get('ubicacion'))
     #usuario = int(request.args.get('usuario'))
     #resguardo = int(request.args.get('resguardo'))
@@ -764,13 +776,13 @@ def mostrar_ModificacionL():
     #num_inventario = request.args.get('num_inventario')
 
     modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
-                    autor, editorial, anio, edicion)
+                    autor, editorial, anio, edicion, cantidad)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultadoUpdL.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, estado=estado, autor=autor,
                             editorial=editorial, anio=anio,
-                            edicion=edicion)
+                            edicion=edicion, cantidad=cantidad)
 
 
 @app.route('/eliminar_libro/<int:libro_id>')
