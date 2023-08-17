@@ -69,8 +69,8 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
             for red_id, mac, ip in zip(lista_ids_red, lista_ids_mac, lista_ids_ip):
                 cursor.execute(insert_dispo_red_query, (activo_id, red_id, mac, ip, fecha_ram, 1))
         
-        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID) VALUES (%s, %s, %s)"    
-        cursor.execute(insert_dispo_ubicacion_query, (fecha_ram, ubicacion, activo_id))
+        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+        cursor.execute(insert_dispo_ubicacion_query, (fecha_ram, ubicacion, activo_id, 1))
         
         if lista_ids_usuario:
             insert_dispo_usuario_query = "INSERT INTO HISTORICO_ACTIVO_USUARIO(FECHA_PRESTAMO, USUARIO_FINAL_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
@@ -485,8 +485,8 @@ def insertar_dispoH(factura, serial, num_inventario, nombre,
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
         # Confirmar las inserciones en la base de datos
-        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID) VALUES (%s, %s, %s)"    
-        cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id))
+        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+        cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id, 1))
         
         if lista_ids_usuario:
             insert_dispo_usuario_query = "INSERT INTO HISTORICO_ACTIVO_USUARIO(FECHA_PRESTAMO, USUARIO_FINAL_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
@@ -533,8 +533,8 @@ def insertar_dispoL(factura, serial, num_inventario, nombre,
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
         # Confirmar las inserciones en la base de datos
-        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID) VALUES (%s, %s, %s)"    
-        cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id))
+        insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
+        cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id, 1))
         if lista_ids_usuario:
             insert_dispo_usuario_query = "INSERT INTO HISTORICO_ACTIVO_USUARIO(FECHA_PRESTAMO, USUARIO_FINAL_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
             for usuario_id in lista_ids_usuario:
@@ -566,6 +566,7 @@ def obtener_libros():
 
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+
         cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, L.CANTIDAD FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for libro in cursor.fetchall():
@@ -706,7 +707,7 @@ def obtener_herramientas():
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ")
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, HC.FECHA_COMPRA, HC.FECHA_CONSUMO, HC.CANTIDAD, HC.CONTENIDO, HC.DESCRIPCION FROM ACTIVO A JOIN HERRAMIENTA_CONSUMIBLE HC ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ORDER BY A.NOMBRE")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for herramienta in cursor.fetchall():
             activo_id = herramienta[0]
@@ -845,7 +846,8 @@ def obtener_dispos():
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO, FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = HC.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO, A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE AS NOMBRE_ACTIVO, A.ESTADO,  A.MODELO_ID, (SELECT M.NOMBRE FROM MODELO M WHERE M.MODELO_ID = A.MODELO_ID) AS NOMBRE_MODELO, DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX,  DI.SUBTIPO_ID, (SELECT S.NOMBRE FROM SUBTIPO S WHERE S.SUBTIPO_ID = DI.SUBTIPO_ID) AS NOMBRE_SUBTIPO FROM ACTIVO A JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ORDER BY A.NOMBRE")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for dispo in cursor.fetchall():
             activo_id = dispo[0]
@@ -917,10 +919,14 @@ def obtener_dispoID(id_especifico):
             ram_instalada = dispo[10]
             ram_maxima = dispo[11]
             subtipo =  dispo[12]
+            ram_ToG = 0 #chck para GiB
             if num_inventario is None:
                 num_inventario = ''
+            if ram_maxima > 1000:
+                ram_maxima=ram_maxima/1024 #validacion de si son TERAS
+                ram_ToG = 1 #check para TiB
             dispos.append((activo_id, factura, num_serial, num_inventario, tipo, nombre_activo, estado, modelo,
-                           caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo))
+                           caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, ram_ToG))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -1098,43 +1104,36 @@ def obtener_micro():
 def busqueda_dispos():
     dispos = []
     try:
-        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        # Ejecuta la consulta para obtener los atributos de la tabla ACTIVO, MODELO, DISPO_INTELIIGENTE y SUBTIPO,
-        # y los RAM_ID, SISTEMA_OPERATIVO_ID, TARGETA_GARFICA_ID, PUERTO_ID, MICROPROCESADOR_ID, DISCO_DURO_ID y UNIDAD_LECTORA_ID concatenados
+        
         cursor.execute("""
             SELECT A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.NOMBRE AS ACTIVO_NOMBRE, A.ESTADO, M.NOMBRE AS MODELO_NOMBRE, 
                 DI.CARACTERISTICAS, DI.NUM_PROCESADORES, DI.RAM_INSTALADA, DI.RAM_MAX, S.NOMBRE AS SUBTIPO_NOMBRE,
-                GROUP_CONCAT(DISTINCT DR.RAM_ID) AS RAM_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DSO.SISTEMA_OPERATIVO_ID) AS SO_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DV.TARGETA_GARFICA_ID) AS VIDEO_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DP.PUERTO_ID) AS PUERTO_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DM.MICROPROCESADOR_ID) AS MICROPROCESADOR_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DD.DISCO_DURO_ID) AS DISCO_DURO_ID_CONCAT,
-                GROUP_CONCAT(DISTINCT DL.UNIDAD_LECTORA_ID) AS UNIDAD_LECTORA_ID_CONCAT
+                (SELECT GROUP_CONCAT(DR.RAM_ID) FROM DISPO_RAM DR WHERE A.ACTIVO_ID = DR.ACTIVO_ID AND DR.OPERANTE = 1) AS RAM_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DSO.SISTEMA_OPERATIVO_ID) FROM DISPO_SO DSO WHERE A.ACTIVO_ID = DSO.ACTIVO_ID AND DSO.OPERANTE = 1) AS SO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DV.TARGETA_GARFICA_ID) FROM DISPO_VIDEO DV WHERE A.ACTIVO_ID = DV.ACTIVO_ID AND DV.OPERANTE = 1) AS VIDEO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DP.PUERTO_ID) FROM DISPO_PUERTO DP WHERE A.ACTIVO_ID = DP.ACTIVO_ID AND DP.OPERANTE = 1) AS PUERTO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DM.MICROPROCESADOR_ID) FROM DISPO_MICRO DM WHERE A.ACTIVO_ID = DM.ACTIVO_ID AND DM.OPERANTE = 1) AS MICROPROCESADOR_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DD.DISCO_DURO_ID) FROM DISPO_DD DD WHERE A.ACTIVO_ID = DD.ACTIVO_ID AND DD.OPERANTE = 1) AS DISCO_DURO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DL.UNIDAD_LECTORA_ID) FROM DISPO_LECTORA DL WHERE A.ACTIVO_ID = DL.ACTIVO_ID AND DL.OPERANTE = 1) AS UNIDAD_LECTORA_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DRD.INTERFAZ_RED_ID) FROM DISPOSITIVO_RED DRD WHERE A.ACTIVO_ID = DRD.ACTIVO_ID AND DRD.OPERANTE = 1) AS INTERFAZ_RED_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) AS UBICACION_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAR.RESPONSABLE_RESGUARDO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE HAR WHERE A.ACTIVO_ID = HAR.ACTIVO_ID AND HAR.OPERANTE = 1) AS RESPONSABLE_RESGUARDO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAINT.RESPONSABLE_INTERNO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE_INTERNO HAINT WHERE A.ACTIVO_ID = HAINT.ACTIVO_ID AND HAINT.OPERANTE = 1) AS RESPONSABLE_INTERNO_ID_CONCAT
             FROM ACTIVO A 
             JOIN MODELO M ON A.MODELO_ID = M.MODELO_ID 
             JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID 
-            JOIN SUBTIPO S ON DI.SUBTIPO_ID = S.SUBTIPO_ID 
-            LEFT JOIN DISPO_RAM DR ON A.ACTIVO_ID = DR.ACTIVO_ID AND DR.OPERANTE = 1
-            LEFT JOIN DISPO_SO DSO ON A.ACTIVO_ID = DSO.ACTIVO_ID AND DSO.OPERANTE = 1
-            LEFT JOIN DISPO_VIDEO DV ON A.ACTIVO_ID = DV.ACTIVO_ID AND DV.OPERANTE = 1
-            LEFT JOIN DISPO_PUERTO DP ON A.ACTIVO_ID = DP.ACTIVO_ID AND DP.OPERANTE = 1
-            LEFT JOIN DISPO_MICRO DM ON A.ACTIVO_ID = DM.ACTIVO_ID AND DM.OPERANTE = 1
-            LEFT JOIN DISPO_DD DD ON A.ACTIVO_ID = DD.ACTIVO_ID AND DD.OPERANTE = 1
-            LEFT JOIN DISPO_LECTORA DL ON A.ACTIVO_ID = DL.ACTIVO_ID AND DL.OPERANTE = 1
-            WHERE A.TIPO = 'I'
+            JOIN SUBTIPO S ON DI.SUBTIPO_ID = S.SUBTIPO_ID
             GROUP BY A.ACTIVO_ID
         """)
-        dispos = cursor.fetchall()  # Obtener todos los resultados de la consulta
-        # Cierra el cursor y la conexión a la base de datos
+        
+        dispos = cursor.fetchall()
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al obtener los dispositivos:", e)
     return dispos
-
 
 
 def consulta_ram(ram_id):
@@ -1256,3 +1255,70 @@ def consulta_lectora(lectora_id):
         print("Error al obtener información de lectora:", e)
     return lectora_info
 
+def consulta_red(red_id):
+    red_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT INTER.INTERFAZ_RED_NOMBRE, INTER.INTERFAZ_RED_MODELO, INTER.INTERFAZ_RED_MARCA, INTER.INTEG_O_EXTERN, TIPO.NOMBRE FROM INTERFAZ_RED INTER JOIN TIPO_INTERFAZ_RED TIPO ON INTER.TIPO_INTERFAZ_RED_ID = TIPO.TIPO_INTERFAZ_RED_ID WHERE INTER.INTERFAZ_RED_ID = %s", (red_id,))
+        red_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if red_data:
+            red_info = f"{red_data['INTERFAZ_RED_NOMBRE']} {red_data['INTERFAZ_RED_MODELO']} {red_data['INTERFAZ_RED_MARCA']} {red_data['INTEG_O_EXTERN']} {red_data['NOMBRE']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de red:", e)
+    return red_info
+
+def consulta_ubicacion(ubicacion_id):
+    ubicacion_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT NOMBRE FROM UBICACION WHERE UBICACION_ID = %s", (ubicacion_id,))
+        ubicacion_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if ubicacion_data:
+            ubicacion_info = f"{ubicacion_data['NOMBRE']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de ubicaciones:", e)
+    return ubicacion_info
+
+def consulta_resguardo(resguardo_id):
+    resguardo_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT NOMBRE, AP_PATERNO, AP_MATERNO FROM RESPONSABLE_RESGUARDO WHERE RESPONSABLE_RESGUARDO_ID = %s", (resguardo_id,))
+        resguardo_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if resguardo_data:
+            resguardo_info = f"{resguardo_data['NOMBRE']} {resguardo_data['AP_PATERNO']} {resguardo_data['AP_MATERNO']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de resguardo:", e)
+    return resguardo_info
+
+def consulta_interno(interno_id):
+    interno_info = ""
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT NOMBRE, AP_PATERNO, AP_MATERNO FROM RESPONSABLE_INTERNO WHERE RESPONSABLE_INTERNO_ID = %s", (interno_id,))
+        interno_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
+        
+        if interno_data:
+            interno_info = f"{interno_data['NOMBRE']} {interno_data['AP_PATERNO']} {interno_data['AP_MATERNO']}\n"
+        
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener información de resguardo:", e)
+    return interno_info

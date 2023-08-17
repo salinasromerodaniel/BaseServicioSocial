@@ -293,6 +293,7 @@ CREATE TABLE HISTORICO_ACTIVO_UBICACION(
     FECHA_CAMBIO                        DATE             NOT NULL,
     UBICACION_ID                        INT              NOT NULL,
     ACTIVO_ID                           INT              NOT NULL,
+    OPERANTE                            BIT              NOT NULL,
     PRIMARY KEY (HISTORICO_ACTIVO_UBICACION_ID)
 );
 

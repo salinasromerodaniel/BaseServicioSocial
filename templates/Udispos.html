@@ -168,6 +168,27 @@
                 </div>
                 
 
+                <div id="ram_unit_container" class="form-group">
+                    <label>Seleccione la unidad de RAM máxima</label>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="ram_gb" name="ram_unit" value="GB" {% if dispo[13] == 0 %}checked{% endif %}>
+                            </td>
+                            <td>
+                                <label for="ram_gb">GB</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" id="ram_tb" name="ram_unit" value="TB" {% if dispo[13] == 1 %}checked{% endif %}>
+                            </td>
+                            <td>
+                                <label for="ram_tb">TB</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+
                 <div class="form-group">
                     <label for="tram_maxima">Tamaño de RAM máxima</label>
                     <select id="tram_maxima" name="tram_maxima" required>
