@@ -334,6 +334,8 @@ def modificar_dispo(dispo_id):
          ram_maxima = int( ram_maxima)
     else:
          ram_maxima = None
+    if request.form.get('ram_unit') == 'TB':
+        ram_maxima = str(int(ram_maxima) * 1024)
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionD', dispo_id=dispo_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, modelo=modelo, caracteristicas=caracteristicas, num_procesadores=num_procesadores,
@@ -534,6 +536,10 @@ def modificar_herramienta(herramienta_id):
         num_inventario = int(num_inventario)
     else:
         num_inventario = None
+    if not fecha_compra:
+        fecha_compra = None
+    if not fecha_consumo:
+        fecha_consumo = None
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionH', herramienta_id=herramienta_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, modelo=modelo,
@@ -884,6 +890,10 @@ def busquedaD():
             micro_ids = row[15]
             almacenamiento_ids = row[16]
             lectora_ids = row[17]
+            red_ids = row[18]
+            ubicacion_ids = row[19]
+            resguardo_ids = row[20]
+            interno_ids = row[20]
 
             ram_info_list = []  # Lista para almacenar la información de RAM
             so_info_list = []
@@ -892,6 +902,10 @@ def busquedaD():
             micro_info_list = []
             almacenamiento_info_list = []
             lectora_info_list = []
+            red_info_list = []
+            ubicacion_info_list = []
+            resguardo_info_list = []
+            interno_info_list = []
             
             if ram_ids:
                 ram_id_list = ram_ids.split(",")  # Separar los IDs si no están vacíos
@@ -928,6 +942,26 @@ def busquedaD():
                 for lectora_id in lectora_id_list:
                     lectora_info = consulta_lectora(lectora_id)  # Obtener la información de RAM
                     lectora_info_list.append(lectora_info)
+            if red_ids:
+                red_id_list = red_ids.split(",")  # Separar los IDs si no están vacíos
+                for red_id in red_id_list:
+                    red_info = consulta_red(red_id)  # Obtener la información de RAM
+                    red_info_list.append(red_info)
+            if ubicacion_ids:
+                ubicacion_id_list = ubicacion_ids.split(",")  # Separar los IDs si no están vacíos
+                for ubicacion_id in ubicacion_id_list:
+                    ubicacion_info = consulta_ubicacion(ubicacion_id)  # Obtener la información de RAM
+                    ubicacion_info_list.append(ubicacion_info)
+            if resguardo_ids:
+                resguardo_id_list = resguardo_ids.split(",")  # Separar los IDs si no están vacíos
+                for resguardo_id in resguardo_id_list:
+                    resguardo_info = consulta_resguardo(resguardo_id)  # Obtener la información de RAM
+                    resguardo_info_list.append(resguardo_info)
+            if interno_ids:
+                interno_id_list = interno_ids.split(",")  # Separar los IDs si no están vacíos
+                for interno_id in interno_id_list:
+                    interno_info = consulta_interno(interno_id)  # Obtener la información de RAM
+                    interno_info_list.append(interno_info)
             
             row_dict = {
                 "FACTURA": row[0],
@@ -947,15 +981,17 @@ def busquedaD():
                 "PUERTO_INFO": "-\n".join(puerto_info_list) if puerto_info_list else "",
                 "MICRO_INFO": "-\n".join(micro_info_list) if micro_info_list else "",
                 "ALMACENAMIENTO_INFO": "-\n".join(almacenamiento_info_list) if almacenamiento_info_list else "",
-                "LECTORA_INFO": "-\n".join(lectora_info_list) if lectora_info_list else ""
+                "LECTORA_INFO": "-\n".join(lectora_info_list) if lectora_info_list else "",
+                "RED_INFO": "-\n".join(red_info_list) if red_info_list else "",
+                "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
+                "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
+                "INTERNO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else ""
             }
             datos_procesados.append(row_dict)
         
         return render_template('SBdispos.html', datos_procesados=datos_procesados)
     else:
         return redirect(url_for('logout'))
-
-
 
 
 ##############################  M A I N ############################################################################

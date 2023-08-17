@@ -27,12 +27,15 @@
 
         .table-container {
             overflow-x: auto; /* Agrega barra de desplazamiento horizontal si la tabla es demasiado ancha */
+            width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+            max-height: calc(100vh - 150px);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            min-width: 120%;
         }
 
         th, td {
@@ -40,6 +43,17 @@
             padding: 8px;
             text-align: center;
             font-size: 13px;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #f2f2f2; /* Color para las filas impares */
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background-color: #ddd;
+            z-index: 2;
         }
 
         .btn-back {
@@ -63,20 +77,71 @@
         .btn-back:hover {
             background-color: #2980b9;
         }
+
+        .search-form {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-form label {
+            font-weight: bold;
+        }
+
+        .search-form input[type="text"],
+        .search-form select {
+            width: 200px;
+        }
+
+        .search-form button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+    
     <div class="container">
         <h1>Resultados de Búsqueda</h1>
+        <div class="search-form">
+            <form method="GET" action="">
+                
+                <label for="modelo">Modelo:</label>
+                <input type="text" id="modelo" name="modelo">
+                
+                <label for="num_serial">Núm. de Serie:</label>
+                <input type="text" id="num_serial" name="num_serial">
+                
+                <label for="num_inventario">Inventario:</label>
+                <input type="text" id="num_inventario" name="num_inventario">
+                
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado">
+                    <option value="">Seleccione</option>
+                    <option value="ACTIVO">ACTIVO</option>
+                    <option value="INACTIVO">INACTIVO</option>
+                    <option value="BAJA">BAJA</option>
+                </select>
+                <br>
+                <label for="ubicacion">Ubicación:</label>
+                <input type="text" id="ubicacion" name="ubicacion">
+                
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
         <div class="table-container">
             <table>
                 <tr>
+                    <th>NÚM. DE INVENTARIO</th>
+                    <th>NÚM. DE SERIE</th>
                     <th>FACTURA</th>
-                    <th>NUM_SERIAL</th>
-                    <th>NUM_INVENTARIO</th>
-                    <th>ACTIVO_NOMBRE</th>
+                    <th>NOMBRE</th>
                     <th>ESTADO</th>
-                    <th>MODELO_NOMBRE</th>
+                    <th>MODELO</th>
                     <th>CARACTERISTICAS</th>
                     <th>NÚM. DE PROCESADORES</th>
                     <th>RAM INSTALADA (GiB)</th>
@@ -89,12 +154,16 @@
                     <th>MICROPROCESADORES</th>
                     <th>ALMACENAMIENTO</th>
                     <th>UNIDADES LECTORAS</th>
+                    <th>TARJETAS DE RED</th>
+                    <th>UBICACIÓN</th>
+                    <th>RESGUARDANTES</th>
+                    <th>RESPONSABLES INTERNOS</th>
                 </tr>
                 {% for row in datos_procesados %}
                 <tr>
-                    <td>{{ row['FACTURA'] }}</td>
-                    <td>{{ row['NUM_SERIAL'] }}</td>
                     <td>{{ row['NUM_INVENTARIO'] }}</td>
+                    <td>{{ row['NUM_SERIAL'] }}</td>
+                    <td>{{ row['FACTURA'] }}</td>
                     <td>{{ row['ACTIVO_NOMBRE'] }}</td>
                     <td>{{ row['ESTADO'] }}</td>
                     <td>{{ row['MODELO_NOMBRE'] }}</td>
@@ -110,6 +179,10 @@
                     <td>{{ row['MICRO_INFO'] }}</td>
                     <td>{{ row['ALMACENAMIENTO_INFO'] }}</td>
                     <td>{{ row['LECTORA_INFO'] }}</td>
+                    <td>{{ row['RED_INFO'] }}</td>
+                    <td>{{ row['UBICACION_INFO'] }}</td>
+                    <td>{{ row['RESGUARDO_INFO'] }}</td>
+                    <td>{{ row['INTERNO_INFO'] }}</td>
                 </tr>
                 {% endfor %}
             </table>
