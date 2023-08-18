@@ -287,8 +287,9 @@
             <td>{{ historico[4] }}</td>
             <td>{{ historico[5] }}</td>
             <td>{{ historico[6] }}</td>
+            <td>{{ historico[7] }}</td>
             <td>
-                {% if historico[7] == 1 %}
+                {% if historico[8] == 1 %}
                     ACTIVO
                 {% else %}
                     INACTIVO
@@ -310,7 +311,7 @@
             <th>Operante</th>
             <th>Operaciones</th> 
         </tr>
-        {% for historico in historico_red %}
+        {% for historico in historico_tg %}
         <tr>
             <!--<td>{{ historico[0] }}</td>-->
             <td>{{ historico[2] }}</td>
@@ -352,6 +353,94 @@
             <td>{{ historico[6] }}</td>
             <td>
                 {% if historico[7] == 1 %}
+                    ACTIVO
+                {% else %}
+                    INACTIVO
+                {% endif %}
+            </td>
+            <td><!-- FALTAN LAS OPERACIONES--></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1><br>Historico de microprocesadores</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Nombre de microprocesador</th>
+            <th>Arquitectura</th>
+            <th>Generación</th>
+            <th>Fecha de colocación</th>
+            <th>Operante</th>
+            <th>Operaciones</th> 
+        </tr>
+        {% for historico in historico_Mi %}
+        <tr>
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[2] }}</td>
+            <td>{{ historico[3] }}</td>
+            <td>{{ historico[4] }}</td>
+            <td>{{ historico[5] }}</td>
+            <td>
+                {% if historico[6] == 1 %}
+                    ACTIVO
+                {% else %}
+                    INACTIVO
+                {% endif %}
+            </td>
+            <td><!-- FALTAN LAS OPERACIONES--></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1><br>Historico de unidades lectoras</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Tipo de unidad lectora</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Características</th>
+            <th>Fecha de colocación</th>
+            <th>Operante</th>
+            <th>Operaciones</th> 
+        </tr>
+        {% for historico in historico_ul %}
+        <tr>
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[2] }}</td>
+            <td>{{ historico[3] }}</td>
+            <td>{{ historico[4] }}</td>
+            <td>{{ historico[5] }}</td>
+            <td>{{ historico[6] }}</td>
+            <td>
+                {% if historico[7] == 1 %}
+                    ACTIVO
+                {% else %}
+                    INACTIVO
+                {% endif %}
+            </td>
+            <td><!-- FALTAN LAS OPERACIONES--></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1><br>Historico de Puertos</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Puerto</th>
+            <th>Fecha de colocación</th>
+            <th>Operante</th>
+            <th>Operaciones</th> 
+        </tr>
+        {% for historico in historico_pu %}
+        <tr>
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[2] }}</td>
+            <td>{{ historico[3] }}</td>
+            <td>
+                {% if historico[4] == 1 %}
                     ACTIVO
                 {% else %}
                     INACTIVO

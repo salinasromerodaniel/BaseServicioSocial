@@ -1201,12 +1201,14 @@ def historico_activoD(activo_id):
         historico_red = obtener_historicoHRED(activo_id)
         historico_tg = obtener_historicoHV(activo_id)
         historico_dd = obtener_historicoHDD(activo_id)
-        print(historico_Rinterno)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
         
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, 
                            historico_so=historico_so, historico_ram=historico_ram, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
     else:
         return redirect(url_for('logout'))
 

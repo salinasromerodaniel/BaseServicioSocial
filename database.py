@@ -1703,8 +1703,8 @@ def obtener_historicoHRED(activo_id):
                                 IR.INTERFAZ_RED_NOMBRE,
                                 IR.INTERFAZ_RED_MODELO,
                                 IR.INTERFAZ_RED_MARCA,
-                                DR.MAC,
                                 DR.IP,
+                                DR.MAC,
                                 DR.FECHA_COLOC,
                                 DR.OPERANTE,
                                 DR.DISPOSITIVO_RED_ID
@@ -1803,6 +1803,119 @@ def obtener_historicoHDD(activo_id):
             operante = historico[7] 
             historico_id = historico[8]
             historicos.append(( activo_id, nombre_activo, DDserie, DDmodelo, DDmarca, capacidad, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoHM(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                MP.NOMBRE AS NOMBRE_MICROPROCESADOR,
+                                MP.ARQUITECTURA,
+                                MP.GENERACION,
+                                DM.FECHA_COLOC,
+                                DM.OPERANTE,
+                                DISPO_MICRO_ID
+                            FROM ACTIVO A
+                            JOIN DISPO_MICRO DM ON A.ACTIVO_ID = DM.ACTIVO_ID
+                            JOIN MICROPROCESADOR MP ON DM.MICROPROCESADOR_ID = MP.MICROPROCESADOR_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            micro = historico[2]
+            arqui = historico[3]
+            generacion = historico[4]
+            fecha_colo = historico[5]
+            operante = historico[6] 
+            historico_id = historico[7]
+            historicos.append(( activo_id, nombre_activo, micro, arqui, generacion, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoUL(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                TUL.TIPO_UNIDAD_LECTORA_NOMBRE,
+                                UL.UNIDAD_LECTORA_MODELO,
+                                UL.UNIDAD_LECTORA_MARCA,
+                                UL.UNIDAD_LECTORA_CARACTERISTICAS,
+                                DL.FECHA_COLOC,
+                                DL.OPERANTE,
+                                DISPO_LECTORA_ID
+                            FROM ACTIVO A
+                            JOIN DISPO_LECTORA DL ON A.ACTIVO_ID = DL.ACTIVO_ID
+                            JOIN UNIDAD_LECTORA UL ON DL.UNIDAD_LECTORA_ID = UL.UNIDAD_LECTORA_ID
+                            JOIN TIPO_UNIDAD_LECTORA TUL ON UL.TIPO_UNIDAD_LECTORA_ID = TUL.TIPO_UNIDAD_LECTORA_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            tipo = historico[2]
+            modeloU = historico[3]
+            marcaU = historico[4]
+            caracteristicas = historico[5]
+            fecha_colo = historico[6]
+            operante = historico[7] 
+            historico_id = historico[8]
+            historicos.append(( activo_id, nombre_activo, tipo, modeloU, marcaU, caracteristicas, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoP(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                P.PUERTO_NOMBRE,
+                                DP.FECHA_COLOC,
+                                DP.OPERANTE,
+                                DISPO_PUERTO_ID
+                            FROM ACTIVO A
+                            JOIN DISPO_PUERTO DP ON A.ACTIVO_ID = DP.ACTIVO_ID
+                            JOIN PUERTO P ON DP.PUERTO_ID = P.PUERTO_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            puerto= historico[2]
+            fecha_colo = historico[3]
+            operante = historico[4] 
+            historico_id = historico[5]
+            historicos.append(( activo_id, nombre_activo, puerto, fecha_colo, operante, historico_id))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
