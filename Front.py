@@ -611,6 +611,7 @@ def agregar_libros():
     ubicacion = request.form.get('ubicacion')
     contador_resguardo = int(request.form.get('lista_ids_resguardo'))
     contador_interno = int(request.form.get('lista_ids_interno'))
+    #print(contador_interno)#aqui llega bien
     contador_usuario = int(request.form.get('lista_ids_usuario'))
     ids_resguardo = []
     ids_interno = []
@@ -624,7 +625,7 @@ def agregar_libros():
     if contador_usuario >= 1:
         for i in range (1, contador_usuario + 1) :
             ids_usuario.append(request.form.get(f'usuario_{i}'))
-
+    #print(contador_interno)#aqui llega bien
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -651,7 +652,7 @@ def agregar_libros():
     return redirect(url_for('mostrar_resultadosL', factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, autor=autor,editorial=editorial, anio=anio, cantidad=cantidad,
                             edicion=edicion, ubicacion=ubicacion,
-                            ids_usuario=ids_usuario, ids_resguardo=ids_resguardo, interno=ids_interno, fecha_compra=fecha_compra))
+                            ids_usuario=ids_usuario, ids_resguardo=ids_resguardo, ids_interno=ids_interno, fecha_compra=fecha_compra))
 
 @app.route('/mostrar_resultadosL')
 def mostrar_resultadosL():
@@ -671,6 +672,7 @@ def mostrar_resultadosL():
     lista_ids_resguardo = request.args.getlist('ids_resguardo')
     lista_ids_interno = request.args.getlist('ids_interno')
     lista_ids_usuario = request.args.getlist('ids_usuario')
+    #print(lista_ids_interno) #llega vacia
     for i in range(len(lista_ids_resguardo)):
         lista_ids_resguardo[i] = lista_ids_resguardo[i]
     for i in range(len(lista_ids_interno)):
