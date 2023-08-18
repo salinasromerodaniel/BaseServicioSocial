@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Búsqueda de Dispositivos</title>
+    <title>Búsqueda de Herramientas/Consumibles</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -116,33 +116,19 @@
 <body>
     
     <div class="container">
-        <h1>Búsqueda de Dispositivos</h1>
+        <h1>Búsqueda de Herramientas/Consumibles</h1>
         <div class="search-form">
-            <form  method="POST" action="/activos/busqueda">
-                
-                <label for="modelo">Modelo</label>
-                <!-- Código HTML en ADispos.html -->
-                <select id="modelo" name="modelo">
-                    <!-- Opción deshabilitada y seleccionada por defecto -->
-                    <option value="" disabled selected>Escoja un modelo</option>
-                    <!-- Iterar sobre la lista de tuplas (marca, modelos) -->
-                    {% for marca, modelos in nombres_modelo %}
-                        <!-- Usar la etiqueta <optgroup> para agrupar modelos por marca -->
-                        <optgroup label="{{ marca }}">
-                            <!-- Iterar sobre los modelos asociados a la marca -->
-                            {% for modelo_id, nombre_modelo, _ in modelos %}
-                                <!-- Usar la etiqueta <option> para mostrar el nombre del modelo -->
-                                <option value="{{ modelo_id }}">{{ nombre_modelo }}</option>
-                            {% endfor %}
-                        </optgroup>
-                    {% endfor %}
-                </select>
+            <form  method="POST" action="/activos/herramientas/busqueda">
+
 
                 <label for="num_serial">Núm. de Serie:</label>
                 <input type="text" id="num_serial" name="num_serial">
                 
                 <label for="num_inventario">Inventario:</label>
                 <input type="text" id="num_inventario" name="num_inventario" pattern="[0-9]*" title="Ingrese solo números">
+
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre">
                 
                 <label for="estado">Estado:</label>
                 <select id="estado" name="estado">
@@ -174,22 +160,14 @@
                     <th>NÚM. DE INVENTARIO</th>
                     <th>NÚM. DE SERIE</th>
                     <th>FACTURA</th>
-                    <th>NOMBRE</th>
+                    <th>TÍTULO</th>
                     <th>ESTADO</th>
                     <th>MODELO</th>
-                    <th>CARACTERISTICAS</th>
-                    <th>NÚM. DE PROCESADORES</th>
-                    <th>RAM INSTALADA (GiB)</th>
-                    <th>RAM MÁXIMA (GiB)</th>
-                    <th>SUBTIPO</th>
-                    <th>RAMS</th> <!-- Cambia RAM_ID a RAM_INFO -->
-                    <th>SISTEMAS OPERATIVOS</th>
-                    <th>TARJETAS DE VIDEO INFO</th>
-                    <th>PUERTOS</th>
-                    <th>MICROPROCESADORES</th>
-                    <th>ALMACENAMIENTO</th>
-                    <th>UNIDADES LECTORAS</th>
-                    <th>TARJETAS DE RED</th>
+                    <th>FECHA DE COMPRA</th>
+                    <th>FECHA DE CONSUMO</th>
+                    <th>CANTIDAD</th>
+                    <th>CONTENIDO</th>
+                    <th>DESCRIPCION</th>
                     <th>UBICACIÓN</th>
                     <th>RESGUARDANTES</th>
                     <th>RESPONSABLES INTERNOS</th>
@@ -208,19 +186,11 @@
                     <td>{{ row['ACTIVO_NOMBRE'] }}</td>
                     <td>{{ row['ESTADO'] }}</td>
                     <td>{{ row['MODELO_NOMBRE'] }}</td>
-                    <td>{{ row['CARACTERISTICAS'] }}</td>
-                    <td>{{ row['NUM_PROCESADORES'] }}</td>
-                    <td>{{ row['RAM_INSTALADA'] }}</td>
-                    <td>{{ row['RAM_MAX'] }}</td>
-                    <td>{{ row['SUBTIPO_NOMBRE'] }}</td>
-                    <td>{{ row['RAM_INFO'] }}</td> <!-- Cambia el acceso a RAM_INFO -->
-                    <td>{{ row['SO_INFO'] }}</td>
-                    <td>{{ row['VIDEO_INFO'] }}</td>
-                    <td>{{ row['PUERTO_INFO'] }}</td>
-                    <td>{{ row['MICRO_INFO'] }}</td>
-                    <td>{{ row['ALMACENAMIENTO_INFO'] }}</td>
-                    <td>{{ row['LECTORA_INFO'] }}</td>
-                    <td>{{ row['RED_INFO'] }}</td>
+                    <td>{{ row['FECHA_COMPRA'] }}</td>
+                    <td>{{ row['FECHA_CONSUMO'] }}</td>
+                    <td>{{ row['CANTIDAD'] }}</td>
+                    <td>{{ row['CONTENIDO'] }}</td>
+                    <td>{{ row['DESCRIPCION'] }}</td>
                     <td>{{ row['UBICACION_INFO'] }}</td>
                     <td>{{ row['RESGUARDO_INFO'] }}</td>
                     <td>{{ row['INTERNO_INFO'] }}</td>
@@ -228,7 +198,7 @@
                 {% endfor %}
             </table>
         </div>
-        <a class="btn-back" href="/activos/dispos">&#8592;</a>
+        <a class="btn-back" href="/activos/herramientas">&#8592;</a>
     </div>
 </body>
 </html>

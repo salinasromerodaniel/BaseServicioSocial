@@ -74,6 +74,24 @@
         .btn-back:hover {
             background-color: #2980b9;
         }
+
+        /* Estilos para el menú "Responsables" */
+        .responsables-menu {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .responsables-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .responsables-menu-icon {
+            margin-right: 8px;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
@@ -99,8 +117,22 @@
             <span class="menu-icon">&#128105;</span>
             <a href="/personas/sector">Sector</a>
         </div>
-
-        <a class="btn-back" href="javascript:history.back()">&#8592;</a>
+        <div class="responsables-menu">
+            <div class="responsables-title">Agregar</div>
+            <div class="menu-item">
+                <span class="responsables-menu-icon">&#128101;</span>
+                <a href="/personas/agregar_responsable_resguardo">Responsable de resguardo</a>
+            </div>
+            <div class="menu-item">
+                <span class="responsables-menu-icon">&#127968;</span>
+                <a href="/personas/agregar_responsable_interno">Responsable interno</a>
+            </div>
+            <div class="menu-item">
+                <span class="responsables-menu-icon">&#128218;</span>
+                <a href="/personas/agregar_usuario_final">Usuario final</a>
+            </div>
+        </div>
+        <a class="btn-back" href="/menuP">&#8592;</a>
     </div>
 </body>
 </html>

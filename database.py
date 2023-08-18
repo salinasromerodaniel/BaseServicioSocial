@@ -1,4 +1,5 @@
 # database.py
+
 import mysql.connector
 db_config = {
     'host': 'localhost',
@@ -415,7 +416,6 @@ def obtener_responsables_interno():
 
     return responsables
 
-
 def obtener_usuarios_finales():
     usuarios_finales = []
     try:
@@ -450,7 +450,6 @@ def obtener_usuarios_finales():
         print("Error al obtener los usuarios finales:", e)
 
     return usuarios_finales
-
 
 def insertar_dispoH(factura, serial, num_inventario, nombre,
                     modelo, fecha_compra, cantidad, contenido,
@@ -546,7 +545,6 @@ def insertar_dispoL(factura, serial, num_inventario, nombre,
     except mysql.connector.Error as error:
         print("Error al insertar en las tablas LIBRO:", error)
 
-
 def obtener_libros():
     libros = []
     try:
@@ -557,7 +555,7 @@ def obtener_libros():
         # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
         #cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO,  A.USUARIO_FINAL_ID, (SELECT F.NOMBRE FROM USUARIO_FINAL F WHERE F.USUARIO_FINAL_ID = A.USUARIO_FINAL_ID) AS NOMBRE_USUARIO_FINAL, A.RESPONSABLE_INTERNO_ID, (SELECT I.NOMBRE FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS NOMBRE_RESPONSABLE_INTERNO, (SELECT I.AP_PATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_PATERNO_RESPONSABLE_INTERNO, (SELECT I.AP_MATERNO FROM RESPONSABLE_INTERNO I WHERE I.RESPONSABLE_INTERNO_ID = A.RESPONSABLE_INTERNO_ID) AS AP_MATERNO_RESPONSABLE_INTERNO, A.RESPONSABLE_RESGUARDO_ID, (SELECT R.NOMBRE FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS NOMBRE_RESPONSABLE_RESGUARDO, (SELECT R.AP_PATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_PATERNO_RESPONSABLE_RESGUARDO, (SELECT R.AP_MATERNO FROM RESPONSABLE_RESGUARDO R WHERE R.RESPONSABLE_RESGUARDO_ID = A.RESPONSABLE_RESGUARDO_ID) AS AP_MATERNO_RESPONSABLE_RESGUARDO, A.UBICACION_ID, (SELECT U.NOMBRE FROM UBICACION U WHERE U.UBICACION_ID = A.UBICACION_ID) AS NOMBRE_UBICACION, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA';")
 
-        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, L.CANTIDAD FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA'")
+        cursor.execute("SELECT A.ACTIVO_ID, A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.TIPO, A.NOMBRE, A.ESTADO, L.EDITORIAL, L.EDICION, L.ANIO, L.AUTOR, L.CANTIDAD FROM ACTIVO A JOIN LIBRO L ON A.ACTIVO_ID = L.ACTIVO_ID WHERE A.ESTADO <> 'BAJA' ORDER BY A.NOMBRE")
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for libro in cursor.fetchall():
             activo_id = libro[0]
@@ -597,7 +595,6 @@ def obtener_libros():
     except mysql.connector.Error as e:
         print("Error al obtener los libros:", e)
     return libros
-
 
 def eliminar_libros(libro_id):
     try:
@@ -657,7 +654,6 @@ def obtener_libroID(id_especifico):
     except mysql.connector.Error as e:
         print("Error al obtener los libros:", e)
     return libros
-
 
 def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
                     autor, editorial, anio, edicion, cantidad):
@@ -756,7 +752,6 @@ def eliminar_herramientas(herramienta_id):
     except mysql.connector.Error as e:
         print("Error al eliminar la herramienta:", e)
         # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
-
 
 def obtener_herramientaID(id_especifico):
     herramientas = []
@@ -952,7 +947,6 @@ def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado,
     except mysql.connector.Error as error:
         print("Error al modificar en la tabla DISPO_INTELIGENTE:", error)
 
-
 def obtener_edificio():
     edificios = []
     try:
@@ -1143,6 +1137,90 @@ def busqueda_dispos(diccionario=None):
     except mysql.connector.Error as e:
         print("Error al obtener los dispositivos:", e)
     return dispos
+
+def busqueda_libros(diccionario=None):
+    libros = []
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Construye la consulta SQL base
+        query = """
+            SELECT A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.NOMBRE AS ACTIVO_NOMBRE, A.ESTADO, 
+                LI.EDITORIAL, LI.EDICION, LI.ANIO, LI.AUTOR, LI.CANTIDAD,
+                (SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) AS UBICACION_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAR.RESPONSABLE_RESGUARDO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE HAR WHERE A.ACTIVO_ID = HAR.ACTIVO_ID AND HAR.OPERANTE = 1) AS RESPONSABLE_RESGUARDO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAINT.RESPONSABLE_INTERNO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE_INTERNO HAINT WHERE A.ACTIVO_ID = HAINT.ACTIVO_ID AND HAINT.OPERANTE = 1) AS RESPONSABLE_INTERNO_ID_CONCAT
+            FROM ACTIVO A  
+            JOIN LIBRO LI ON A.ACTIVO_ID = LI.ACTIVO_ID 
+            WHERE 
+        """
+        cantidad = len(diccionario)
+        if cantidad == 0:
+            query += " 1"
+        else:
+            for i, (clave, valor) in enumerate(diccionario.items()):
+                if isinstance(valor, str):
+                    query += f" {clave} LIKE '%{valor}%'"
+
+                elif isinstance(valor, int):
+                    query += f" {clave} = {valor}"
+                    
+                if i < len(diccionario) - 1:
+                    query += " AND "
+        
+        print(query)
+        
+        query += " GROUP BY A.ACTIVO_ID"
+        cursor.execute(query)
+
+        libros = cursor.fetchall()
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los libros:", e)
+    return libros
+
+def busqueda_herramientas(diccionario=None):
+    herramientas = []
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Construye la consulta SQL base
+        query = """
+            SELECT A.FACTURA, A.NUM_SERIAL, A.NUM_INVENTARIO, A.NOMBRE AS ACTIVO_NOMBRE, A.ESTADO, M.NOMBRE AS MODELO_NOMBRE, 
+                H.FECHA_COMPRA, H.FECHA_CONSUMO, H.CANTIDAD, H.CONTENIDO, H.DESCRIPCION,
+                (SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) AS UBICACION_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAR.RESPONSABLE_RESGUARDO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE HAR WHERE A.ACTIVO_ID = HAR.ACTIVO_ID AND HAR.OPERANTE = 1) AS RESPONSABLE_RESGUARDO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DISTINCT HAINT.RESPONSABLE_INTERNO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE_INTERNO HAINT WHERE A.ACTIVO_ID = HAINT.ACTIVO_ID AND HAINT.OPERANTE = 1) AS RESPONSABLE_INTERNO_ID_CONCAT
+            FROM ACTIVO A  
+            JOIN MODELO M ON A.MODELO_ID = M.MODELO_ID
+            JOIN HERRAMIENTA_CONSUMIBLE H ON A.ACTIVO_ID = H.ACTIVO_ID 
+            WHERE 
+        """
+        cantidad = len(diccionario)
+        if cantidad == 0:
+            query += " 1"
+        else:
+            for i, (clave, valor) in enumerate(diccionario.items()):
+                if isinstance(valor, str):
+                    query += f" {clave} LIKE '%{valor}%'"
+
+                elif isinstance(valor, int):
+                    query += f" {clave} = {valor}"
+                    
+                if i < len(diccionario) - 1:
+                    query += " AND "
+        
+        query += " GROUP BY A.ACTIVO_ID"
+        cursor.execute(query)
+        herramientas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener las herramientas:", e)
+    return herramientas
 
 def consulta_ram(ram_id):
     ram_info = ""
@@ -1343,7 +1421,8 @@ def obtener_historicoUB(activo_id):
                             A.NOMBRE AS NOMBRE_ACTIVO,
                             HUB.FECHA_CAMBIO,
                             U.NOMBRE AS NOMBRE_UBICACION,
-                            HUB.OPERANTE
+                            HUB.OPERANTE,
+                            HUB.HISTORICO_ACTIVO_UBICACION_ID
                         FROM ACTIVO A
                         JOIN HISTORICO_ACTIVO_UBICACION HUB ON A.ACTIVO_ID = HUB.ACTIVO_ID
                         JOIN UBICACION U ON HUB.UBICACION_ID = U.UBICACION_ID
@@ -1355,7 +1434,8 @@ def obtener_historicoUB(activo_id):
             fecha_cambio = historico[2]
             ubicacion = historico[3]
             operante = historico[4]
-            historicos.append(( activo_id, nombre_activo, fecha_cambio, ubicacion, operante))
+            historico_id = historico[5]
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, ubicacion, operante, historico_id))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -1363,6 +1443,26 @@ def obtener_historicoUB(activo_id):
         print("Error al obtener los HISTORICOS de ubicación:", e)
     return historicos
 
+def eliminar_HUB(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE HISTORICO_ACTIVO_UBICACION SET OPERANTE = 0 WHERE HISTORICO_ACTIVO_UBICACION_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
+#ESTA NO ES NECESARIA
 def obtener_historicoUF(activo_id):
     historicos = []
     try:
@@ -1375,7 +1475,8 @@ def obtener_historicoUF(activo_id):
                             A.NOMBRE AS NOMBRE_ACTIVO,
                             HFU.FECHA_PRESTAMO,
                             UF.NOMBRE AS NOMBRE_USUARIO_FINAL,
-                            HFU.OPERANTE
+                            HFU.OPERANTE,
+                            HFU.HISTORICO_ACTIVO_USUARIO_ID
                         FROM ACTIVO A
                         JOIN HISTORICO_ACTIVO_USUARIO HFU ON A.ACTIVO_ID = HFU.ACTIVO_ID
                         JOIN USUARIO_FINAL UF ON HFU.USUARIO_FINAL_ID = UF.USUARIO_FINAL_ID
@@ -1387,7 +1488,8 @@ def obtener_historicoUF(activo_id):
             fecha_cambio = historico[2]
             usuario = historico[3]
             operante = historico[4]
-            historicos.append(( activo_id, nombre_activo, fecha_cambio, usuario, operante))
+            historico_id = historico[5]
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, usuario, operante, historico_id))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
@@ -1409,7 +1511,8 @@ def obtener_historicoRR(activo_id):
                                 RR.NOMBRE AS NOMBRE_RESPONSABLE,
                                 RR.AP_PATERNO,
                                 RR.AP_MATERNO,
-                                HR.OPERANTE
+                                HR.OPERANTE,
+                                HR.HISTORICO_ACTIVO_RESPONSABLE_ID
                             FROM ACTIVO A
                             JOIN HISTORICO_ACTIVO_RESPONSABLE HR ON A.ACTIVO_ID = HR.ACTIVO_ID
                             JOIN RESPONSABLE_RESGUARDO RR ON HR.RESPONSABLE_RESGUARDO_ID = RR.RESPONSABLE_RESGUARDO_ID
@@ -1423,14 +1526,34 @@ def obtener_historicoRR(activo_id):
             aprr = historico[4]
             amrr = historico[5]
             operante = historico[6] 
+            historico_id = historico[7]
             responsable = nrr + ' ' + aprr + ' ' + amrr
-            historicos.append(( activo_id, nombre_activo, fecha_cambio, responsable, operante))
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, responsable, operante, historico_id))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al obtener los HISTORICOS de responsableR:", e)
     return historicos
+
+def eliminar_HRR(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE HISTORICO_ACTIVO_RESPONSABLE SET OPERANTE = 0 WHERE HISTORICO_ACTIVO_RESPONSABLE_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
 
 def obtener_historicoRI(activo_id):
     historicos = []
@@ -1446,7 +1569,8 @@ def obtener_historicoRI(activo_id):
                             RI.NOMBRE AS NOMBRE_RESPONSABLE_INTERNO,
                             RI.AP_PATERNO,
                             RI.AP_MATERNO,
-                            HRI.OPERANTE
+                            HRI.OPERANTE,
+                            HRI.HISTORICO_ACTIVO_RESPONSABLE_INT_ID
                         FROM ACTIVO A
                         JOIN HISTORICO_ACTIVO_RESPONSABLE_INTERNO HRI ON A.ACTIVO_ID = HRI.ACTIVO_ID
                         JOIN RESPONSABLE_INTERNO RI ON HRI.RESPONSABLE_INTERNO_ID = RI.RESPONSABLE_INTERNO_ID
@@ -1460,11 +1584,228 @@ def obtener_historicoRI(activo_id):
             apri = historico[4]
             amri = historico[5]
             operante = historico[6] 
+            historico_id = historico[7]
             responsable = nri + ' ' + apri + ' ' + amri
-            historicos.append(( activo_id, nombre_activo, fecha_cambio, responsable, operante))
+            historicos.append(( activo_id, nombre_activo, fecha_cambio, responsable, operante, historico_id))
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al obtener los HISTORICOS de responsableI:", e)
+    return historicos
+
+def eliminar_HRI(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE HISTORICO_ACTIVO_RESPONSABLE_INTERNO SET OPERANTE = 0 WHERE HISTORICO_ACTIVO_RESPONSABLE_INT_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
+def obtener_historicoHRAM(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute("""SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                R.MARCA AS MARCA_RAM,
+                                R.NUM_SERIE AS NUM_SERIE_RAM,
+                                R.CAPACIDAD AS CAPACIDAD_RAM,
+                                DR.FECHA_COLOC,
+                                DR.OPERANTE,
+                                DR.DISPO_RAM_ID 
+                            FROM ACTIVO A
+                            JOIN DISPO_RAM DR ON A.ACTIVO_ID = DR.ACTIVO_ID
+                            JOIN RAM R ON DR.RAM_ID = R.RAM_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            marca_ram = historico[2]
+            serie_ram = historico[3]
+            capacidad_ram = historico[4]
+            fecha_colo = historico[5]
+            operante = historico[6] 
+            historico_id = historico[7]
+            historicos.append(( activo_id, nombre_activo, marca_ram, serie_ram, capacidad_ram, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoHSO(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute("""SELECT
+                        A.ACTIVO_ID,
+                        A.NOMBRE AS NOMBRE_ACTIVO,
+                        SO.NUM_VERSION AS NUM_VERSION_SO,
+                        SO.ARQUITECTURA,
+                        TS.NOMBRE AS NOMBRE_TIPO_SO,
+                        DS.FECHA_COLOC,
+                        DS.OPERANTE,
+                        DS.DISPO_SO_ID
+                    FROM ACTIVO A
+                    JOIN DISPO_SO DS ON A.ACTIVO_ID = DS.ACTIVO_ID
+                    LEFT JOIN SISTEMA_OPERATIVO SO ON DS.SISTEMA_OPERATIVO_ID = SO.SISTEMA_OPERATIVO_ID
+                    LEFT JOIN TIPO_SO TS ON SO.TIPO_SO_ID = TS.TIPO_SO_ID
+                    WHERE A.ACTIVO_ID =  %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            version = historico[2]
+            arqui = historico[3]
+            tipo = historico[4]
+            fecha_colo = historico[5]
+            operante = historico[6] 
+            historico_id = historico[7]
+            historicos.append(( activo_id, nombre_activo, version, arqui, tipo, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoHRED(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                IR.INTERFAZ_RED_NOMBRE,
+                                IR.INTERFAZ_RED_MODELO,
+                                IR.INTERFAZ_RED_MARCA,
+                                DR.MAC,
+                                DR.IP,
+                                DR.FECHA_COLOC,
+                                DR.OPERANTE,
+                                DR.DISPOSITIVO_RED_ID
+                            FROM ACTIVO A
+                            JOIN DISPOSITIVO_RED DR ON A.ACTIVO_ID = DR.ACTIVO_ID
+                            LEFT JOIN INTERFAZ_RED IR ON DR.INTERFAZ_RED_ID = IR.INTERFAZ_RED_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            IRnombre = historico[2]
+            IRmodelo = historico[3]
+            IRmarca = historico[4]
+            ip = historico[5]
+            mac = historico[6]
+            fecha_colo = historico[7]
+            operante = historico[8] 
+            historico_id = historico[9]
+            historicos.append(( activo_id, nombre_activo, IRnombre, IRmodelo, IRmarca, ip, mac, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoHV(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                            A.ACTIVO_ID,
+                            A.NOMBRE AS NOMBRE_ACTIVO,
+                            TG.TARGETA_GRAFICA_MODELO,
+                            TG.TARGETA_GRAFICA_MARCA,
+                            TG.NUM_NUCLEOS,
+                            DV.FECHA_COLOC,
+                            DV.OPERANTE,
+                            DISPO_VIDEO_ID
+                        FROM ACTIVO A
+                        JOIN DISPO_VIDEO DV ON A.ACTIVO_ID = DV.ACTIVO_ID
+                        LEFT JOIN TARGETA_GRAFICA TG ON DV.TARGETA_GARFICA_ID = TG.TARGETA_GARFICA_ID
+                        WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            TRmodelo = historico[2]
+            TRmarca = historico[3]
+            nucleos = historico[4]
+            fecha_colo = historico[5]
+            operante = historico[6] 
+            historico_id = historico[7]
+            historicos.append(( activo_id, nombre_activo, TRmodelo, TRmarca, nucleos, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
+def obtener_historicoHDD(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                HDD.NUMERO_SERIE,
+                                HDD.DISCO_DURO_MODELO,
+                                HDD.DISCO_DURO_MARCA,
+                                HDD.DISCO_DURO_CAPACIDAD,
+                                DD.FECHA_COLOC,
+                                DD.OPERANTE,
+                                DISPO_DD_ID
+                            FROM ACTIVO A
+                            JOIN DISPO_DD DD ON A.ACTIVO_ID = DD.ACTIVO_ID
+                            JOIN DISCO_DURO HDD ON DD.DISCO_DURO_ID = HDD.DISCO_DURO_ID
+                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            DDserie = historico[2]
+            DDmodelo = historico[3]
+            DDmarca = historico[4]
+            capacidad = historico[5]
+            fecha_colo = historico[6]
+            operante = historico[7] 
+            historico_id = historico[8]
+            historicos.append(( activo_id, nombre_activo, DDserie, DDmodelo, DDmarca, capacidad, fecha_colo, operante, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
     return historicos

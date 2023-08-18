@@ -157,7 +157,7 @@
                 <select id="cantidad" name="cantidad" required>
                     <option value="" disabled selected>Seleccione el número</option>
                     <!-- Generamos las opciones del menú desplegable para números del 0 al 100 usando el lenguaje de plantillas de Flask -->
-                    {% for i in range(1, 11) %} {# Aumenté el rango hasta 11 #}
+                    {% for i in range(1, 101) %} {# Aumenté el rango hasta 11 #}
                         <option value="{{ i }}" {% if i == herramienta[9] %}selected{% endif %}>{{ i }}</option>
                     {% endfor %}
                 </select>

@@ -113,7 +113,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES --></td>
+            <td>
+                <a href="{{ url_for('eliminar_hub', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -139,7 +141,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES --></td>
+            <td>
+                <a href="{{ url_for('eliminar_hrr', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -165,7 +169,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES --></td>
+            <td>
+                <a href="{{ url_for('eliminar_hri', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

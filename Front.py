@@ -400,6 +400,8 @@ def agregar_herramienta():
         serial = "N/A"
     if not descripcion:
         descripcion = "N/A"
+    if not contenido:
+        contenido = "N/A"
     if num_inventario is not None and num_inventario != '':
         num_inventario = int(num_inventario)
     else:
@@ -481,6 +483,79 @@ def SHerramientas():
         #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
         return render_template('Sherramientas.html', datos_herramientas=datos_herramientas)
 
+@app.route('/activos/herramientas/busqueda', methods=['GET', 'POST'])
+def busquedaH():
+    if 'logged_in' in session and session['logged_in']:
+        diccionario = {}
+        nombres_ubicacion = obtener_ubicaciones()
+        # Obtener los parámetros del formulario
+        num_serial = request.form.get('num_serial')
+        nombre = request.form.get('nombre')
+        num_inventario_str = request.form.get('num_inventario')
+        estado = request.form.get('estado')
+        ubicacion_str = request.form.get('ubicacion')
+        if num_serial:
+            diccionario["A.num_serial"] = num_serial
+        if nombre:
+            nombre.upper()
+            diccionario["A.nombre"] = nombre
+        if num_inventario_str:
+            num_inventario_str = int(num_inventario_str)
+            diccionario["A.num_inventario"] = num_inventario_str
+        if estado:
+            diccionario["A.estado"] = estado
+        if ubicacion_str:
+            ubicacion_str = int(ubicacion_str)
+            diccionario["(SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) "] = ubicacion_str
+
+        datos_busqueda = busqueda_herramientas(diccionario)
+        datos_procesados = []  # Lista para almacenar los resultados procesados
+        for row in datos_busqueda:
+            ubicacion_ids = row[11]
+            resguardo_ids = row[12]
+            interno_ids = row[13]
+
+            ubicacion_info_list = []
+            resguardo_info_list = []
+            interno_info_list = []
+            
+            if ubicacion_ids:
+                ubicacion_id_list = ubicacion_ids.split(",")  # Separar los IDs si no están vacíos
+                for ubicacion_id in ubicacion_id_list:
+                    ubicacion_info = consulta_ubicacion(ubicacion_id)  # Obtener la información de RAM
+                    ubicacion_info_list.append(ubicacion_info)
+            if resguardo_ids:
+                resguardo_id_list = resguardo_ids.split(",")  # Separar los IDs si no están vacíos
+                for resguardo_id in resguardo_id_list:
+                    resguardo_info = consulta_resguardo(resguardo_id)  # Obtener la información de RAM
+                    resguardo_info_list.append(resguardo_info)
+            if interno_ids:
+                interno_id_list = interno_ids.split(",")  # Separar los IDs si no están vacíos
+                for interno_id in interno_id_list:
+                    interno_info = consulta_interno(interno_id)  # Obtener la información de RAM
+                    interno_info_list.append(interno_info)
+            
+            row_dict = {
+                "FACTURA": row[0],
+                "NUM_SERIAL": row[1],
+                "NUM_INVENTARIO": row[2],
+                "ACTIVO_NOMBRE": row[3],
+                "ESTADO": row[4],
+                "MODELO_NOMBRE": row[5],
+                "FECHA_COMPRA": row[6],
+                "FECHA_CONSUMO": row[7],
+                "CANTIDAD": row[8],
+                "CONTENIDO": row[9],
+                "DESCRIPCION": row[10],
+                "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
+                "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
+                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else ""
+            }
+            datos_procesados.append(row_dict)
+        return render_template('SBherramientas.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion)
+    else:
+        return redirect(url_for('logout'))
+    
 @app.route('/eliminar_herramienta/<int:herramienta_id>')
 def eliminar_herramienta(herramienta_id):
     if 'logged_in' in session and session['logged_in']:
@@ -701,6 +776,78 @@ def SLibros():
     else:
         return redirect(url_for('logout'))
 
+@app.route('/activos/libros/busqueda', methods=['GET', 'POST'])
+def busquedaL():
+    if 'logged_in' in session and session['logged_in']:
+        diccionario = {}
+        nombres_ubicacion = obtener_ubicaciones()
+        # Obtener los parámetros del formulario
+        num_serial = request.form.get('num_serial')
+        nombre = request.form.get('nombre')
+        num_inventario_str = request.form.get('num_inventario')
+        estado = request.form.get('estado')
+        ubicacion_str = request.form.get('ubicacion')
+        if num_serial:
+            diccionario["A.num_serial"] = num_serial
+        if nombre:
+            nombre.upper()
+            diccionario["A.nombre"] = nombre
+        if num_inventario_str:
+            num_inventario_str = int(num_inventario_str)
+            diccionario["A.num_inventario"] = num_inventario_str
+        if estado:
+            diccionario["A.estado"] = estado
+        if ubicacion_str:
+            ubicacion_str = int(ubicacion_str)
+            diccionario["(SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) "] = ubicacion_str
+
+        datos_busqueda = busqueda_libros(diccionario)
+        datos_procesados = []  # Lista para almacenar los resultados procesados
+        for row in datos_busqueda:
+            ubicacion_ids = row[10]
+            resguardo_ids = row[11]
+            interno_ids = row[12]
+
+            ubicacion_info_list = []
+            resguardo_info_list = []
+            interno_info_list = []
+            
+            if ubicacion_ids:
+                ubicacion_id_list = ubicacion_ids.split(",")  # Separar los IDs si no están vacíos
+                for ubicacion_id in ubicacion_id_list:
+                    ubicacion_info = consulta_ubicacion(ubicacion_id)  # Obtener la información de RAM
+                    ubicacion_info_list.append(ubicacion_info)
+            if resguardo_ids:
+                resguardo_id_list = resguardo_ids.split(",")  # Separar los IDs si no están vacíos
+                for resguardo_id in resguardo_id_list:
+                    resguardo_info = consulta_resguardo(resguardo_id)  # Obtener la información de RAM
+                    resguardo_info_list.append(resguardo_info)
+            if interno_ids:
+                interno_id_list = interno_ids.split(",")  # Separar los IDs si no están vacíos
+                for interno_id in interno_id_list:
+                    interno_info = consulta_interno(interno_id)  # Obtener la información de RAM
+                    interno_info_list.append(interno_info)
+            
+            row_dict = {
+                "FACTURA": row[0],
+                "NUM_SERIAL": row[1],
+                "NUM_INVENTARIO": row[2],
+                "ACTIVO_NOMBRE": row[3],
+                "ESTADO": row[4],
+                "EDITORIAL": row[5],
+                "EDICION": row[6],
+                "ANIO": row[7],
+                "AUTOR": row[8],
+                "CANTIDAD": row[9],
+                "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
+                "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
+                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else ""
+            }
+            datos_procesados.append(row_dict)
+        return render_template('SBlibros.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion)
+    else:
+        return redirect(url_for('logout'))
+    
 @app.route('/editar_libro/<int:libro_id>')
 def editar_libro(libro_id):
     if 'logged_in' in session and session['logged_in']:
@@ -911,7 +1058,7 @@ def busquedaD():
             diccionario["A.estado"] = estado
         if ubicacion_str:
             ubicacion_str = int(ubicacion_str)
-            diccionario["UBICACION_ID_CONCAT"] = ubicacion_str
+            diccionario["(SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) "] = ubicacion_str
         print(diccionario)
 
         datos_busqueda = busqueda_dispos(diccionario)
@@ -927,7 +1074,7 @@ def busquedaD():
             red_ids = row[18]
             ubicacion_ids = row[19]
             resguardo_ids = row[20]
-            interno_ids = row[20]
+            interno_ids = row[21]
 
             ram_info_list = []  # Lista para almacenar la información de RAM
             so_info_list = []
@@ -1018,7 +1165,7 @@ def busquedaD():
                 "RED_INFO": "-\n".join(red_info_list) if red_info_list else "",
                 "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
-                "INTERNO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else ""
+                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else ""
             }
             datos_procesados.append(row_dict)
         return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)
@@ -1032,13 +1179,89 @@ def historico_activo(activo_id):
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
-        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+        historico_Rinterno = obtener_historicoRI(activo_id)#no necesario
         print(historico_Rinterno)
         
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
     else:
         return redirect(url_for('logout'))
+    
+@app.route('/historico_activoD/<int:activo_id>')
+def historico_activoD(activo_id):
+    if 'logged_in' in session and session['logged_in']:
+        # se deben obtener los datos para poder redirigir a seleccionar Historicos
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#si es necesario 
+        #los necesarios de DISPO INTELIGENTE:
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        print(historico_Rinterno)
+        
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, 
+                           historico_so=historico_so, historico_ram=historico_ram, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hub/<int:activo_id>/<int:historico_id>')
+def eliminar_hub(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HUB(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+        return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/eliminar_hrr/<int:activo_id>/<int:historico_id>')
+def eliminar_hrr(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HRR(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+        return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/eliminar_hri/<int:activo_id>/<int:historico_id>')
+def eliminar_hri(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HRI(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+        return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/personas/agregar_responsable_resguardo')
+def responsableR():
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('Shistoricos.html')
+    else:
+        return redirect(url_for('logout'))
+    
 
 ##############################  M A I N ############################################################################
 if __name__=='__main__':

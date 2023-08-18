@@ -92,7 +92,7 @@
     </style>
 </head>
 <body>
-    <h1>Lista de Disposotivos inteligentes</h1>
+    <h1>Lista de Dispositivos inteligentes</h1>
     <table>
         <tr>
             <!--<th>ID</th>-->
@@ -128,6 +128,7 @@
             <td>
                 <a href="{{ url_for('editar_dispo', dispo_id=dispo[0]) }}" class="btn-edit">Modificar</a>
                 <a href="{{ url_for('eliminar_dispo', dispo_id=dispo[0]) }}" class="btn-delete">Dar de baja</a>
+                <a href="{{ url_for('historico_activoD', activo_id=dispo[0]) }}" class="btn-delete">Historico</a>
             </td>
 
         </tr>
