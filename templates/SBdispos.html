@@ -213,14 +213,14 @@
                     <td>{{ row['RAM_INSTALADA'] }}</td>
                     <td>{{ row['RAM_MAX'] }}</td>
                     <td>{{ row['SUBTIPO_NOMBRE'] }}</td>
-                    <td>{{ row['RAM_INFO'] }}</td> <!-- Cambia el acceso a RAM_INFO -->
-                    <td>{{ row['SO_INFO'] }}</td>
-                    <td>{{ row['VIDEO_INFO'] }}</td>
-                    <td>{{ row['PUERTO_INFO'] }}</td>
-                    <td>{{ row['MICRO_INFO'] }}</td>
-                    <td>{{ row['ALMACENAMIENTO_INFO'] }}</td>
-                    <td>{{ row['LECTORA_INFO'] }}</td>
-                    <td>{{ row['RED_INFO'] }}</td>
+                    <td>{{ row['RAM_INFO']|safe }}</td> <!-- Cambia el acceso a RAM_INFO -->
+                    <td>{{ row['SO_INFO']|safe}}</td>
+                    <td>{{ row['VIDEO_INFO']|safe }}</td>
+                    <td>{{ row['PUERTO_INFO']|safe }}</td>
+                    <td>{{ row['MICRO_INFO']|safe }}</td>
+                    <td>{{ row['ALMACENAMIENTO_INFO']|safe }}</td>
+                    <td>{{ row['LECTORA_INFO']|safe }}</td>
+                    <td>{{ row['RED_INFO']|safe }}</td>
                     <td>{{ row['UBICACION_INFO'] }}</td>
                     <td>{{ row['RESGUARDO_INFO'] }}</td>
                     <td>{{ row['INTERNO_INFO'] }}</td>

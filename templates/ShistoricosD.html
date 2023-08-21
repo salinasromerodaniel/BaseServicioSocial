@@ -116,7 +116,7 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{{ url_for('eliminar_hub', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+                <a href="{{ url_for('eliminar_hubD', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
             </td>
         </tr>
         {% endfor %}
@@ -144,7 +144,7 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{{ url_for('eliminar_hrr', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+                <a href="{{ url_for('eliminar_hrrD', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
             </td>
         </tr>
         {% endfor %}
@@ -172,40 +172,12 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{{ url_for('eliminar_hri', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+                <a href="{{ url_for('eliminar_hriD', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
             </td>
         </tr>
         {% endfor %}
     </table>
 
-    <h1><br>Historico de responsables de resguardo</h1>
-    <table>
-        <tr>
-            <!--<th>ID</th>-->
-            <th>Resguardante</th>
-            <th>Fecha de cambio</th>
-            <th>Operante</th>
-            <th>Operaciones</th> 
-        </tr>
-        {% for historico in historico_resguardante %}
-        <tr>
-            <!--<td>{{ historico[0] }}</td>-->
-            <td>{{ historico[3] }}</td>
-            <td>{{ historico[2] }}</td>
-            <td>
-                {% if historico[4] == 1 %}
-                    ACTIVO
-                {% else %}
-                    INACTIVO
-                {% endif %}
-            </td>
-            <td>
-                <a href="{{ url_for('eliminar_hrr', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    
     <h1><br>Historico de sistemas operativos</h1>
     <table>
         <tr>
@@ -231,7 +203,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hso', activo_id=historico[0], historico_id=historico[7]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -261,7 +235,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hram', activo_id=historico[0], historico_id=historico[7]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -295,7 +271,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hred', activo_id=historico[0], historico_id=historico[9]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -318,15 +296,16 @@
             <td>{{ historico[3] }}</td>
             <td>{{ historico[4] }}</td>
             <td>{{ historico[5] }}</td>
-            <td>{{ historico[6] }}</td>
             <td>
-                {% if historico[7] == 1 %}
+                {% if historico[6] == 1 %}
                     ACTIVO
                 {% else %}
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_htg', activo_id=historico[0], historico_id=historico[7]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -358,7 +337,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hdd', activo_id=historico[0], historico_id=historico[8]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -388,7 +369,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hmi', activo_id=historico[0], historico_id=historico[7]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -420,7 +403,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hul', activo_id=historico[0], historico_id=historico[8]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -446,7 +431,9 @@
                     INACTIVO
                 {% endif %}
             </td>
-            <td><!-- FALTAN LAS OPERACIONES--></td>
+            <td>
+                <a href="{{ url_for('eliminar_hpu', activo_id=historico[0], historico_id=historico[5]) }}" class="btn-delete">Dar de baja</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

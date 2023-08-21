@@ -919,6 +919,49 @@ def obtener_dispoID(id_especifico):
         print("Error al obtener los dispos:", e)
     return dispos
 
+def obtener_ubicacionID(activo_id):
+    ubicacion_id = None  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute(f"SELECT UBICACION_ID FROM HISTORICO_ACTIVO_UBICACION WHERE ACTIVO_ID = {activo_id} AND OPERANTE = 1")
+        # Obtiene el resultado de la consulta
+        row = cursor.fetchone()
+        if row:
+            ubicacion_id = row[0]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener la ubicación con base en el activo:", e)
+    return ubicacion_id
+
+def modificar_ubicacion(activo_id, nuevo_id, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        # Primero, actualiza el registro anterior
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_UBICACION SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND OPERANTE = 1")
+        
+        # Luego, inserta el nuevo registro
+        insert_ubicacion_nuevo = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"
+        cursor.execute(insert_ubicacion_nuevo, (fecha_modificacion, nuevo_id, activo_id, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar la ubicación del activo:", e)
+
+
+
 def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo):
     try:
@@ -1113,7 +1156,6 @@ def busqueda_dispos(diccionario=None):
             WHERE 
         """
         cantidad = len(diccionario)
-        print(diccionario)
         if cantidad == 0:
             query += " 1"
         else:
@@ -1126,7 +1168,6 @@ def busqueda_dispos(diccionario=None):
                 if i < len(diccionario) - 1:
                     query += " AND "
         
-        print(query)
         
         query += " GROUP BY A.ACTIVO_ID"
         cursor.execute(query)
@@ -1231,7 +1272,7 @@ def consulta_ram(ram_id):
         ram_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if ram_data:
-            ram_info = f"{ram_data['MARCA']} {ram_data['NUM_SERIE']} {ram_data['CAPACIDAD']}GiB {ram_data['TIPO_RAM_NOMBRE']}\n"
+            ram_info = f"{ram_data['MARCA']} {ram_data['NUM_SERIE']} {ram_data['CAPACIDAD']}GiB {ram_data['TIPO_RAM_NOMBRE']}"
         
         cursor.close()
         conn.close()
@@ -1248,7 +1289,7 @@ def consulta_so(so_id):
         so_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if so_data:
-            so_info = f"{so_data['NOMBRE']} {so_data['NUM_VERSION']}, {so_data['ARQUITECTURA']}\n"
+            so_info = f"{so_data['NOMBRE']} {so_data['NUM_VERSION']} de {so_data['ARQUITECTURA']}"
         
         cursor.close()
         conn.close()
@@ -1265,7 +1306,7 @@ def consulta_video(video_id):
         video_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if video_data:
-            video_info = f"{video_data['TARGETA_GRAFICA_MARCA']} {video_data['TARGETA_GRAFICA_MODELO']} {video_data['TIPO_TARGETA_GRAFICA_NOMBRE']} {video_data['TIPO_PCI_NOMBRE']}\n"
+            video_info = f"{video_data['TARGETA_GRAFICA_MARCA']} {video_data['TARGETA_GRAFICA_MODELO']} {video_data['TIPO_TARGETA_GRAFICA_NOMBRE']} {video_data['TIPO_PCI_NOMBRE']}"
         
         cursor.close()
         conn.close()
@@ -1282,7 +1323,7 @@ def consulta_puerto(puerto_id):
         puerto_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if puerto_data:
-            puerto_info = f"{puerto_data['PUERTO_NOMBRE']}\n"
+            puerto_info = f"{puerto_data['PUERTO_NOMBRE']}"
         
         cursor.close()
         conn.close()
@@ -1299,7 +1340,7 @@ def consulta_micro(micro_id):
         micro_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if micro_data:
-            micro_info = f"{micro_data['NOMBRE']} {micro_data['ARQUITECTURA']} {micro_data['GENERACION']} {micro_data['MARCA_NOMBRE']}\n"
+            micro_info = f"{micro_data['NOMBRE']} {micro_data['ARQUITECTURA']} {micro_data['GENERACION']} {micro_data['MARCA_NOMBRE']}"
         
         cursor.close()
         conn.close()
@@ -1316,7 +1357,7 @@ def consulta_almacenamiento(almacenamiento_id):
         almacenamiento_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if almacenamiento_data:
-            almacenamiento_info = f"{almacenamiento_data['NUMERO_SERIE']} {almacenamiento_data['DISCO_DURO_MARCA']} {almacenamiento_data['DISCO_DURO_MODELO']} {almacenamiento_data['DISCO_DURO_CAPACIDAD']}GiB\n"
+            almacenamiento_info = f"{almacenamiento_data['NUMERO_SERIE']} {almacenamiento_data['DISCO_DURO_MARCA']} {almacenamiento_data['DISCO_DURO_MODELO']} {almacenamiento_data['DISCO_DURO_CAPACIDAD']}GiB"
         
         cursor.close()
         conn.close()
@@ -1333,7 +1374,7 @@ def consulta_lectora(lectora_id):
         lectora_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if lectora_data:
-            lectora_info = f"{lectora_data['TIPO_UNIDAD_LECTORA_NOMBRE']} {lectora_data['UNIDAD_LECTORA_MODELO']} {lectora_data['UNIDAD_LECTORA_MARCA']}\n"
+            lectora_info = f"{lectora_data['TIPO_UNIDAD_LECTORA_NOMBRE']} {lectora_data['UNIDAD_LECTORA_MODELO']} {lectora_data['UNIDAD_LECTORA_MARCA']}"
         
         cursor.close()
         conn.close()
@@ -1350,7 +1391,7 @@ def consulta_red(red_id):
         red_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if red_data:
-            red_info = f"{red_data['INTERFAZ_RED_NOMBRE']} {red_data['INTERFAZ_RED_MODELO']} {red_data['INTERFAZ_RED_MARCA']} {red_data['INTEG_O_EXTERN']} {red_data['NOMBRE']}\n"
+            red_info = f"{red_data['INTERFAZ_RED_NOMBRE']} {red_data['INTERFAZ_RED_MODELO']} {red_data['INTERFAZ_RED_MARCA']} {red_data['INTEG_O_EXTERN']} {red_data['NOMBRE']}"
         
         cursor.close()
         conn.close()
@@ -1401,7 +1442,7 @@ def consulta_interno(interno_id):
         interno_data = cursor.fetchone()  # Obtener el resultado de la consulta como un diccionario
         
         if interno_data:
-            interno_info = f"{interno_data['NOMBRE']} {interno_data['AP_PATERNO']} {interno_data['AP_MATERNO']}\n"
+            interno_info = f"{interno_data['NOMBRE']} {interno_data['AP_PATERNO']} {interno_data['AP_MATERNO']}"
         
         cursor.close()
         conn.close()
@@ -1651,6 +1692,25 @@ def obtener_historicoHRAM(activo_id):
         print("Error al obtener los valores:", e)
     return historicos
 
+def eliminar_HRAM(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_RAM SET OPERANTE = 0 WHERE DISPO_RAM_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
 def obtener_historicoHSO(activo_id):
     historicos = []
     try:
@@ -1689,6 +1749,25 @@ def obtener_historicoHSO(activo_id):
     except mysql.connector.Error as e:
         print("Error al obtener los valores:", e)
     return historicos
+
+def eliminar_HSO(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_SO SET OPERANTE = 0 WHERE DISPO_SO_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
 
 def obtener_historicoHRED(activo_id):
     historicos = []
@@ -1732,6 +1811,25 @@ def obtener_historicoHRED(activo_id):
         print("Error al obtener los valores:", e)
     return historicos
 
+def eliminar_HRED(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPOSITIVO_RED SET OPERANTE = 0 WHERE DISPOSITIVO_RED_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
 def obtener_historicoHV(activo_id):
     historicos = []
     try:
@@ -1769,6 +1867,25 @@ def obtener_historicoHV(activo_id):
     except mysql.connector.Error as e:
         print("Error al obtener los valores:", e)
     return historicos
+
+def eliminar_HV(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_VIDEO SET OPERANTE = 0 WHERE DISPO_VIDEO_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
 
 def obtener_historicoHDD(activo_id):
     historicos = []
@@ -1810,6 +1927,25 @@ def obtener_historicoHDD(activo_id):
         print("Error al obtener los valores:", e)
     return historicos
 
+def eliminar_HDD(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_DD SET OPERANTE = 0 WHERE DISPO_DD_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
 def obtener_historicoHM(activo_id):
     historicos = []
     try:
@@ -1847,6 +1983,25 @@ def obtener_historicoHM(activo_id):
     except mysql.connector.Error as e:
         print("Error al obtener los valores:", e)
     return historicos
+
+def eliminar_HM(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_MICRO SET OPERANTE = 0 WHERE DISPO_MICRO_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
 
 def obtener_historicoUL(activo_id):
     historicos = []
@@ -1889,6 +2044,25 @@ def obtener_historicoUL(activo_id):
         print("Error al obtener los valores:", e)
     return historicos
 
+def eliminar_HUL(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_LECTORA SET OPERANTE = 0 WHERE DISPO_LECTORA_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
 def obtener_historicoP(activo_id):
     historicos = []
     try:
@@ -1922,3 +2096,22 @@ def obtener_historicoP(activo_id):
     except mysql.connector.Error as e:
         print("Error al obtener los valores:", e)
     return historicos
+
+def eliminar_HP(historico_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Sentencia SQL para eliminar el libro con el libro_id proporcionado
+        #delete_query = "DELETE FROM LIBRO WHERE ACTIVO_ID = %s" #esto elimina el registro
+        delete_query = " UPDATE DISPO_PUERTO SET OPERANTE = 0 WHERE DISPO_PUERTO_ID = %s"
+        # Ejecuta la eliminación con el libro_id proporcionado
+        cursor.execute(delete_query, (historico_id,))
+        # Confirma los cambios en la base de datos
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar historico:", e)
+        # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)

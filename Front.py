@@ -2,6 +2,8 @@ import mysql.connector
 from database import *
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import g
+from collections import defaultdict
+import re
 import datetime
 
 app = Flask(__name__)
@@ -296,10 +298,13 @@ def eliminar_dispo(dispo_id):
 def editar_dispo(dispo_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar libros
-        obtener_dispoIDs = obtener_dispoID(dispo_id) #si lo imprime
+        nombres_ubicacion = obtener_ubicaciones()
+        obtener_dispoIDs = obtener_dispoID(dispo_id)
+        obtener_ubicacion_original = obtener_ubicacionID(dispo_id)
         nombres_subtipo = obtener_nombres_subtipo()
         nombres_modelo = obtener_info_modelo()
-        return render_template('Udispos.html', obtener_dispoIDs=obtener_dispoIDs, nombres_subtipo=nombres_subtipo,nombres_modelo=nombres_modelo)
+        return render_template('Udispos.html', obtener_dispoIDs=obtener_dispoIDs, nombres_subtipo=nombres_subtipo,nombres_modelo=nombres_modelo,
+                               obtener_ubicacion_original=obtener_ubicacion_original, nombres_ubicacion=nombres_ubicacion)
     else:
         return redirect(url_for('logout'))
     
@@ -312,11 +317,16 @@ def modificar_dispo(dispo_id):
     nombre = request.form.get('nombre').upper()
     estado = request.form.get('estado').upper()
     modelo = request.form.get('modelo')
-    caracteristicas = request.form.get('caracterisiticas')
+    caracteristicas = request.form.get('caracteristicas')
     num_procesadores = request.form.get('num_procesadores')
     ram_instalada = request.form.get('iram_instalada')
     ram_maxima = request.form.get('tram_maxima')
     subtipo = request.form.get('subtipo')
+    ubicacion_original = int(obtener_ubicacionID(dispo_id))
+    ubicacion_nueva = int(request.form.get('ubicacion'))
+    fecha_modificacion = datetime.date.today()
+    if ubicacion_original != ubicacion_nueva:
+        modificar_ubicacion(dispo_id, ubicacion_nueva, fecha_modificacion)
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
@@ -1037,6 +1047,14 @@ def micro():
 def busquedaD():
     if 'logged_in' in session and session['logged_in']:
         diccionario = {}
+        conteo_puertos = defaultdict(int)
+        conteo_lectora = defaultdict(int)
+        conteo_so = defaultdict(int)
+        conteo_ram = defaultdict(int)
+        conteo_micro = defaultdict(int)
+        conteo_almacenamiento = defaultdict(int)
+        conteo_red = defaultdict(int)
+        conteo_video = defaultdict(int)
         nombres_ubicacion = obtener_ubicaciones()
         nombres_modelo = obtener_info_modelo()
         # Obtener los parámetros del formulario
@@ -1045,7 +1063,6 @@ def busquedaD():
         num_inventario_str = request.form.get('num_inventario')
         estado = request.form.get('estado')
         ubicacion_str = request.form.get('ubicacion')
-        print(num_serial)
         if modelo:
             modelo = int(modelo)
             diccionario["A.modelo_id"] = modelo
@@ -1059,7 +1076,6 @@ def busquedaD():
         if ubicacion_str:
             ubicacion_str = int(ubicacion_str)
             diccionario["(SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) "] = ubicacion_str
-        print(diccionario)
 
         datos_busqueda = busqueda_dispos(diccionario)
         datos_procesados = []  # Lista para almacenar los resultados procesados
@@ -1092,41 +1108,121 @@ def busquedaD():
                 for ram_id in ram_id_list:
                     ram_info = consulta_ram(ram_id)  # Obtener la información de RAM
                     ram_info_list.append(ram_info)  # Agregar la información a la lista
+            conteo_ram = {}
+            for ram in ram_info_list:
+                conteo_ram[ram] = conteo_ram.get(ram, 0) + 1
+            nueva_lista_ram = []
+            for ram, conteo in conteo_ram.items():
+                if conteo > 1:
+                    nueva_lista_ram.append(f"{conteo}: {ram}")
+                else:
+                    nueva_lista_ram.append(f"1: {ram}")
+            ram_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_ram]
             if so_ids:
                 so_id_list = so_ids.split(",")  # Separar los IDs si no están vacíos
                 for so_id in so_id_list:
                     so_info = consulta_so(so_id)  # Obtener la información de RAM
                     so_info_list.append(so_info)
+            conteo_so = {}
+            for so in so_info_list:
+                conteo_so[so] = conteo_so.get(so, 0) + 1
+            nueva_lista_so = []
+            for so, conteo in conteo_so.items():
+                if conteo > 1:
+                    nueva_lista_so.append(f"{conteo}: {so}")
+                else:
+                    nueva_lista_so.append(f"1: {so}")
+            so_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_so]
             if video_ids:
                 video_id_list = video_ids.split(",")  # Separar los IDs si no están vacíos
                 for video_id in video_id_list:
                     video_info = consulta_video(video_id)  # Obtener la información de RAM
                     video_info_list.append(video_info)
+            conteo_video = {}
+            for video in video_info_list:
+                conteo_video[video] = conteo_video.get(video, 0) + 1
+            nueva_lista_video = []
+            for video, conteo in conteo_video.items():
+                if conteo > 1:
+                    nueva_lista_video.append(f"{conteo}: {video}")
+                else:
+                    nueva_lista_video.append(f"1: {video}")
+            video_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_video]
             if puerto_ids:
                 puerto_id_list = puerto_ids.split(",")  # Separar los IDs si no están vacíos
                 for puerto_id in puerto_id_list:
                     puerto_info = consulta_puerto(puerto_id)  # Obtener la información de RAM
                     puerto_info_list.append(puerto_info)
+            conteo_puertos = {}
+            for puerto in puerto_info_list:
+                conteo_puertos[puerto] = conteo_puertos.get(puerto, 0) + 1
+            nueva_lista_puertos = []
+            for puerto, conteo in conteo_puertos.items():
+                if conteo > 1:
+                    nueva_lista_puertos.append(f"{conteo}: {puerto}")
+                else:
+                    nueva_lista_puertos.append(f"1: {puerto}")
+            puerto_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_puertos]
             if micro_ids:
                 micro_id_list = micro_ids.split(",")  # Separar los IDs si no están vacíos
                 for micro_id in micro_id_list:
                     micro_info = consulta_micro(micro_id)  # Obtener la información de RAM
                     micro_info_list.append(micro_info)
+            conteo_micro = {}
+            for micro in micro_info_list:
+                conteo_micro[micro] = conteo_micro.get(micro, 0) + 1
+            nueva_lista_micro = []
+            for micro, conteo in conteo_micro.items():
+                if conteo > 1:
+                    nueva_lista_micro.append(f"{conteo}: {micro}")
+                else:
+                    nueva_lista_micro.append(f"1: {micro}")
+            micro_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_micro]
             if almacenamiento_ids:
                 almacenamiento_id_list = almacenamiento_ids.split(",")  # Separar los IDs si no están vacíos
                 for almacenamiento_id in almacenamiento_id_list:
                     almacenamiento_info = consulta_almacenamiento(almacenamiento_id)  # Obtener la información de RAM
                     almacenamiento_info_list.append(almacenamiento_info)
+            conteo_almacenamiento = {}
+            for almacenamiento in almacenamiento_info_list:
+                conteo_almacenamiento[almacenamiento] = conteo_almacenamiento.get(almacenamiento, 0) + 1
+            nueva_lista_almacenamiento = []
+            for almacenamiento, conteo in conteo_almacenamiento.items():
+                if conteo > 1:
+                    nueva_lista_almacenamiento.append(f"{conteo}: {almacenamiento}")
+                else:
+                    nueva_lista_almacenamiento.append(f"1: {almacenamiento}")
+            almacenamiento_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_almacenamiento]
             if lectora_ids:
                 lectora_id_list = lectora_ids.split(",")  # Separar los IDs si no están vacíos
                 for lectora_id in lectora_id_list:
                     lectora_info = consulta_lectora(lectora_id)  # Obtener la información de RAM
                     lectora_info_list.append(lectora_info)
+            conteo_lectora = {}
+            for lectora in lectora_info_list:
+                conteo_lectora[lectora] = conteo_lectora.get(lectora, 0) + 1
+            nueva_lista_lectora = []
+            for lectora, conteo in conteo_lectora.items():
+                if conteo > 1:
+                    nueva_lista_lectora.append(f"{conteo}: {lectora}")
+                else:
+                    nueva_lista_lectora.append(f"1: {lectora}")
+            lectora_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_lectora]
             if red_ids:
                 red_id_list = red_ids.split(",")  # Separar los IDs si no están vacíos
                 for red_id in red_id_list:
                     red_info = consulta_red(red_id)  # Obtener la información de RAM
                     red_info_list.append(red_info)
+            conteo_red = {}
+            for red in red_info_list:
+                conteo_red[red] = conteo_red.get(red, 0) + 1
+            nueva_lista_red = []
+            for red, conteo in conteo_red.items():
+                if conteo > 1:
+                    nueva_lista_red.append(f"{conteo}: {red}")
+                else:
+                    nueva_lista_red.append(f"1: {red}")
+            red_info_modificado = [re.sub(r'(\d+:)', r'<strong>\1</strong>', item) for item in nueva_lista_red]
             if ubicacion_ids:
                 ubicacion_id_list = ubicacion_ids.split(",")  # Separar los IDs si no están vacíos
                 for ubicacion_id in ubicacion_id_list:
@@ -1155,17 +1251,17 @@ def busquedaD():
                 "RAM_INSTALADA": row[8],
                 "RAM_MAX": row[9],
                 "SUBTIPO_NOMBRE": row[10],
-                "RAM_INFO": "-\n".join(ram_info_list) if ram_info_list else "",  # Unir la información de RAM con saltos de línea
-                "SO_INFO": "-\n".join(so_info_list) if so_info_list else "",
-                "VIDEO_INFO": "-\n".join(video_info_list) if video_info_list else "",
-                "PUERTO_INFO": "-\n".join(puerto_info_list) if puerto_info_list else "",
-                "MICRO_INFO": "-\n".join(micro_info_list) if micro_info_list else "",
-                "ALMACENAMIENTO_INFO": "-\n".join(almacenamiento_info_list) if almacenamiento_info_list else "",
-                "LECTORA_INFO": "-\n".join(lectora_info_list) if lectora_info_list else "",
-                "RED_INFO": "-\n".join(red_info_list) if red_info_list else "",
+                "RAM_INFO": ", ".join(ram_info_modificado) if ram_info_modificado else "",
+                "SO_INFO": ", ".join(so_info_modificado) if so_info_modificado else "",
+                "VIDEO_INFO": ", ".join(video_info_modificado) if video_info_modificado else "",
+                "PUERTO_INFO": ", ".join(puerto_info_modificado) if puerto_info_modificado else "",
+                "MICRO_INFO": ", ".join(micro_info_modificado) if micro_info_modificado else "",
+                "ALMACENAMIENTO_INFO": ", ".join(almacenamiento_info_modificado) if almacenamiento_info_modificado else "",
+                "LECTORA_INFO": ", ".join(lectora_info_modificado) if lectora_info_modificado else "",
+                "RED_INFO": ", ".join(red_info_modificado) if red_info_modificado else "",
                 "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
-                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else ""
+                "INTERNO_INFO": ", ".join(interno_info_list) if interno_info_list else ""
             }
             datos_procesados.append(row_dict)
         return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)
@@ -1226,7 +1322,32 @@ def eliminar_hub(activo_id, historico_id):
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
     else:
         return redirect(url_for('logout'))
-    
+
+@app.route('/eliminar_hubD/<int:activo_id>/<int:historico_id>')
+def eliminar_hubD(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HUB(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
 @app.route('/eliminar_hrr/<int:activo_id>/<int:historico_id>')
 def eliminar_hrr(activo_id, historico_id):
     if 'logged_in' in session and session['logged_in']:
@@ -1237,8 +1358,35 @@ def eliminar_hrr(activo_id, historico_id):
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/eliminar_hrrD/<int:activo_id>/<int:historico_id>')
+def eliminar_hrrD(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HRR(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
     else:
         return redirect(url_for('logout'))
     
@@ -1254,6 +1402,240 @@ def eliminar_hri(activo_id, historico_id):
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/eliminar_hriD/<int:activo_id>/<int:historico_id>')
+def eliminar_hriD(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HRI(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hso/<int:activo_id>/<int:historico_id>')
+def eliminar_hso(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HSO(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hram/<int:activo_id>/<int:historico_id>')
+def eliminar_hram(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HRAM(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hred/<int:activo_id>/<int:historico_id>')
+def eliminar_hred(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HRED(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_htg/<int:activo_id>/<int:historico_id>')
+def eliminar_htg(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HV(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hdd/<int:activo_id>/<int:historico_id>')
+def eliminar_hdd(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HDD(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hmi/<int:activo_id>/<int:historico_id>')
+def eliminar_hmi(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HM(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+
+@app.route('/eliminar_hul/<int:activo_id>/<int:historico_id>')
+def eliminar_hul(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HUL(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+    else:
+        return redirect(url_for('logout'))
+    
+@app.route('/eliminar_hpu/<int:activo_id>/<int:historico_id>')
+def eliminar_hpu(activo_id, historico_id):
+    if 'logged_in' in session and session['logged_in']:
+        #Eliminacion del registro indiciado (no tiene confirmacion)
+        eliminar_HP(historico_id)
+        # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_ubicaciones = obtener_historicoUB(activo_id)
+        historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
+        historico_resguardante = obtener_historicoRR(activo_id)
+        historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
+
+        historico_ram = obtener_historicoHRAM(activo_id)
+        historico_so = obtener_historicoHSO(activo_id)
+        historico_red = obtener_historicoHRED(activo_id)
+        historico_tg = obtener_historicoHV(activo_id)
+        historico_dd = obtener_historicoHDD(activo_id)
+        historico_Mi = obtener_historicoHM(activo_id)
+        historico_ul = obtener_historicoUL(activo_id)
+        historico_pu = obtener_historicoP(activo_id)
+        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
+                           historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
     else:
         return redirect(url_for('logout'))
 
