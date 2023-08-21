@@ -1,5 +1,5 @@
 # database.py
-
+import datetime
 import mysql.connector
 db_config = {
     'host': 'localhost',
@@ -31,6 +31,12 @@ def insertar_dispoI(factura, serial, num_inventario, subtipo, nombre,
         values_dispo = (activo_id, caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = ("ACTIVO", fecha_ram, 1, activo_id)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Insertar en la tabla DISPO_SO para cada ID de sistema operativo
         if sistema_operativo_ids:
             insert_dispo_so_query = "INSERT INTO DISPO_SO (ACTIVO_ID, SISTEMA_OPERATIVO_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
@@ -473,6 +479,12 @@ def insertar_dispoH(factura, serial, num_inventario, nombre,
         values_dispo = (activo_id, fecha_compra,consumo, cantidad, contenido, descripcion)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = ("ACTIVO", fecha_compra, cantidad, activo_id)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirmar las inserciones en la base de datos
         insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
         cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id, 1))
@@ -521,6 +533,12 @@ def insertar_dispoL(factura, serial, num_inventario, nombre,
         values_dispo = (activo_id, editorial, edicion, anio, autor, cantidad)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(insert_dispo_query, values_dispo)
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = ("ACTIVO", fecha_compra, cantidad, activo_id)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirmar las inserciones en la base de datos
         insert_dispo_ubicacion_query = "INSERT INTO HISTORICO_ACTIVO_UBICACION(FECHA_CAMBIO, UBICACION_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"    
         cursor.execute(insert_dispo_ubicacion_query, (fecha_compra, ubicacion, activo_id, 1))
@@ -606,6 +624,14 @@ def eliminar_libros(libro_id):
         delete_query = " UPDATE ACTIVO SET ESTADO = 'BAJA' WHERE ACTIVO_ID = %s"
         # Ejecuta la eliminación con el libro_id proporcionado
         cursor.execute(delete_query, (libro_id,))
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        #establecer fecha de hoy
+        fecha_modificacion = datetime.date.today()
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = ('BAJA', fecha_modificacion, 0, libro_id)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirma los cambios en la base de datos
         conn.commit()
         # Cierra el cursor y la conexión a la base de datos
@@ -676,6 +702,14 @@ def modificar_dispoL(id_activo, factura, serial, num_inventario, nombre, estado,
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(update_libro_query, values_libro)
         # Confirmar las inserciones en la base de datos
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        #establecer fecha de hoy
+        fecha_modificacion = datetime.date.today()
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = (estado, fecha_modificacion, cantidad, id_activo)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         conn.commit()
         # Cerrar el cursor y la conexión
         cursor.close()
@@ -744,6 +778,14 @@ def eliminar_herramientas(herramienta_id):
         delete_query = " UPDATE ACTIVO SET ESTADO = 'BAJA' WHERE ACTIVO_ID = %s"
         # Ejecuta la eliminación con el libro_id proporcionado
         cursor.execute(delete_query, (herramienta_id,))
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        #establecer fecha de hoy
+        fecha_modificacion = datetime.date.today()
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = ('BAJA', fecha_modificacion, 0, herramienta_id)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirma los cambios en la base de datos
         conn.commit()
         # Cierra el cursor y la conexión a la base de datos
@@ -813,6 +855,14 @@ def modificar_dispoH(id_activo, factura, serial, num_inventario, nombre, estado,
         values_herramienta = ( fecha_compra, fecha_consumo, cantidad, contenido, descripcion, id_activo)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(update_herr_query, values_herramienta)
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        #establecer fecha de hoy
+        fecha_modificacion = datetime.date.today()
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = (estado, fecha_modificacion, cantidad, id_activo)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión
@@ -870,6 +920,14 @@ def eliminar_dispos(dispo_id):
         delete_query = " UPDATE ACTIVO SET ESTADO = 'BAJA' WHERE ACTIVO_ID = %s"
         # Ejecuta la eliminación con el libro_id proporcionado
         cursor.execute(delete_query, (dispo_id,))
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        #establecer fecha de hoy
+        fecha_modificacion = datetime.date.today()
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = ('BAJA', fecha_modificacion, 0, dispo_id)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirma los cambios en la base de datos
         conn.commit()
         # Cierra el cursor y la conexión a la base de datos
@@ -960,10 +1018,8 @@ def modificar_ubicacion(activo_id, nuevo_id, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar la ubicación del activo:", e)
 
-
-
 def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
-                    caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo):
+                    caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion):
     try:
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
@@ -981,6 +1037,12 @@ def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado,
         values_dispo = ( caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, id_activo)
         # Ejecutar la consulta de inserción en la tabla DISPO_INTELIGENTE
         cursor.execute(update_dispo_query, values_dispo)
+        # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        # Definir los valores para la inserción en la tabla CAMBIO_EDO
+        values_cambio = (estado, fecha_modificacion, 1, id_activo)
+        # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+        cursor.execute(insert_cambio_query, values_cambio)
         # Confirmar las inserciones en la base de datos
         conn.commit()
         # Cerrar el cursor y la conexión

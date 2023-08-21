@@ -349,7 +349,7 @@ def modificar_dispo(dispo_id):
     # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
     return redirect(url_for('mostrar_ModificacionD', dispo_id=dispo_id, factura=factura, serial=serial, num_inventario=num_inventario,
                             nombre=nombre, estado=estado, modelo=modelo, caracteristicas=caracteristicas, num_procesadores=num_procesadores,
-                            ram_instalada=ram_instalada, ram_maxima=ram_maxima, subtipo=subtipo))
+                            ram_instalada=ram_instalada, ram_maxima=ram_maxima, subtipo=subtipo, fecha_modificacion=fecha_modificacion))
 
 @app.route('/mostrar_ModificacionD')
 def mostrar_ModificacionD():
@@ -366,14 +366,15 @@ def mostrar_ModificacionD():
     ram_instalada = int(request.args.get('ram_instalada'))
     ram_maxima = int(request.args.get('ram_maxima'))
     subtipo = int(request.args.get('subtipo'))
+    fecha_modificacion = request.args.get('fecha_modificacion')
 
     modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
-                    caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo)
+                    caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion)
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('resultadoUpdD.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
                            nombre=nombre, estado=estado, modelo=modelo, caracteristicas=caracteristicas, num_procesadores=num_procesadores,
-                           ram_instalada=ram_instalada, ram_maxima=ram_maxima, subtipo=subtipo)
+                           ram_instalada=ram_instalada, ram_maxima=ram_maxima, subtipo=subtipo, fecha_modificacion=fecha_modificacion)
 
 @app.route('/agregar_herramientas', methods=['POST'])
 def agregar_herramienta():

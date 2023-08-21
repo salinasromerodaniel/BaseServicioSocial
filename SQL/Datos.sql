@@ -592,15 +592,13 @@ WHERE A.ACTIVO_ID = {activo_id};
 
 
 ------------------------------
-CREATE TABLE CAMBIO_EDO(
-    CAMBIO_EDO_ID   INT   NOT NULL AUTO_INCREMENT,
-    ESTADO          VARCHAR(20)     NOT NULL,
-    FECHA_CAMBIO    DATE    NOT NULL,
-    CANTIDAD        CANTIDAD        DECIMAL(3, 0)   NOT NULL,
-    ACTIVO_ID       INT,
-    PRIMARY KEY(CAMBIO_EDO_ID)
-);
 
-ALTER TABLE CAMBIO_EDO ADD CONSTRAINT FK_CAMBIO_EDO_ACTIVO
-    FOREIGN KEY (ACTIVO_ID)
-    REFERENCES ACTIVO(ACTIVO_ID);
+
+# Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
+insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+#establecer fecha de hoy
+fecha_modificacion = datetime.date.today()
+# Definir los valores para la inserción en la tabla CAMBIO_EDO
+values_cambio = ('BAJA', fecha_modificacion, 0, herramienta_id)
+# Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
+cursor.execute(insert_cambio_query, values_cambio)
