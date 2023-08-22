@@ -2177,3 +2177,36 @@ def eliminar_HP(historico_id):
     except mysql.connector.Error as e:
         print("Error al modificar historico:", e)
         # Maneja el error adecuadamente (puedes levantar una excepción o imprimir un mensaje)
+
+def obtener_historicoC(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT
+                                A.ACTIVO_ID,
+                                A.NOMBRE AS NOMBRE_ACTIVO,
+                                CE.ESTADO,
+                                CE.FECHA_CAMBIO,
+                                CE.CANTIDAD,
+                                CAMBIO_EDO_ID
+                            FROM ACTIVO A
+                            JOIN CAMBIO_EDO CE ON A.ACTIVO_ID = CE.ACTIVO_ID
+                            WHERE A.ACTIVO_ID = %s;""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            activo_id = historico[0]
+            nombre_activo = historico[1]
+            estado = historico[2]
+            fecha_cam = historico[3]
+            cantidad = historico[4]
+            historico_id = historico[5]
+            historicos.append(( activo_id, nombre_activo, estado, fecha_cam, cantidad, historico_id))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos

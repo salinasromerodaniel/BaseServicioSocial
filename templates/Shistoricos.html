@@ -92,6 +92,24 @@
     </style>
 </head>
 <body>
+    <h1>Historico de cambios</h1>
+    <table>
+        <tr>
+            <!--<th>ID</th>-->
+            <th>Estado</th>
+            <th>Fecha de cambio</th>
+            <th>Cantidad</th>
+        </tr>
+        {% for historico in historico_cambios %}
+        <tr>
+            <!--<td>{{ historico[0] }}</td>-->
+            <td>{{ historico[2] }}</td>
+            <td>{{ historico[3] }}</td>
+            <td>{{ historico[4] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
     <h1>Historico de ubicaciones</h1>
     <table>
         <tr>

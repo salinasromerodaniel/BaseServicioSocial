@@ -602,3 +602,16 @@ fecha_modificacion = datetime.date.today()
 values_cambio = ('BAJA', fecha_modificacion, 0, herramienta_id)
 # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
 cursor.execute(insert_cambio_query, values_cambio)
+
+
+-- cambio_edo
+SELECT
+    A.ACTIVO_ID,
+    A.NOMBRE AS NOMBRE_ACTIVO,
+    CE.ESTADO,
+    CE.FECHA_CAMBIO,
+    CE.CANTIDAD,
+    CAMBIO_EDO_ID
+FROM ACTIVO A
+JOIN CAMBIO_EDO CE ON A.ACTIVO_ID = CE.ACTIVO_ID
+WHERE A.ACTIVO_ID = %s;

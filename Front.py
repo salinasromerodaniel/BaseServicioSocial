@@ -1273,6 +1273,7 @@ def busquedaD():
 def historico_activo(activo_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar Historicos
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
@@ -1280,7 +1281,7 @@ def historico_activo(activo_id):
         print(historico_Rinterno)
         
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
-                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
     
@@ -1288,6 +1289,7 @@ def historico_activo(activo_id):
 def historico_activoD(activo_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar Historicos
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
@@ -1305,7 +1307,7 @@ def historico_activoD(activo_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, 
                            historico_so=historico_so, historico_ram=historico_ram, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1315,12 +1317,13 @@ def eliminar_hub(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HUB(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
-                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1330,6 +1333,7 @@ def eliminar_hubD(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HUB(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
@@ -1345,7 +1349,7 @@ def eliminar_hubD(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1355,13 +1359,14 @@ def eliminar_hrr(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HRR(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
 
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
-                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
     
@@ -1371,11 +1376,11 @@ def eliminar_hrrD(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HRR(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1387,7 +1392,7 @@ def eliminar_hrrD(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
     
@@ -1397,12 +1402,13 @@ def eliminar_hri(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HRI(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
         return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
-                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno)
+                           historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
     
@@ -1412,11 +1418,11 @@ def eliminar_hriD(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HRI(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para 
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1428,7 +1434,7 @@ def eliminar_hriD(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1438,11 +1444,11 @@ def eliminar_hso(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HSO(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1454,7 +1460,7 @@ def eliminar_hso(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1464,11 +1470,11 @@ def eliminar_hram(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HRAM(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1480,7 +1486,7 @@ def eliminar_hram(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1490,11 +1496,11 @@ def eliminar_hred(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HRED(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1506,7 +1512,7 @@ def eliminar_hred(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1516,11 +1522,11 @@ def eliminar_htg(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HV(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1532,7 +1538,7 @@ def eliminar_htg(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1542,11 +1548,11 @@ def eliminar_hdd(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HDD(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1558,7 +1564,7 @@ def eliminar_hdd(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1568,11 +1574,11 @@ def eliminar_hmi(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HM(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1584,7 +1590,7 @@ def eliminar_hmi(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
@@ -1594,11 +1600,11 @@ def eliminar_hul(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HUL(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1610,7 +1616,7 @@ def eliminar_hul(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
     
@@ -1620,11 +1626,11 @@ def eliminar_hpu(activo_id, historico_id):
         #Eliminacion del registro indiciado (no tiene confirmacion)
         eliminar_HP(historico_id)
         # se deben obtener los datos para poder redirigir a seleccionar libros
+        historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
         historico_resguardante = obtener_historicoRR(activo_id)
         historico_Rinterno = obtener_historicoRI(activo_id)#solo es necesario para
-
         historico_ram = obtener_historicoHRAM(activo_id)
         historico_so = obtener_historicoHSO(activo_id)
         historico_red = obtener_historicoHRED(activo_id)
@@ -1636,7 +1642,7 @@ def eliminar_hpu(activo_id, historico_id):
         return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno,
                            historico_ram=historico_ram, historico_so=historico_so, historico_red=historico_red, historico_tg=historico_tg,
-                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu)
+                           historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
 
