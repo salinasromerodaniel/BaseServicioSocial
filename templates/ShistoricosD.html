@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Libros</title>
+    <title>Lista de disposititos inteligentes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             align-items: center;
             height: 100vh;
         }
-
+        
         .container {
             background-color: #fff;
             border-radius: 8px;
@@ -26,20 +26,23 @@
             text-align: center;
             margin-bottom: 20px; /* Agregamos un margen inferior */
         }
-
+        
         h1 {
             margin-top: 0; /* Eliminamos el margen superior para el título */
         }
-
+        
+        .table-container {
+            max-height: 1000px; /* Ajusta la altura máxima según tus necesidades */
+            overflow-y: auto;
+        }
+        
         table {
-            width: 100%;
+            width: 85%;
             border-collapse: collapse;
             margin: 0 auto; /* Centramos la tabla horizontalmente */
             border: 2px solid black; /* Agregamos un borde negro a la tabla */
-            max-height: 100px; /* Ajusta la altura máxima según tus necesidades */
-            overflow-y: auto;
         }
-
+        
         th, td {
             border: 1px solid black; /* Agregamos bordes negros a las celdas */
             padding: 8px;
@@ -90,6 +93,30 @@
 
         .btn-back:hover {
             background-color: #2980b9;
+        }
+
+        .expandable-table {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .expand-button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;       
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .inner-table {
+            display: none; /* Por defecto, las tablas están ocultas */
+        }
+
+        .expanded .inner-table {
+            display: block; /* Mostrar la tabla si el contenedor está expandido */
         }
     </style>
 </head>
@@ -455,5 +482,27 @@
         </tr>
         {% endfor %}
     </table>
+
+    <script>
+        // Seleccionar todos los botones de expansión
+        const expandButtons = document.querySelectorAll('.expand-button');
+
+        // Agregar un evento de clic a cada botón
+        expandButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const table = button.nextElementSibling; // La tabla siguiente al botón
+
+                // Toggle (alternar) la clase "expanded" en la tabla
+                table.classList.toggle('expanded');
+
+                // Cambiar el texto del botón según el estado de la tabla
+                if (table.classList.contains('expanded')) {
+                    button.textContent = 'Contraer';
+                } else {
+                    button.textContent = 'Expandir';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

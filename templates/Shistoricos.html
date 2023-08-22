@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Libros</title>
+    <title>Lista de historicos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             align-items: center;
             height: 100vh;
         }
-
+        
         .container {
             background-color: #fff;
             border-radius: 8px;
@@ -26,18 +26,23 @@
             text-align: center;
             margin-bottom: 20px; /* Agregamos un margen inferior */
         }
-
+        
         h1 {
             margin-top: 0; /* Eliminamos el margen superior para el título */
         }
-
+        
+        .table-container {
+            max-height: 400px; /* Ajusta la altura máxima según tus necesidades */
+            overflow-y: auto;
+        }
+        
         table {
-            width: 100%;
+            width: 85%;
             border-collapse: collapse;
             margin: 0 auto; /* Centramos la tabla horizontalmente */
             border: 2px solid black; /* Agregamos un borde negro a la tabla */
         }
-
+        
         th, td {
             border: 1px solid black; /* Agregamos bordes negros a las celdas */
             padding: 8px;
