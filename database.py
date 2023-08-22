@@ -625,13 +625,19 @@ def eliminar_libros(libro_id):
         # Ejecuta la eliminación con el libro_id proporcionado
         cursor.execute(delete_query, (libro_id,))
         # Crear la consulta SQL para la inserción en la tabla CAMBIO_EDO
-        insert_cambio_query = "insert CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
+        insert_cambio_query = "INSERT CAMBIO_EDO (ESTADO, FECHA_CAMBIO, CANTIDAD, ACTIVO_ID) VALUES (%s, %s, %s, %s)"
         #establecer fecha de hoy
         fecha_modificacion = datetime.date.today()
         # Definir los valores para la inserción en la tabla CAMBIO_EDO
         values_cambio = ('BAJA', fecha_modificacion, 0, libro_id)
         # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
         cursor.execute(insert_cambio_query, values_cambio)
+        # Crear la consulta SQL para la inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        update_HUB_query = "UPDATE HISTORICO_ACTIVO_UBICACION SET OPERANTE = 0 WHERE ACTIVO_ID = %s"
+        # Definir los valores para la inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        values_HUB = (libro_id,)
+        # Ejecutar la consulta de inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        cursor.execute(update_HUB_query, values_HUB)
         # Confirma los cambios en la base de datos
         conn.commit()
         # Cierra el cursor y la conexión a la base de datos
@@ -786,6 +792,12 @@ def eliminar_herramientas(herramienta_id):
         values_cambio = ('BAJA', fecha_modificacion, 0, herramienta_id)
         # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
         cursor.execute(insert_cambio_query, values_cambio)
+        # Crear la consulta SQL para la inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        update_HUB_query = "UPDATE HISTORICO_ACTIVO_UBICACION SET OPERANTE = 0 WHERE ACTIVO_ID = %s"
+        # Definir los valores para la inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        values_HUB = (herramienta_id,)
+        # Ejecutar la consulta de inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        cursor.execute(update_HUB_query, values_HUB)
         # Confirma los cambios en la base de datos
         conn.commit()
         # Cierra el cursor y la conexión a la base de datos
@@ -928,6 +940,14 @@ def eliminar_dispos(dispo_id):
         values_cambio = ('BAJA', fecha_modificacion, 0, dispo_id)
         # Ejecutar la consulta de inserción en la tabla CAMBIO_EDO
         cursor.execute(insert_cambio_query, values_cambio)
+
+        # Crear la consulta SQL para la inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        update_HUB_query = "UPDATE HISTORICO_ACTIVO_UBICACION SET OPERANTE = 0 WHERE ACTIVO_ID = %s"
+        # Definir los valores para la inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        values_HUB = (dispo_id,)
+        # Ejecutar la consulta de inserción en la tabla HISTORICO_ACTIVO_UBICACION
+        cursor.execute(update_HUB_query, values_HUB)
+
         # Confirma los cambios en la base de datos
         conn.commit()
         # Cierra el cursor y la conexión a la base de datos
