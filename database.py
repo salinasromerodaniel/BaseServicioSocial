@@ -1016,6 +1016,44 @@ def obtener_ubicacionID(activo_id):
         print("Error al obtener la ubicación con base en el activo:", e)
     return ubicacion_id
 
+def obtener_resguardoID(activo_id):
+    resguardo_id = None  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute(f"SELECT RESPONSABLE_RESGUARDO_ID FROM HISTORICO_ACTIVO_RESPONSABLE WHERE ACTIVO_ID = {activo_id} AND OPERANTE = 1")
+        # Obtiene el resultado de la consulta
+        row = cursor.fetchone()
+        if row:
+            resguardo_id = row[0]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el resguardante con base en el activo:", e)
+    return resguardo_id
+
+def obtener_internoID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT RESPONSABLE_INTERNO_ID FROM HISTORICO_ACTIVO_RESPONSABLE_INTERNO WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
 def modificar_ubicacion(activo_id, nuevo_id, fecha_modificacion):
     try:
         # Realiza la conexión a la base de datos
@@ -1037,6 +1075,28 @@ def modificar_ubicacion(activo_id, nuevo_id, fecha_modificacion):
         conn.close()
     except mysql.connector.Error as e:
         print("Error al modificar la ubicación del activo:", e)
+
+def modificar_resguardo(activo_id, nuevo_id, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        # Primero, actualiza el registro anterior
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND OPERANTE = 1")
+        
+        # Luego, inserta el nuevo registro
+        insert_resguardo_nuevo = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE(FECHA_CAMBIO_RESGUARDO, RESPONSABLE_RESGUARDO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"
+        cursor.execute(insert_resguardo_nuevo, (fecha_modificacion, nuevo_id, activo_id, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el resguardante del activo:", e)
 
 def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion):
@@ -1549,7 +1609,8 @@ def obtener_historicoUB(activo_id):
                         FROM ACTIVO A
                         JOIN HISTORICO_ACTIVO_UBICACION HUB ON A.ACTIVO_ID = HUB.ACTIVO_ID
                         JOIN UBICACION U ON HUB.UBICACION_ID = U.UBICACION_ID
-                        WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                        WHERE A.ACTIVO_ID = %s
+                        ORDER BY HUB.FECHA_CAMBIO DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1603,7 +1664,8 @@ def obtener_historicoUF(activo_id):
                         FROM ACTIVO A
                         JOIN HISTORICO_ACTIVO_USUARIO HFU ON A.ACTIVO_ID = HFU.ACTIVO_ID
                         JOIN USUARIO_FINAL UF ON HFU.USUARIO_FINAL_ID = UF.USUARIO_FINAL_ID
-                        WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                        WHERE A.ACTIVO_ID = %s
+                        ORDER BY HFU.FECHA_PRESTAMO DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1639,7 +1701,8 @@ def obtener_historicoRR(activo_id):
                             FROM ACTIVO A
                             JOIN HISTORICO_ACTIVO_RESPONSABLE HR ON A.ACTIVO_ID = HR.ACTIVO_ID
                             JOIN RESPONSABLE_RESGUARDO RR ON HR.RESPONSABLE_RESGUARDO_ID = RR.RESPONSABLE_RESGUARDO_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY HR.FECHA_CAMBIO_RESGUARDO DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1697,7 +1760,8 @@ def obtener_historicoRI(activo_id):
                         FROM ACTIVO A
                         JOIN HISTORICO_ACTIVO_RESPONSABLE_INTERNO HRI ON A.ACTIVO_ID = HRI.ACTIVO_ID
                         JOIN RESPONSABLE_INTERNO RI ON HRI.RESPONSABLE_INTERNO_ID = RI.RESPONSABLE_INTERNO_ID
-                        WHERE A.ACTIVO_ID = %s """, (activo_id,))
+                        WHERE A.ACTIVO_ID = %s 
+                        ORDER BY HRI.FECHA_PRESTAMO DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1755,7 +1819,8 @@ def obtener_historicoHRAM(activo_id):
                             FROM ACTIVO A
                             JOIN DISPO_RAM DR ON A.ACTIVO_ID = DR.ACTIVO_ID
                             JOIN RAM R ON DR.RAM_ID = R.RAM_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY DR.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1813,7 +1878,8 @@ def obtener_historicoHSO(activo_id):
                     JOIN DISPO_SO DS ON A.ACTIVO_ID = DS.ACTIVO_ID
                     LEFT JOIN SISTEMA_OPERATIVO SO ON DS.SISTEMA_OPERATIVO_ID = SO.SISTEMA_OPERATIVO_ID
                     LEFT JOIN TIPO_SO TS ON SO.TIPO_SO_ID = TS.TIPO_SO_ID
-                    WHERE A.ACTIVO_ID =  %s""", (activo_id,))
+                    WHERE A.ACTIVO_ID =  %s
+                    ORDER BY DS.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1872,7 +1938,8 @@ def obtener_historicoHRED(activo_id):
                             FROM ACTIVO A
                             JOIN DISPOSITIVO_RED DR ON A.ACTIVO_ID = DR.ACTIVO_ID
                             LEFT JOIN INTERFAZ_RED IR ON DR.INTERFAZ_RED_ID = IR.INTERFAZ_RED_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY DR.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1931,7 +1998,8 @@ def obtener_historicoHV(activo_id):
                         FROM ACTIVO A
                         JOIN DISPO_VIDEO DV ON A.ACTIVO_ID = DV.ACTIVO_ID
                         LEFT JOIN TARGETA_GRAFICA TG ON DV.TARGETA_GARFICA_ID = TG.TARGETA_GARFICA_ID
-                        WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                        WHERE A.ACTIVO_ID = %s
+                        ORDER BY DV.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -1989,7 +2057,8 @@ def obtener_historicoHDD(activo_id):
                             FROM ACTIVO A
                             JOIN DISPO_DD DD ON A.ACTIVO_ID = DD.ACTIVO_ID
                             JOIN DISCO_DURO HDD ON DD.DISCO_DURO_ID = HDD.DISCO_DURO_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY DD.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -2047,7 +2116,8 @@ def obtener_historicoHM(activo_id):
                             FROM ACTIVO A
                             JOIN DISPO_MICRO DM ON A.ACTIVO_ID = DM.ACTIVO_ID
                             JOIN MICROPROCESADOR MP ON DM.MICROPROCESADOR_ID = MP.MICROPROCESADOR_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY DM.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -2106,7 +2176,8 @@ def obtener_historicoUL(activo_id):
                             JOIN DISPO_LECTORA DL ON A.ACTIVO_ID = DL.ACTIVO_ID
                             JOIN UNIDAD_LECTORA UL ON DL.UNIDAD_LECTORA_ID = UL.UNIDAD_LECTORA_ID
                             JOIN TIPO_UNIDAD_LECTORA TUL ON UL.TIPO_UNIDAD_LECTORA_ID = TUL.TIPO_UNIDAD_LECTORA_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY DL.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -2162,7 +2233,8 @@ def obtener_historicoP(activo_id):
                             FROM ACTIVO A
                             JOIN DISPO_PUERTO DP ON A.ACTIVO_ID = DP.ACTIVO_ID
                             JOIN PUERTO P ON DP.PUERTO_ID = P.PUERTO_ID
-                            WHERE A.ACTIVO_ID = %s""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY DP.FECHA_COLOC DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]
@@ -2214,7 +2286,8 @@ def obtener_historicoC(activo_id):
                                 CAMBIO_EDO_ID
                             FROM ACTIVO A
                             JOIN CAMBIO_EDO CE ON A.ACTIVO_ID = CE.ACTIVO_ID
-                            WHERE A.ACTIVO_ID = %s;""", (activo_id,))
+                            WHERE A.ACTIVO_ID = %s
+                            ORDER BY CE.FECHA_CAMBIO DESC""", (activo_id,))
         # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
         for historico in cursor.fetchall():
             activo_id = historico[0]

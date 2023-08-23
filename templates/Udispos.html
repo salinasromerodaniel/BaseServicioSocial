@@ -80,6 +80,582 @@
 <!-- Coloca esto en la sección <head> de tu archivo HTML -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="mi_script.js"></script>
+    <script>
+        var listaIdsSistemas = [];
+        var listaIdsRam = [];
+        var listaIdsAlmacenamiento = [];
+        var listaIdsMicro = [];
+        var listaIdsTarjeta = [];
+        var listaIdsPuerto = [];
+        var listaIdsLectora = [];
+        var listaIdsRed = [];
+        var listaIdsIp = [];
+        var listaIdsMac = [];
+        var listaIdsInterno = [];
+        var listaIdsResguardo = [];
+        var listaIdsUsuario = [];
+
+        $(document).ready(function() {
+            var contadorSistemas = 1;
+            var contadorRam = 1;
+            var contadorAlmacenamiento = 1;
+            var contadorMicro = 1;
+            var contadorTarjeta = 1;
+            var contadorPuerto = 1;
+            var contadorLectora = 1;
+            var contadorRed = 1;
+            var contadorIp = 1;
+            var contadorMac = 1;
+            var contadorInterno = 1;
+            var contadorResguardo = 1;
+            var contadorUsuario = 1;
+
+            $("#agregar-sistema").click(function() {
+                contadorSistemas++;
+
+                var sistemaOriginal = $("#sistema_operativo");
+                var nuevoSistema = sistemaOriginal.clone();
+
+                nuevoSistema.attr("id", "sistema_operativo_" + contadorSistemas);
+                nuevoSistema.attr("name", "sistema_operativo_" + contadorSistemas);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoSistema.find("option:selected").removeAttr("selected");
+
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoSistema.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoSistema.after('<button class="btn-borrar-sistema">Borrar</button>');
+
+                // Encuentra el último duplicado de sistema operativo y agrega el nuevo sistema después de él
+                var ultimoSistemaDuplicado = $("select[name^='sistema_operativo_']").last();
+                nuevoSistema.insertAfter(ultimoSistemaDuplicado);
+
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsSistemas.push("sistema_operativo_" + contadorSistemas);
+
+                $("#lista_ids_sistemas").val(contadorSistemas);
+            });
+
+
+            $("#agregar-ram").click(function() {
+                contadorRam++;
+                console.log(contadorRam);
+
+                var ramOriginal = $("#ram");
+                var nuevoRam = ramOriginal.clone();
+                console.log(nuevoRam);
+
+                nuevoRam.attr("id", "ram_" + contadorRam);
+                nuevoRam.attr("name", "ram_" + contadorRam);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoRam.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoRam.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoRam.after('<button class="btn-borrar-ram">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoRamDuplicado = $("select[name^='ram_']").last();
+                console.log(ultimoRamDuplicado);
+                //$("#ram_form").append(ultimoRamDuplicado);
+                nuevoRam.insertAfter(ultimoRamDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsRam.push("ram_" + contadorRam);
+
+                $("#lista_ids_ram").val(contadorRam);
+            });
+
+            $("#agregar-almacenamiento").click(function() {
+                contadorAlmacenamiento++;
+
+                var almacenamientoOriginal = $("#almacenamiento");
+                var nuevoAlmacenamiento = almacenamientoOriginal.clone();
+
+                nuevoAlmacenamiento.attr("id", "almacenamiento_" + contadorAlmacenamiento);
+                nuevoAlmacenamiento.attr("name", "almacenamiento_" + contadorAlmacenamiento);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoAlmacenamiento.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoAlmacenamiento.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoAlmacenamiento.after('<button class="btn-borrar-almacenamiento">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoAlmacenamientoDuplicado = $("select[name^='almacenamiento_']").last();
+                nuevoAlmacenamiento.insertAfter(ultimoAlmacenamientoDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsAlmacenamiento.push("almacenamiento_" + contadorAlmacenamiento);
+
+                $("#lista_ids_almacenamiento").val(contadorAlmacenamiento);
+            });
+
+            $("#agregar-micro").click(function() {
+                contadorMicro++;
+
+                var microOriginal = $("#micro");
+                var nuevoMicro = microOriginal.clone();
+
+                nuevoMicro.attr("id", "micro_" + contadorMicro);
+                nuevoMicro.attr("name", "micro_" + contadorMicro);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoMicro.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoMicro.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoMicro.after('<button class="btn-borrar-micro">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoMicroDuplicado = $("select[name^='micro_']").last();
+                nuevoMicro.insertAfter(ultimoMicroDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsMicro.push("micro_" + contadorMicro);
+
+                $("#lista_ids_micro").val(contadorMicro);
+            });
+
+            $("#agregar-tarjeta").click(function() {
+                contadorTarjeta++;
+
+                var tarjetaOriginal = $("#tarjeta");
+                var nuevoTarjeta = tarjetaOriginal.clone();
+
+                nuevoTarjeta.attr("id", "tarjeta_" + contadorTarjeta);
+                nuevoTarjeta.attr("name", "tarjeta_" + contadorTarjeta);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoTarjeta.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoTarjeta.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoTarjeta.after('<button class="btn-borrar-tarjeta">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoTarjetaDuplicado = $("select[name^='tarjeta_']").last();
+                nuevoTarjeta.insertAfter(ultimoTarjetaDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsTarjeta.push("tarjeta_" + contadorTarjeta);
+
+                $("#lista_ids_tarjeta").val(contadorTarjeta);
+            });
+
+            $("#agregar-puerto").click(function() {
+                contadorPuerto++;
+
+                var puertoOriginal = $("#puerto");
+                var nuevoPuerto = puertoOriginal.clone();
+
+                nuevoPuerto.attr("id", "puerto_" + contadorPuerto);
+                nuevoPuerto.attr("name", "puerto_" + contadorPuerto);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoPuerto.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoPuerto.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoPuerto.after('<button class="btn-borrar-puerto">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoPuertoDuplicado = $("select[name^='puerto_']").last();
+                nuevoPuerto.insertAfter(ultimoPuertoDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsPuerto.push("puerto_" + contadorPuerto);
+
+                $("#lista_ids_puerto").val(contadorPuerto);
+            });
+
+            $("#agregar-lectora").click(function() {
+                contadorLectora++;
+
+                var lectoraOriginal = $("#lectora");
+                var nuevoLectora = lectoraOriginal.clone();
+
+                nuevoLectora.attr("id", "lectora_" + contadorLectora);
+                nuevoLectora.attr("name", "lectora_" + contadorLectora);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoLectora.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoLectora.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoLectora.after('<button class="btn-borrar-lectora">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoLectoraDuplicado = $("select[name^='lectora_']").last();
+                nuevoLectora.insertAfter(ultimoLectoraDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsLectora.push("lectora_" + contadorLectora);
+
+                $("#lista_ids_lectora").val(contadorLectora);
+            });
+
+            $("#agregar-red").click(function() {
+                contadorRed++;
+                contadorIp++;
+                contadorMac++;
+
+                var redOriginal = $("#red");
+                var ipOriginal = $("#ip");
+                var macOriginal = $("#mac");
+
+                var nuevoRed = redOriginal.clone();
+                var nuevoIp = ipOriginal.clone();
+                var nuevoMac = macOriginal.clone();
+
+                nuevoRed.attr("id", "red_" + contadorRed);
+                nuevoRed.attr("name", "red_" + contadorRed);
+                nuevoIp.attr("id", "ip_" + contadorIp);
+                nuevoIp.attr("name", "ip_" + contadorIp);
+                nuevoMac.attr("id", "mac_" + contadorMac);
+                nuevoMac.attr("name", "mac_" + contadorMac);
+
+                nuevoIp.val("");
+                nuevoMac.val("");
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoRed.find("option:selected").removeAttr("selected");
+                nuevoIp.find("option:selected").removeAttr("selected");
+                nuevoMac.find("option:selected").removeAttr("selected");
+
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoRed.find("option:first").attr("selected", "selected");
+                nuevoIp.find("option:first").attr("selected", "selected");
+                nuevoMac.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado******
+                nuevoRed.after('<button class="btn-borrar-red">Borrar</button>');
+                
+                // Encuentra el último duplicado de menú deslizable
+                var ultimoRedDuplicado = $("select[name^='red_']").last();
+
+                // Encuentra el último duplicado de caja de texto de IP
+                var ultimoIpDuplicado = $("input[name^='ip_']").last();
+
+                // Encuentra el último duplicado de caja de texto de MAC
+                var ultimoMacDuplicado = $("input[name^='mac_']").last();
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                nuevoRed.insertAfter(ultimoRedDuplicado);
+                nuevoIp.insertAfter(ultimoIpDuplicado);
+                nuevoMac.insertAfter(ultimoMacDuplicado);
+
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsRed.push("red_" + contadorRed);
+                listaIdsIp.push("ip_" + contadorIp);
+                listaIdsMac.push("mac_" + contadorMac);
+
+                $("#lista_ids_red").val(contadorRed);
+                $("#lista_ids_ip").val(contadorIp);
+                $("#lista_ids_mac").val(contadorMac);
+            });
+
+            $("#agregar-interno").click(function() {
+                contadorInterno++;
+
+                var internoOriginal = $("#interno");
+                var nuevoInterno = internoOriginal.clone();
+
+                nuevoInterno.attr("id", "interno_" + contadorInterno);
+                nuevoInterno.attr("name", "interno_" + contadorInterno);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoInterno.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoInterno.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoInterno.after('<button class="btn-borrar-interno">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoInternoDuplicado = $("select[name^='interno_']").last();
+                nuevoInterno.insertAfter(ultimoInternoDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsInterno.push("interno_" + contadorInterno);
+
+                $("#lista_ids_interno").val(contadorInterno);
+            });
+
+            $(document).ready(function() {
+            // Obtener el número de clics de Flask
+            var numeroDeClics = {{ numeroDeClics }}; // Asegúrate de que Flask proporcione este valor en tu plantilla HTML.
+
+            // Función para simular clics en el botón
+            function simularClics() {
+                for (var i = 0; i < numeroDeClics; i++) {
+                    $("#agregar-interno").click();
+                }
+                var i=1;
+                var obtener_interno_original = {{ obtener_interno_original }};
+                obtener_interno_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "interno_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                
+            }
+
+            // Llamar a la función para simular los clics después de que la página se haya cargado
+            simularClics();
+            });
+
+            $("#agregar-resguardo").click(function() {
+                contadorResguardo++;
+
+                var resguardoOriginal = $("#resguardo");
+                var nuevoResguardo = resguardoOriginal.clone();
+
+                nuevoResguardo.attr("id", "resguardo_" + contadorResguardo);
+                nuevoResguardo.attr("name", "resguardo_" + contadorResguardo);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoResguardo.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoResguardo.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoResguardo.after('<button class="btn-borrar-resguardo">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoResguardoDuplicado = $("select[name^='resguardo_']").last();
+                nuevoResguardo.insertAfter(ultimoResguardoDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsResguardo.push("resguardo_" + contadorResguardo);
+
+                $("#lista_ids_resguardo").val(contadorResguardo);
+            });
+
+            $("#agregar-usuario").click(function() {
+                contadorUsuario++;
+
+                var usuarioOriginal = $("#usuario");
+                var nuevoUsuario = usuarioOriginal.clone();
+
+                nuevoUsuario.attr("id", "usuario_" + contadorUsuario);
+                nuevoUsuario.attr("name", "usuario_" + contadorUsuario);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoUsuario.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoUsuario.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoUsuario.after('<button class="btn-borrar-usuario">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoUsuarioDuplicado = $("select[name^='usuario_']").last();
+                nuevoUsuario.insertAfter(ultimoUsuarioDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsUsuario.push("usuario_" + contadorUsuario);
+
+                $("#lista_ids_usuario").val(contadorUsuario);
+            });
+
+            $(document).on('click', '.btn-borrar-resguardo', function() {
+                var resguardoDuplicado = $("select[name^='resguardo_']").not(":first");
+                
+                if (resguardoDuplicado.length > 0) {
+                    var resguardoDuplicado = resguardoDuplicado.last();
+                    resguardoDuplicado.prev(".btn-borrar-resguardo").remove(); // Remover el botón de borrado del sistema anterior
+                    resguardoDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsResguardo.pop();
+                } else {
+                    var resguardoOriginal = $("select[name='resguardo_1']");
+                    resguardoOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-interno', function() {
+                var internoDuplicado = $("select[name^='interno_']").not(":first");
+                
+                if (internoDuplicado.length > 0) {
+                    var internoDuplicado = internoDuplicado.last();
+                    internoDuplicado.prev(".btn-borrar-interno").remove(); // Remover el botón de borrado del sistema anterior
+                    internoDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsInterno.pop();
+                } else {
+                    var internoOriginal = $("select[name='interno_1']");
+                    internoOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-usuario', function() {
+                var usuarioDuplicado = $("select[name^='usuario_']").not(":first");
+                
+                if (usuarioDuplicado.length > 0) {
+                    var usuarioDuplicado = usuarioDuplicado.last();
+                    usuarioDuplicado.prev(".btn-borrar-usuario").remove(); // Remover el botón de borrado del sistema anterior
+                    usuarioDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsUsuario.pop();
+                } else {
+                    var usuarioOriginal = $("select[name='usuario_1']");
+                    usuarioOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+
+            // Agregar un evento para borrar el sistema operativo duplicado
+            $(document).on('click', '.btn-borrar-sistema', function() {
+                var sistemaDuplicado = $("select[name^='sistema_operativo_']").not(":first");
+                
+                if (sistemaDuplicado.length > 0) {
+                    var sistemaDuplicado = sistemaDuplicado.last();
+                    sistemaDuplicado.prev(".btn-borrar-sistema").remove(); // Remover el botón de borrado del sistema anterior
+                    sistemaDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsSistemas.pop();
+                } else {
+                    var sistemaOriginal = $("select[name='sistema_operativo_1']");
+                    sistemaOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+            
+            // Agregar un evento para borrar la ram duplicada
+            $(document).on('click', '.btn-borrar-ram', function() {
+                var ramDuplicado = $("select[name^='ram_']").not(":first");
+                
+                if (ramDuplicado.length > 0) {
+                    var ramDuplicado = ramDuplicado.last();
+                    ramDuplicado.prev(".btn-borrar-ram").remove(); // Remover el botón de borrado del sistema anterior
+                    ramDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsRam.pop();
+                } else {
+                    var ramOriginal = $("select[name='ram_1']");
+                    ramOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            // Agregar un evento para borrar el almacenamiento duplicada
+            $(document).on('click', '.btn-borrar-almacenamiento', function() {
+                var almacenamientoDuplicado = $("select[name^='almacenamiento_']").not(":first");
+                
+                if (almacenamientoDuplicado.length > 0) {
+                    var almacenamientoDuplicado = almacenamientoDuplicado.last();
+                    almacenamientoDuplicado.prev(".btn-borrar-almacenamiento").remove(); // Remover el botón de borrado del sistema anterior
+                    almacenamientoDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsAlmacenamiento.pop();
+                } else {
+                    var almacenamientoOriginal = $("select[name='almacenamiento_1']");
+                    almacenamientoOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            // Agregar un evento para borrar el microprocesador duplicado
+            $(document).on('click', '.btn-borrar-micro', function() {
+                var microDuplicado = $("select[name^='micro_']").not(":first");
+                
+                if (microDuplicado.length > 0) {
+                    var microDuplicado = microDuplicado.last();
+                    microDuplicado.prev(".btn-borrar-micro").remove(); // Remover el botón de borrado del sistema anterior
+                    microDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsMicro.pop();
+                } else {
+                    var microOriginal = $("select[name='micro_1']");
+                    microOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            // Agregar un evento para borrar la tarjeta duplicada
+            $(document).on('click', '.btn-borrar-tarjeta', function() {
+                var tarjetaDuplicado = $("select[name^='tarjeta_']").not(":first");
+                
+                if (tarjetaDuplicado.length > 0) {
+                    var tarjetaDuplicado = tarjetaDuplicado.last();
+                    tarjetaDuplicado.prev(".btn-borrar-tarjeta").remove(); // Remover el botón de borrado del sistema anterior
+                    tarjetaDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsTarjeta.pop();
+                } else {
+                    var tarjetaOriginal = $("select[name='tarjeta_1']");
+                    tarjetaOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-puerto', function() {
+                var puertoDuplicado = $("select[name^='puerto_']").not(":first");
+                
+                if (puertoDuplicado.length > 0) {
+                    var puertoDuplicado = puertoDuplicado.last();
+                    puertoDuplicado.prev(".btn-borrar-puerto").remove();
+                    puertoDuplicado.remove();
+                    listaIdsPuerto.pop();
+                } else {
+                    var puertoOriginal = $("select[name='puerto_1']");
+                    puertoOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-lectora', function() {
+                var lectoraDuplicado = $("select[name^='lectora_']").not(":first");
+                
+                if (lectoraDuplicado.length > 0) {
+                    var lectoraDuplicado = lectoraDuplicado.last();
+                    lectoraDuplicado.prev(".btn-borrar-lectora").remove();
+                    lectoraDuplicado.remove();
+                    listaIdsLectora.pop();
+                } else {
+                    var lectoraOriginal = $("select[name='lectora_1']");
+                    lectoraOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-red', function() {
+                var redDuplicado = $("select[name^='red_']").not(":first");
+                var ipDuplicado = $("input[name^='ip_']").not(":first");
+                var macDuplicado = $("input[name^='mac_']").not(":first");
+
+                if (redDuplicado.length > 0 && ipDuplicado.length > 0 && macDuplicado.length > 0) {
+                    var redDuplicado = redDuplicado.last();
+                    var ipDuplicado = ipDuplicado.last();
+                    var macDuplicado = macDuplicado.last();
+                    
+                    // Restablecer el contador para mantener la sincronización con los elementos clonados
+                    contadorIp--;
+                    contadorMac--;
+
+                    redDuplicado.prev(".btn-borrar-red").remove();
+                    ipDuplicado.prev(".btn-borrar-red").remove();
+                    macDuplicado.prev(".btn-borrar-red").remove();
+                    redDuplicado.remove();
+                    ipDuplicado.remove();
+                    macDuplicado.remove();
+                    
+                    // Restablecer los valores en los campos ocultos
+                    $("#lista_ids_red").val(contadorRed);
+                    $("#lista_ids_ip").val(contadorIp);
+                    $("#lista_ids_mac").val(contadorMac);
+                } else {
+                    var redOriginal = $("select[name='red_1']");
+                    var ipOriginal = $("input[name='ip_1']");
+                    var macOriginal = $("input[name='mac_1']");
+                    redOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                    ipOriginal.val("");
+                    macOriginal.val("");
+                }
+            });
+
+
+        });
+
+    </script>
 </head>
 <body>
     <div class="container">
@@ -223,8 +799,57 @@
                     </select>
                 </div>
                 <input type="hidden" id="ubicacion_id" name="ubicacion_id">
+
+                <div class="form-group">
+                    <label for="interno">Responsable interno*</label>
+                    <select id="interno" name="interno_1" required>
+                        <!-- Opción deshabilitada y seleccionada por defecto -->
+                        <option value="" disabled selected>Seleccione responsable</option>
+                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_INTERNO -->
+                        {% for responsable_id, nombre in nombres_interno %}
+                            <option value="{{ responsable_id }}" {% if responsable_id == obtener_interno_original[0] %}selected{% endif %} data-nombre="{{ nombre }}">{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-interno">Agregar otro Interno</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-interno">Eliminar último Interno</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="interno_id" name="interno_id">
+
+                <div class="form-group">
+                    <label for="resguardo">Responsable de resguardo*</label>
+                    <select id="resguardo" name="resguardo_1" required>
+                        <!-- Opción deshabilitada y seleccionada por defecto -->
+                        <option value="" disabled selected>Seleccione responsable</option>
+                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_RESGUARDO -->
+                        {% for responsable in nombres_resguardo %}
+                            <option value="{{ responsable.id }}" {% if responsable.id == obtener_resguardo_original %}selected{% endif %}>{{ responsable.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" id="resguardo_id" name="resguardo_id">
                 
 
+                <input type="hidden" name="lista_ids_sistemas" id="lista_ids_sistemas" value="1">
+                <input type="hidden" name="lista_ids_ram" id="lista_ids_ram" value="1">
+                <input type="hidden" name="lista_ids_almacenamiento" id="lista_ids_almacenamiento" value="1">
+                <input type="hidden" name="lista_ids_micro" id="lista_ids_micro" value="1">
+                <input type="hidden" name="lista_ids_tarjeta" id="lista_ids_tarjeta" value="1">
+                <input type="hidden" name="lista_ids_puerto" id="lista_ids_puerto" value="1">
+                <input type="hidden" name="lista_ids_lectora" id="lista_ids_lectora" value="1">
+                <input type="hidden" name="lista_ids_red" id="lista_ids_red" value="1">
+                <input type="hidden" name="lista_ids_ip" id="lista_ids_ip" value="1">
+                <input type="hidden" name="lista_ids_mac" id="lista_ids_mac" value="1">
+                <input type="hidden" name="lista_ids_interno" id="lista_ids_interno" value="1">
+                <input type="hidden" name="lista_ids_resguardo" id="lista_ids_resguardo" value="1">
+                <input type="hidden" name="lista_ids_usuario" id="lista_ids_usuario" value="1">
             <button class="btn-submit" type="submit">Modificar</button>
         </form>
         {% endfor %}

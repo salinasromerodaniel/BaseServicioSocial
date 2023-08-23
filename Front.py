@@ -15,7 +15,8 @@ app.secret_key = 'mi_clave_secreta'
 # Simulación de usuarios y contraseñas (reemplaza esto con una base de datos en un entorno de producción)
 users = {
     'admin': 'admin',
-    'david': 'david'
+    'david': 'david',
+    'salac': 'fraqfrnhe3r4'
 }
 
 @app.route('/')
@@ -299,12 +300,19 @@ def editar_dispo(dispo_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar libros
         nombres_ubicacion = obtener_ubicaciones()
+        nombres_resguardo = obtener_responsables_resguardo()
+        nombres_interno = obtener_responsables_interno()
         obtener_dispoIDs = obtener_dispoID(dispo_id)
         obtener_ubicacion_original = obtener_ubicacionID(dispo_id)
+        obtener_interno_original = obtener_internoID(dispo_id)
+        obtener_resguardo_original = obtener_resguardoID(dispo_id)
         nombres_subtipo = obtener_nombres_subtipo()
         nombres_modelo = obtener_info_modelo()
+        numeroDeClics = len(obtener_interno_original) -1
         return render_template('Udispos.html', obtener_dispoIDs=obtener_dispoIDs, nombres_subtipo=nombres_subtipo,nombres_modelo=nombres_modelo,
-                               obtener_ubicacion_original=obtener_ubicacion_original, nombres_ubicacion=nombres_ubicacion)
+                               obtener_ubicacion_original=obtener_ubicacion_original, nombres_ubicacion=nombres_ubicacion, obtener_resguardo_original=obtener_resguardo_original,
+                                nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, numeroDeClics=numeroDeClics,
+                                obtener_interno_original=obtener_interno_original)
     else:
         return redirect(url_for('logout'))
     
@@ -322,11 +330,17 @@ def modificar_dispo(dispo_id):
     ram_instalada = request.form.get('iram_instalada')
     ram_maxima = request.form.get('tram_maxima')
     subtipo = request.form.get('subtipo')
+
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
     ubicacion_nueva = int(request.form.get('ubicacion'))
+    resguardo_original = int(obtener_resguardoID(dispo_id))
+    resguardo_nueva = int(request.form.get('resguardo_1'))
+    obtener_interno_original = obtener_internoID(dispo_id)
     fecha_modificacion = datetime.date.today()
     if ubicacion_original != ubicacion_nueva:
         modificar_ubicacion(dispo_id, ubicacion_nueva, fecha_modificacion)
+    if resguardo_original != resguardo_nueva:
+        modificar_resguardo(dispo_id, resguardo_nueva, fecha_modificacion)
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
