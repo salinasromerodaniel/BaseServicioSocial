@@ -112,6 +112,10 @@
     </style>
 </head>
 <body>
+    {% for historico in historico_cambios %}
+    <h1><strong><u>Historico de: {{ historico[1] }}</u></strong></h1>
+    {% endfor %}
+
     <h1>Historico de cambios</h1>
     <table>
         <tr>
