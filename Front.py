@@ -468,11 +468,9 @@ def mostrar_resultadosH():
                     descripcion, ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno)
 
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultadosH.html', factura=factura, serial=serial, num_inventario=num_inventario,
-                           nombre=nombre, cantidad=cantidad,
-                            contenido=contenido, modelo=modelo,
-                            fecha_compra=fecha_compra,
-                            descripcion=descripcion)
+    #return render_template('resultadosH.html', factura=factura, serial=serial, num_inventario=num_inventario, nombre=nombre, cantidad=cantidad, contenido=contenido, modelo=modelo, fecha_compra=fecha_compra, descripcion=descripcion)
+    datos_herramientas = obtener_herramientas()
+    return render_template('Sherramientas.html', datos_herramientas=datos_herramientas)
 
 @app.route('/activos/herramientas')
 def herramientas():
@@ -667,9 +665,9 @@ def mostrar_ModificacionH():
                     fecha_compra, fecha_consumo, cantidad, contenido, descripcion)
 
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultadoUpdH.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
-                           nombre=nombre, estado=estado, modelo=modelo, fecha_compra=fecha_compra, fecha_consumo=fecha_consumo,
-                            cantidad=cantidad, contenido=contenido, descripcion=descripcion)
+    #return render_template('resultadoUpdH.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario, nombre=nombre, estado=estado, modelo=modelo, fecha_compra=fecha_compra, fecha_consumo=fecha_consumo, cantidad=cantidad, contenido=contenido, descripcion=descripcion)
+    datos_herramientas = obtener_herramientas()
+    return render_template('Sherramientas.html', datos_herramientas=datos_herramientas)
     
 @app.route('/activos/libros')
 def libros():
@@ -785,10 +783,9 @@ def mostrar_resultadosL():
                      ubicacion, lista_ids_usuario, lista_ids_resguardo, lista_ids_interno, fecha_compra)
 
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultadosL.html', factura=factura, serial=serial, num_inventario=num_inventario,
-                           nombre=nombre, autor=autor, cantidad=cantidad,
-                            editorial=editorial, anio=anio,
-                            edicion=edicion)
+    #return render_template('resultadosL.html', factura=factura, serial=serial, num_inventario=num_inventario, nombre=nombre, autor=autor, cantidad=cantidad, editorial=editorial, anio=anio, edicion=edicion)
+    datos_libros = obtener_libros()
+    return render_template('Slibros.html', datos_libros=datos_libros)
 
 @app.route('/seleccionar_libros')
 def SLibros():
@@ -956,10 +953,9 @@ def mostrar_ModificacionL():
                     autor, editorial, anio, edicion, cantidad)
 
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultadoUpdL.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
-                           nombre=nombre, estado=estado, autor=autor,
-                            editorial=editorial, anio=anio,
-                            edicion=edicion, cantidad=cantidad)
+    #return render_template('resultadoUpdL.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario, nombre=nombre, estado=estado, autor=autor, editorial=editorial, anio=anio, edicion=edicion, cantidad=cantidad)
+    datos_libros = obtener_libros()
+    return render_template('Slibros.html', datos_libros=datos_libros)
 
 
 @app.route('/eliminar_libro/<int:libro_id>')
