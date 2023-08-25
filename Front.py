@@ -269,11 +269,9 @@ def mostrar_resultados():
                     lista_ids_almacenamiento, lista_ids_micro, lista_ids_tarjeta, lista_ids_puerto, lista_ids_lectora, lista_ids_red,
                     lista_ids_ip, lista_ids_mac)
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario,
-                           subtipo=subtipo, nombre=nombre,
-                           ram_instalada=ram_instalada, ram_maxima=ram_maxima,
-                           num_procesadores=num_procesadores, modelo=modelo,
-                           caracteristicas=caracteristicas, ubicacion=ubicacion, fecha_ram=fecha_ram)
+    #return render_template('resultados.html', factura=factura, serial=serial, num_inventario=num_inventario, subtipo=subtipo, nombre=nombre, ram_instalada=ram_instalada, ram_maxima=ram_maxima, num_procesadores=num_procesadores, modelo=modelo, caracteristicas=caracteristicas, ubicacion=ubicacion, fecha_ram=fecha_ram)
+    datos_dispos = obtener_dispos()
+    return render_template('Sdispos.html', datos_dispos=datos_dispos)
 
 @app.route('/seleccionar_dispos')
 def SDispos():
@@ -386,9 +384,9 @@ def mostrar_ModificacionD():
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion)
 
     # Renderizar la página de resultados con los datos recibidos
-    return render_template('resultadoUpdD.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario,
-                           nombre=nombre, estado=estado, modelo=modelo, caracteristicas=caracteristicas, num_procesadores=num_procesadores,
-                           ram_instalada=ram_instalada, ram_maxima=ram_maxima, subtipo=subtipo, fecha_modificacion=fecha_modificacion)
+    #return render_template('resultadoUpdD.html', id_activo=id_activo, factura=factura, serial=serial, num_inventario=num_inventario, nombre=nombre, estado=estado, modelo=modelo, caracteristicas=caracteristicas, num_procesadores=num_procesadores, ram_instalada=ram_instalada, ram_maxima=ram_maxima, subtipo=subtipo, fecha_modificacion=fecha_modificacion)
+    datos_dispos = obtener_dispos()
+    return render_template('Sdispos.html', datos_dispos=datos_dispos)
 
 @app.route('/agregar_herramientas', methods=['POST'])
 def agregar_herramienta():
