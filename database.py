@@ -2611,7 +2611,7 @@ def obtener_historicoC(activo_id):
         # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        # Ejecuta la consulta original
         cursor.execute(""" SELECT
                                 A.ACTIVO_ID,
                                 A.NOMBRE AS NOMBRE_ACTIVO,
@@ -2623,15 +2623,28 @@ def obtener_historicoC(activo_id):
                             JOIN CAMBIO_EDO CE ON A.ACTIVO_ID = CE.ACTIVO_ID
                             WHERE A.ACTIVO_ID = %s
                             ORDER BY CE.FECHA_CAMBIO DESC""", (activo_id,))
-        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
-        for historico in cursor.fetchall():
-            activo_id = historico[0]
-            nombre_activo = historico[1]
-            estado = historico[2]
-            fecha_cam = historico[3]
-            cantidad = historico[4]
-            historico_id = historico[5]
-            historicos.append(( activo_id, nombre_activo, estado, fecha_cam, cantidad, historico_id))
+        
+        records = cursor.fetchall()  # Obtén todos los registros
+        unique_combinations = {}  # Diccionario para rastrear las combinaciones únicas (ESTADO, FECHA_CAMBIO)
+        
+        for record in records:
+            estado = record[2]
+            fecha_cam = record[3]
+            key = (estado, fecha_cam)
+            
+            # Verifica si la combinación ya existe en el diccionario
+            if key not in unique_combinations:
+                unique_combinations[key] = record
+            else:
+                # Si la fecha es más reciente, actualiza el registro en el diccionario
+                existing_record = unique_combinations[key]
+                existing_date = existing_record[3]
+                if fecha_cam > existing_date:
+                    unique_combinations[key] = record
+        
+        # Agregar los registros únicos filtrados a la lista de historicos
+        historicos = list(unique_combinations.values())
+        
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
