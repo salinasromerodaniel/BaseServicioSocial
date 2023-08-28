@@ -396,6 +396,21 @@ def modificar_dispo(dispo_id):
     if son:
         son = [x for x in son if x is not None]
     modificar_so(dispo_id, sof, son, fecha_modificacion)
+
+    obtener_ram_original = obtener_ramID(dispo_id)
+    contador_ram = int(request.form.get('lista_ids_ram'))
+    ids_ram = []
+    if contador_ram >= 1:
+        for i in range (1, contador_ram + 1) :
+            ids_ram.append(request.form.get(f'ram_{i}'))
+    for i in range(len(ids_ram)):
+        if ids_ram[i]:
+            ids_ram[i] = int(ids_ram[i])
+    ids_ram = [x for x in ids_ram if x is not None]
+    ramf, ramn = encontrar_cambios_con_repeticiones(obtener_ram_original, ids_ram)
+    if ramn:
+        ramn = [x for x in ramn if x is not None]
+    modificar_ram(dispo_id, ramf, ramn, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
