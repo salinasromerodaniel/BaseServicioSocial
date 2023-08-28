@@ -97,8 +97,9 @@
     </style>
 </head>
 <body>
-    {% for historico in historico_cambios %}
-    <h1><strong><u>Historico de: {{ historico[1] }}</u></strong></h1>
+    <h1><strong><u>Historico de:</u></strong></h1>
+    {% for historico in nombre_activo %}
+    <h1><strong><u>{{ historico[0] }}</u></strong></h1>
     {% endfor %}
 
     <h1>Historico de cambios</h1>

@@ -1396,6 +1396,7 @@ def busquedaD():
 def historico_activo(activo_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar Historicos
+        nombre_activo = obtener_nombvreA(activo_id)
         historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
@@ -1403,7 +1404,7 @@ def historico_activo(activo_id):
         historico_Rinterno = obtener_historicoRI(activo_id)#no necesario
         print(historico_Rinterno)
         
-        return render_template('Shistoricos.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+        return render_template('Shistoricos.html', nombre_activo=nombre_activo, historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, historico_cambios=historico_cambios)
     else:
         return redirect(url_for('logout'))
@@ -1412,6 +1413,7 @@ def historico_activo(activo_id):
 def historico_activoD(activo_id):
     if 'logged_in' in session and session['logged_in']:
         # se deben obtener los datos para poder redirigir a seleccionar Historicos
+        nombre_activo = obtener_nombvreA(activo_id)
         historico_cambios = obtener_historicoC(activo_id)
         historico_ubicaciones = obtener_historicoUB(activo_id)
         historico_usuarios = obtener_historicoUF(activo_id)#no se ocupa para ninguna tabla
@@ -1427,7 +1429,7 @@ def historico_activoD(activo_id):
         historico_ul = obtener_historicoUL(activo_id)
         historico_pu = obtener_historicoP(activo_id)
         
-        return render_template('ShistoricosD.html', historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
+        return render_template('ShistoricosD.html', nombre_activo=nombre_activo, historico_ubicaciones=historico_ubicaciones,historico_usuarios=historico_usuarios,
                            historico_resguardante=historico_resguardante, historico_Rinterno=historico_Rinterno, 
                            historico_so=historico_so, historico_ram=historico_ram, historico_red=historico_red, historico_tg=historico_tg,
                            historico_dd=historico_dd, historico_Mi=historico_Mi, historico_ul=historico_ul, historico_pu=historico_pu, historico_cambios=historico_cambios)
