@@ -1361,6 +1361,54 @@ def modificar_so(activo_id, quitar, agregar, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar el interno del activo:", e)
 
+def modificar_ram(activo_id, quitar, agregar, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if quitar:
+            for elemento in quitar:
+                query = f"UPDATE DISPO_RAM SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND RAM_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
+                cursor.execute(query)
+        
+        if agregar:
+            for elemento in agregar:
+                insert_nuevo = "INSERT INTO DISPO_RAM(ACTIVO_ID, RAM_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (activo_id, elemento, fecha_modificacion, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el interno del activo:", e)
+
+def modificar_tarjeta(activo_id, quitar, agregar, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if quitar:
+            for elemento in quitar:
+                query = f"UPDATE DISPO_VIDEO SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND TARGETA_GARFICA_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
+                cursor.execute(query)
+        
+        if agregar:
+            for elemento in agregar:
+                insert_nuevo = "INSERT INTO DISPO_VIDEO(ACTIVO_ID, TARGETA_GARFICA_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (activo_id, elemento, fecha_modificacion, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el interno del activo:", e)
+
 def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion):
     try:
