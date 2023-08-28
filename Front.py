@@ -298,21 +298,59 @@ def eliminar_dispo(dispo_id):
 @app.route('/editar_dispo/<int:dispo_id>')
 def editar_dispo(dispo_id):
     if 'logged_in' in session and session['logged_in']:
-        # se deben obtener los datos para poder redirigir a seleccionar libros
+        nombres_so = obtener_info_sistema_operativo()
+        nombres_ram = obtener_info_ram()
+        nombres_almacenamiento = obtener_info_almacenamiento()
+        nombres_micro = obtener_info_micro()
+        nombres_tarjeta = obtener_info_tarjeta()
+        nombres_puerto = obtener_nombres_puerto()
+        nombres_lectora = obtener_info_lectora()
+        nombres_red = obtener_info_red()
         nombres_ubicacion = obtener_ubicaciones()
         nombres_resguardo = obtener_responsables_resguardo()
         nombres_interno = obtener_responsables_interno()
+
         obtener_dispoIDs = obtener_dispoID(dispo_id)
         obtener_ubicacion_original = obtener_ubicacionID(dispo_id)
         obtener_interno_original = obtener_internoID(dispo_id)
         obtener_resguardo_original = obtener_resguardoID(dispo_id)
+        obtener_so_original = obtener_soID(dispo_id)
+        obtener_ram_original = obtener_ramID(dispo_id)
+        obtener_almacenamiento_original = obtener_almacenamientoID(dispo_id)
+        obtener_micro_original = obtener_microID(dispo_id)
+        obtener_tarjeta_original = obtener_tarjetaID(dispo_id)
+        obtener_puerto_original = obtener_puertoID(dispo_id)
+        obtener_lectora_original = obtener_lectoraID(dispo_id)
+        obtener_red_original = obtener_redID(dispo_id)
+        obtener_ip_original = obtener_ipID(dispo_id)
+        obtener_mac_original = obtener_macID(dispo_id)
+        print(obtener_ip_original)
+
         nombres_subtipo = obtener_nombres_subtipo()
         nombres_modelo = obtener_info_modelo()
+
         numeroDeClics = len(obtener_interno_original) -1
+        numeroDeClics_so = len(obtener_so_original) -1
+        numeroDeClics_ram = len(obtener_ram_original) -1
+        numeroDeClics_almacenamiento = len(obtener_almacenamiento_original) -1
+        numeroDeClics_micro = len(obtener_micro_original) -1
+        numeroDeClics_tarjeta = len(obtener_tarjeta_original) -1
+        numeroDeClics_puerto = len(obtener_puerto_original) -1
+        numeroDeClics_lectora = len(obtener_lectora_original) -1
+        numeroDeClics_red = len(obtener_red_original) -1
+
         return render_template('Udispos.html', obtener_dispoIDs=obtener_dispoIDs, nombres_subtipo=nombres_subtipo,nombres_modelo=nombres_modelo,
                                obtener_ubicacion_original=obtener_ubicacion_original, nombres_ubicacion=nombres_ubicacion, obtener_resguardo_original=obtener_resguardo_original,
                                 nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, numeroDeClics=numeroDeClics,
-                                obtener_interno_original=obtener_interno_original)
+                                obtener_interno_original=obtener_interno_original, nombres_so=nombres_so, nombres_ram=nombres_ram,
+                                nombres_almacenamiento=nombres_almacenamiento, nombres_micro=nombres_micro, nombres_tarjeta=nombres_tarjeta,
+                                nombres_puerto=nombres_puerto, nombres_lectora=nombres_lectora, nombres_red=nombres_red, obtener_so_original=obtener_so_original,
+                                numeroDeClics_so=numeroDeClics_so, obtener_ram_original=obtener_ram_original, numeroDeClics_ram=numeroDeClics_ram,
+                                obtener_almacenamiento_original=obtener_almacenamiento_original, numeroDeClics_almacenamiento=numeroDeClics_almacenamiento,
+                                obtener_micro_original=obtener_micro_original, numeroDeClics_micro=numeroDeClics_micro, obtener_tarjeta_original=obtener_tarjeta_original,
+                                numeroDeClics_tarjeta=numeroDeClics_tarjeta, obtener_puerto_original=obtener_puerto_original, numeroDeClics_puerto=numeroDeClics_puerto,
+                                obtener_lectora_original=obtener_lectora_original, numeroDeClics_lectora=numeroDeClics_lectora, obtener_red_original=obtener_red_original,
+                                numeroDeClics_red=numeroDeClics_red, obtener_ip_original=obtener_ip_original, obtener_mac_original=obtener_mac_original)
     else:
         return redirect(url_for('logout'))
     

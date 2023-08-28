@@ -1054,6 +1054,196 @@ def obtener_internoID(activo_id):
         print("Error al obtener el interno con base en el activo:", e)
     return interno_id
 
+def obtener_soID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT SISTEMA_OPERATIVO_ID FROM DISPO_SO WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_ramID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT RAM_ID FROM DISPO_RAM WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_almacenamientoID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT DISCO_DURO_ID FROM DISPO_DD WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_microID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT MICROPROCESADOR_ID FROM DISPO_MICRO WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_tarjetaID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT TARGETA_GARFICA_ID FROM DISPO_VIDEO WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_puertoID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT PUERTO_ID FROM DISPO_PUERTO WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_lectoraID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT UNIDAD_LECTORA_ID FROM DISPO_LECTORA WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_redID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT INTERFAZ_RED_ID FROM DISPOSITIVO_RED WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_ipID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT IP FROM DISPOSITIVO_RED WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
+def obtener_macID(activo_id):
+    interno_id = []  # Valor predeterminado en caso de que no se encuentre ninguna ubicación
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta SQL
+        cursor.execute("SELECT MAC FROM DISPOSITIVO_RED WHERE ACTIVO_ID = %s AND OPERANTE = 1", (activo_id,))
+
+        rows = cursor.fetchall()
+        if rows:
+            interno_id = [row[0] for row in rows]
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener el interno con base en el activo:", e)
+    return interno_id
+
 def modificar_ubicacion(activo_id, nuevo_id, fecha_modificacion):
     try:
         # Realiza la conexión a la base de datos

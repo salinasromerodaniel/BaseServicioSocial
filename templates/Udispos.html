@@ -395,11 +395,43 @@
             $(document).ready(function() {
             // Obtener el número de clics de Flask
             var numeroDeClics = {{ numeroDeClics }}; // Asegúrate de que Flask proporcione este valor en tu plantilla HTML.
+            var numeroDeClics_so = {{ numeroDeClics_so }};
+            var numeroDeClics_ram = {{ numeroDeClics_ram }};
+            var numeroDeClics_almacenamiento = {{ numeroDeClics_almacenamiento }};
+            var numeroDeClics_micro = {{ numeroDeClics_micro }};
+            var numeroDeClics_tarjeta = {{ numeroDeClics_tarjeta }};
+            var numeroDeClics_puerto = {{ numeroDeClics_puerto }};
+            var numeroDeClics_lectora = {{ numeroDeClics_lectora }};
+            var numeroDeClics_red = {{ numeroDeClics_red }};
 
             // Función para simular clics en el botón
             function simularClics() {
                 for (var i = 0; i < numeroDeClics; i++) {
                     $("#agregar-interno").click();
+                }
+                for (var i = 0; i < numeroDeClics_so; i++) {
+                    $("#agregar-sistema").click();
+                }
+                for (var i = 0; i < numeroDeClics_ram; i++) {
+                    $("#agregar-ram").click();
+                }
+                for (var i = 0; i < numeroDeClics_almacenamiento; i++) {
+                    $("#agregar-almacenamiento").click();
+                }
+                for (var i = 0; i < numeroDeClics_micro; i++) {
+                    $("#agregar-micro").click();
+                }
+                for (var i = 0; i < numeroDeClics_tarjeta; i++) {
+                    $("#agregar-tarjeta").click();
+                }
+                for (var i = 0; i < numeroDeClics_puerto; i++) {
+                    $("#agregar-puerto").click();
+                }
+                for (var i = 0; i < numeroDeClics_lectora; i++) {
+                    $("#agregar-lectora").click();
+                }
+                for (var i = 0; i < numeroDeClics_red; i++) {
+                    $("#agregar-red").click();
                 }
                 var i=1;
                 var obtener_interno_original = {{ obtener_interno_original }};
@@ -410,6 +442,88 @@
                     select.value = elemento;
                     i++;
                 });
+                var i=1;
+                var obtener_so_original = {{ obtener_so_original }};
+                obtener_so_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "sistema_operativo_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_ram_original = {{ obtener_ram_original }};
+                obtener_ram_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "ram_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_almacenamiento_original = {{ obtener_almacenamiento_original }};
+                obtener_almacenamiento_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "almacenamiento_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_micro_original = {{ obtener_micro_original }};
+                obtener_micro_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "micro_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_tarjeta_original = {{ obtener_tarjeta_original }};
+                obtener_tarjeta_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "tarjeta_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_puerto_original = {{ obtener_puerto_original }};
+                obtener_puerto_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "puerto_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_lectora_original = {{ obtener_lectora_original }};
+                obtener_lectora_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "lectora_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                var obtener_red_original = {{ obtener_red_original }};
+                obtener_red_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "red_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+                var i=1;
+                obtener_ip_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreInput = "ip_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var input = document.querySelector("input[name='" + nombreInput + "']");
+                    input.value = elemento;
+                    i++;
+                });
+                
+
                 
             }
 
@@ -683,26 +797,7 @@
                     <label for="nombre">Nombre</label>
                     <input type="text" id="nombre" name="nombre"  value="{{ dispo[5] }}" required>
                 </div>
-                
-                <div class="form-group">
-                    <label for="modelo">Modelo</label>
-                    <select id="modelo" name="modelo" required>
-                        <!-- Opción deshabilitada y seleccionada por defecto -->
-                        <option value="" disabled selected>Escoja un modelo</option>
-                        <!-- Iterar sobre la lista de tuplas (marca, modelos) -->
-                        {% for marca, modelos in nombres_modelo %}
-                            <!-- Usar la etiqueta <optgroup> para agrupar modelos por marca -->
-                            <optgroup label="{{ marca }}">
-                                <!-- Iterar sobre los modelos asociados a la marca -->
-                                {% for modelo_id, nombre_modelo, _ in modelos %}
-                                    <!-- Usar la etiqueta <option> para mostrar el nombre del modelo -->
-                                    <option value="{{ modelo_id }}" {% if modelo_id == dispo[7] %}selected{% endif %}>{{ nombre_modelo }}</option>
-                                {% endfor %}
-                            </optgroup>
-                        {% endfor %}
-                    </select>
-                </div>
-                
+
                 <div class="form-group">
                     <label for="subtipo">Tipo de Dispositivo*</label>
                     <select id="subtipo" name="subtipo" required>
@@ -726,13 +821,126 @@
                     </select>
                     <br><br>
                 </div>
-                <!--<input type="hidden" id="estado" name="estado" value="{{ dispo[6] }}">-->
 
                 <div class="form-group">
                     <label for="nombre">Características</label>
                     <input type="text" id="caracterisiticas" name="caracteristicas"  value="{{ dispo[8] }}" required>
+                </div> 
+                
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <select id="modelo" name="modelo" required>
+                        <!-- Opción deshabilitada y seleccionada por defecto -->
+                        <option value="" disabled selected>Escoja un modelo</option>
+                        <!-- Iterar sobre la lista de tuplas (marca, modelos) -->
+                        {% for marca, modelos in nombres_modelo %}
+                            <!-- Usar la etiqueta <optgroup> para agrupar modelos por marca -->
+                            <optgroup label="{{ marca }}">
+                                <!-- Iterar sobre los modelos asociados a la marca -->
+                                {% for modelo_id, nombre_modelo, _ in modelos %}
+                                    <!-- Usar la etiqueta <option> para mostrar el nombre del modelo -->
+                                    <option value="{{ modelo_id }}" {% if modelo_id == dispo[7] %}selected{% endif %}>{{ nombre_modelo }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sistema_operativo">Sistema Operativo</label>
+                    <select id="sistema_operativo" name="sistema_operativo_1">
+                        <!-- Opción deshabilitada y seleccionada por defecto -->
+                        <option value="" disabled selected>Seleccione un sistema operativo</option>
+                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SISTEMA_OPERATIVO -->
+                        {% for sistema_id, nombre, num_version, arquitectura in nombres_so %}
+                            <option value="{{ sistema_id }}" {% if sistema_id == obtener_so_original[0] %}selected{% endif %} data-version="{{ num_version }}" data-arquitectura="{{ arquitectura }}">{{ nombre }} {{ num_version }} {{ arquitectura }}</option>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-sistema">Agregar otro sistema operativo</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-sistema">Eliminar último sistema operativo añadido</button>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
 
+                <div class="form-group">
+                    <label for="red" style="font-size: 25px;">Interfaz de Red</label>
+                    <select id="red" name="red_1" class="form-control">
+                        <option value="" disabled selected>Escoja una Interfaz de Red</option>
+                        {% set red_por_marca = {} %}
+                        {% for red_id, nombre, modelo, marca, integ_o_extern, tipo_nombre in nombres_red %}
+                            {% if marca not in red_por_marca %}
+                                {% set _ = red_por_marca.update({marca: []}) %}
+                            {% endif %}
+                            {% set _ = red_por_marca[marca].append((red_id, nombre, modelo, integ_o_extern, tipo_nombre)) %}
+                        {% endfor %}
+                        {% for marca, redes in red_por_marca.items() %}
+                            <optgroup label="{{ marca }}">
+                                {% for red in redes %}
+                                    <option value="{{ red[0] }}">
+                                        {{ red[1] }} - {{ red[2] }} - Interfaz: {% if red[3]|int == 0 %}Integrada{% else %}Externa{% endif %} - {{ red[4] }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <!-- Agregar caja de texto para dirección IP -->
+                    <label for="ip">Dirección IPv4</label>
+                    <input type="text" id="ip" name="ip_1" placeholder="NO ASIGNADA" class="form-control">
+                    <label for="mac">Dirección MAC</label>
+                    <input type="text" id="mac" name="mac_1" placeholder="NO INDICADA" class="form-control">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-red">Agregar otra Interfaz de Red</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-red">Eliminar última Interfaz de Red añadida</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="red_id" name="red_id">
+
+                <div id="ram_form" class="form-group">
+                    <label for="ram" style="font-size: 25px;">RAM</label>
+                    <select id="ram" name="ram_1" class="form-control" onchange="actualizarCampoOculto(this)">
+                        <option value="" disabled selected>Escoja una RAM</option>
+                        {% set ram_por_marca = {} %}
+                        {% for ram_id, marca_ram, num_serie, tipo_nombre, capacidad in nombres_ram %}
+                            {% if marca_ram not in ram_por_marca %}
+                                {% set _ = ram_por_marca.update({marca_ram: []}) %}
+                            {% endif %}
+                            {% set _ = ram_por_marca[marca_ram].append((ram_id, num_serie, tipo_nombre, capacidad)) %}
+                        {% endfor %}
+                        {% for marca, rams in ram_por_marca.items() %}
+                            <optgroup label="{{ marca }}">
+                                {% for ram in rams %}
+                                    <option value="{{ ram[0] }}">
+                                        Núm de Serie: {{ ram[1] }} - {{ ram[2] }} - Capacidad: {{ ram[3] }}GiB
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-ram">Agregar otra RAM</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-ram">Eliminar última RAM operativo añadido</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="ram_id" name="ram_id">
+                
                 <div class="form-group">
                     <label for="iram_instalada">Ram instalada (GiB)* </label>
                     <select id="iram_instalada" name="iram_instalada" required>
@@ -774,7 +982,75 @@
                             <option value="{{ i }}" {% if i == dispo[11] %}selected{% endif %}>{{ i }}</option>
                         {% endfor %}
                     </select>
-                </div>                
+                </div>
+                
+                <div class="form-group">
+                    <label for="almacenamiento" style="font-size: 25px;">Almacenamiento</label>
+                    <select id="almacenamiento" name="almacenamiento_1" class="form-control">
+                        <option value="" disabled selected>Escoja Almacenamiento</option>
+                        {% set almacenamiento_por_marca = {} %}
+                        {% for disco_id, num_serie, marca_almacenamiento, modelo, capacidad in nombres_almacenamiento %}
+                            {% if marca_almacenamiento not in almacenamiento_por_marca %}
+                                {% set _ = almacenamiento_por_marca.update({marca_almacenamiento: []}) %}
+                            {% endif %}
+                            {% set _ = almacenamiento_por_marca[marca_almacenamiento].append((disco_id, num_serie, modelo, capacidad)) %}
+                        {% endfor %}
+                        {% for marca, almacenamientos in almacenamiento_por_marca.items() %}
+                            <optgroup label="{{ marca }}">
+                                {% for almacenamiento in almacenamientos %}
+                                    <option value="{{ almacenamiento[0] }}">
+                                        Núm de Serie: {{ almacenamiento[1] }} - Modelo: {{ almacenamiento[2] }} - Capacidad: {{ almacenamiento[3] }}GiB
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-almacenamiento">Agregar otro Almacenamiento</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-almacenamiento">Eliminar último Almacenamiento añadido</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="disco_id" name="disco_id">
+
+                <div class="form-group">
+                    <label for="micro" style="font-size: 25px;">Microprocesador</label>
+                    <select id="micro" name="micro_1" class="form-control">
+                        <option value="" disabled selected>Escoja Microprocesador</option>
+                        {% set micro_por_marca = {} %}
+                        {% for micro_id, nombre, arquitectura,generacion, marca in nombres_micro %}
+                            {% if marca not in micro_por_marca %}
+                                {% set _ = micro_por_marca.update({marca: []}) %}
+                            {% endif %}
+                            {% set _ = micro_por_marca[marca].append((micro_id, nombre, arquitectura,generacion)) %}
+                        {% endfor %}
+                        {% for marca, micros in micro_por_marca.items() %}
+                            <optgroup label="{{ marca }}">
+                                {% for micro in micros %}
+                                    <option value="{{ micro[0] }}">
+                                        {{ micro[1] }} - Arquitectura: {{ micro[2] }} - Generación: {{ micro[3] }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-micro">Agregar otro Microprocesador</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-micro">Eliminar último Microprocesador añadido</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="micro_id" name="micro_id">
 
                 <div class="form-group">
                     <label for="num_procesadores">Número de procesadores*</label>
@@ -786,6 +1062,97 @@
                         {% endfor %}
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label for="tarjeta" style="font-size: 25px;">Tarjeta Gráfica</label>
+                    <select id="tarjeta" name="tarjeta_1" class="form-control">
+                        <option value="" disabled selected>Escoja Tarjeta Gráfica</option>
+                        {% set tarjeta_por_marca = {} %}
+                        {% for tarjeta_id, marca, modelo, tipo_nombre, pci_nombre in nombres_tarjeta %}
+                            {% if marca not in tarjeta_por_marca %}
+                                {% set _ = tarjeta_por_marca.update({marca: []}) %}
+                            {% endif %}
+                            {% set _ = tarjeta_por_marca[marca].append((tarjeta_id, modelo, tipo_nombre, pci_nombre)) %}
+                        {% endfor %}
+                        {% for marca, tarjetas in tarjeta_por_marca.items() %}
+                            <optgroup label="{{ marca }}">
+                                {% for tarjeta in tarjetas %}
+                                    <option value="{{ tarjeta[0] }}">
+                                        {{ tarjeta[1] }} - {{ tarjeta[2] }} - {{ tarjeta[3] }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-tarjeta">Agregar otra Tarjeta Gráfica</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-tarjeta">Eliminar última Tarjeta añadida</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="tarjeta_id" name="tarjeta_id">
+
+                <div class="form-group">
+                    <label for="puerto" style="font-size: 25px;">Puertos</label>
+                    <select id="puerto" name="puerto_1">
+                        <!-- Opción deshabilitada y seleccionada por defecto -->
+                        <option value="" disabled selected>Seleccione un Puerto</option>
+                        <!-- Generamos las opciones del menú desplegable con los nombres de la tabla SUBTIPO -->
+                        {% for puerto_id, nombre in nombres_puerto %}
+                            <option value="{{ puerto_id }}">{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-puerto">Agregar otro Puerto</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-puerto">Eliminar último Puerto añadido</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="puerto_id" name="puerto_id">
+    
+                <div class="form-group">
+                    <label for="lectora" style="font-size: 25px;">Unidad Lectora</label>
+                    <select id="lectora" name="lectora_1" class="form-control">
+                        <option value="" disabled selected>Escoja una Unidad Lectora</option>
+                        {% set lectora_por_marca = {} %}
+                        {% for lectora_id, tipo_nombre, modelo, marca in nombres_lectora %}
+                            {% if marca not in lectora_por_marca %}
+                                {% set _ = lectora_por_marca.update({marca: []}) %}
+                            {% endif %}
+                            {% set _ = lectora_por_marca[marca].append((lectora_id, tipo_nombre, modelo)) %}
+                        {% endfor %}
+                        {% for marca, lectoras in lectora_por_marca.items() %}
+                            <optgroup label="{{ marca }}">
+                                {% for lectora in lectoras %}
+                                    <option value="{{ lectora[0] }}">
+                                        Tipo: {{ lectora[1] }} - Modelo: {{ lectora[2] }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" id="agregar-lectora">Agregar otra Unidad Lectora</button>
+                            </td>
+                            <td style="width: 50%; text-align: center;">
+                                <button type="button" class="btn-borrar-lectora">Eliminar última Unidad lectora añadida</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="hidden" id="lectora_id" name="lectora_id">
 
                 <div class="form-group">
                     <label for="ubicacion">Ubicación*</label>
