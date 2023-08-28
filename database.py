@@ -1288,6 +1288,55 @@ def modificar_resguardo(activo_id, nuevo_id, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar el resguardante del activo:", e)
 
+def encontrar_cambios_con_repeticiones(obtener_interno_original, ids_interno):
+    # Verificar si los arreglos son iguales
+    if obtener_interno_original == ids_interno:
+        return None, None  # Si son iguales, no hacemos nada
+    # Crear diccionarios para contar las repeticiones de elementos en cada lista
+    original_dict = {}
+    modificado_dict = {}
+    # Llenar el diccionario original_dict con las repeticiones de elementos en el original
+    for elemento in obtener_interno_original:
+        original_dict[elemento] = original_dict.get(elemento, 0) + 1
+    # Llenar el diccionario modificado_dict con las repeticiones de elementos en el modificado
+    for elemento in ids_interno:
+        modificado_dict[elemento] = modificado_dict.get(elemento, 0) + 1
+    # Encontrar elementos que desaparecieron (en el original pero no en el modificado)
+    elementos_que_desaparecieron = []
+    for elemento, repeticiones in original_dict.items():
+        if elemento not in modificado_dict or repeticiones > modificado_dict[elemento]:
+            elementos_que_desaparecieron.extend([elemento] * (repeticiones - modificado_dict.get(elemento, 0)))
+    # Encontrar nuevos elementos (en el modificado pero no en el original)
+    nuevos_elementos = []
+    for elemento, repeticiones in modificado_dict.items():
+        if elemento not in original_dict or repeticiones > original_dict[elemento]:
+            nuevos_elementos.extend([elemento] * (repeticiones - original_dict.get(elemento, 0)))
+    return elementos_que_desaparecieron, nuevos_elementos
+
+def modificar_interno(activo_id, quitar, agregar, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if quitar:
+            for elemento in quitar:
+                query = f"UPDATE HISTORICO_ACTIVO_RESPONSABLE_INTERNO SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND RESPONSABLE_INTERNO_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
+                cursor.execute(query)
+        
+        if agregar:
+            for elemento in agregar:
+                insert_nuevo = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE_INTERNO(FECHA_PRESTAMO, RESPONSABLE_INTERNO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (fecha_modificacion, elemento, activo_id, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el interno del activo:", e)
+
 def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion):
     try:

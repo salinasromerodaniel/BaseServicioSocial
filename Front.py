@@ -322,7 +322,6 @@ def editar_dispo(dispo_id):
         obtener_red_original = obtener_redID(dispo_id)
         obtener_ip_original = obtener_ipID(dispo_id)
         obtener_mac_original = obtener_macID(dispo_id)
-        print(obtener_ip_original)
 
         nombres_subtipo = obtener_nombres_subtipo()
         nombres_modelo = obtener_info_modelo()
@@ -366,17 +365,49 @@ def modificar_dispo(dispo_id):
     ram_instalada = request.form.get('iram_instalada')
     ram_maxima = request.form.get('tram_maxima')
     subtipo = request.form.get('subtipo')
+    fecha_modificacion = datetime.date.today()
+
+    obtener_interno_original = obtener_internoID(dispo_id)
+    contador_interno = int(request.form.get('lista_ids_interno'))
+    ids_interno = []
+    if contador_interno >= 1:
+        for i in range (1, contador_interno + 1) :
+            ids_interno.append(request.form.get(f'interno_{i}'))
+    for i in range(len(ids_interno)):
+        if ids_interno[i]:
+            ids_interno[i] = int(ids_interno[i])
+    ids_interno = [x for x in ids_interno if x is not None]
+    internof, internon = encontrar_cambios_con_repeticiones(obtener_interno_original, ids_interno)
+    if internon:
+        internon = [x for x in internon if x is not None]
+    modificar_interno(dispo_id, internof, internon, fecha_modificacion)
+
+    obtener_so_original = obtener_soID(dispo_id)
+    contador_so = int(request.form.get('lista_ids_so'))
+    ids_so = []
+    if contador_so >= 1:
+        for i in range (1, contador_so + 1) :
+            ids_so.append(request.form.get(f'sistema_operativo_{i}'))
+    for i in range(len(ids_so)):
+        if ids_so[i]:
+            ids_so[i] = int(ids_so[i])
+    ids_so = [x for x in ids_so if x is not None]
+    sof, son = encontrar_cambios_con_repeticiones(obtener_so_original, ids_so)
+    if son:
+        son = [x for x in son if x is not None]
+    
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
     ubicacion_nueva = int(request.form.get('ubicacion'))
     resguardo_original = int(obtener_resguardoID(dispo_id))
     resguardo_nueva = int(request.form.get('resguardo_1'))
-    obtener_interno_original = obtener_internoID(dispo_id)
-    fecha_modificacion = datetime.date.today()
+    
+
     if ubicacion_original != ubicacion_nueva:
         modificar_ubicacion(dispo_id, ubicacion_nueva, fecha_modificacion)
     if resguardo_original != resguardo_nueva:
         modificar_resguardo(dispo_id, resguardo_nueva, fecha_modificacion)
+    
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
