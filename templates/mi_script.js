@@ -1,4 +1,4 @@
-<script>
+
     // Obtener el elemento del menú desplegable
     const selectElement = document.getElementById('sistema_operativo');
 
@@ -17,8 +17,8 @@
         console.log("Versión:", version);
         console.log("Arquitectura:", arquitectura);
     });
-</script>
-<script>
+
+
 function obtenerModeloId() {
         const selectElement = document.getElementById('modelo');
         const selectedOption = selectElement.selectedOptions[0];
@@ -110,6 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
-</script>
+
 
 

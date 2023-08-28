@@ -5,6 +5,7 @@ from flask import g
 from collections import defaultdict
 import re
 import datetime
+import json
 
 app = Flask(__name__)
 
@@ -321,7 +322,10 @@ def editar_dispo(dispo_id):
         obtener_lectora_original = obtener_lectoraID(dispo_id)
         obtener_red_original = obtener_redID(dispo_id)
         obtener_ip_original = obtener_ipID(dispo_id)
+        obtener_ip_original_json = json.dumps(obtener_ip_original)
+
         obtener_mac_original = obtener_macID(dispo_id)
+        obtener_mac_original_json = json.dumps(obtener_mac_original)
 
         nombres_subtipo = obtener_nombres_subtipo()
         nombres_modelo = obtener_info_modelo()
@@ -347,7 +351,7 @@ def editar_dispo(dispo_id):
                                 obtener_micro_original=obtener_micro_original, numeroDeClics_micro=numeroDeClics_micro, obtener_tarjeta_original=obtener_tarjeta_original,
                                 numeroDeClics_tarjeta=numeroDeClics_tarjeta, obtener_puerto_original=obtener_puerto_original, numeroDeClics_puerto=numeroDeClics_puerto,
                                 obtener_lectora_original=obtener_lectora_original, numeroDeClics_lectora=numeroDeClics_lectora, obtener_red_original=obtener_red_original,
-                                numeroDeClics_red=numeroDeClics_red, obtener_ip_original=obtener_ip_original, obtener_mac_original=obtener_mac_original)
+                                numeroDeClics_red=numeroDeClics_red, obtener_ip_original_json=obtener_ip_original_json, obtener_mac_original_json=obtener_mac_original_json)
     else:
         return redirect(url_for('logout'))
     
@@ -486,6 +490,25 @@ def modificar_dispo(dispo_id):
     if lectoran:
         lectoran = [x for x in lectoran if x is not None]
     modificar_lectora(dispo_id, lectoraf, lectoran, fecha_modificacion)
+
+    obtener_red_original = obtener_redID(dispo_id)
+    obtener_ip_original = obtener_ipID(dispo_id)
+    obtener_mac_original = obtener_macID(dispo_id)
+    contador_red = int(request.form.get('lista_ids_red'))
+    contador_ip = int(request.form.get('lista_ids_ip'))
+    contador_mac = int(request.form.get('lista_ids_mac'))
+    ids_red = []
+    if contador_red >= 1:
+        for i in range (1, contador_red + 1) :
+            ids_red.append(request.form.get(f'red_{i}'))
+    for i in range(len(ids_red)):
+        if ids_red[i]:
+            ids_red[i] = int(ids_red[i])
+    ids_red = [x for x in ids_red if x is not None]
+    redf, redn = encontrar_cambios_con_repeticiones(obtener_red_original, ids_red)
+    if redn:
+        redn = [x for x in redn if x is not None]
+    modificar_red(dispo_id, redf, redn, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
