@@ -411,6 +411,21 @@ def modificar_dispo(dispo_id):
     if ramn:
         ramn = [x for x in ramn if x is not None]
     modificar_ram(dispo_id, ramf, ramn, fecha_modificacion)
+
+    obtener_tarjeta_original = obtener_tarjetaID(dispo_id)
+    contador_tarjeta = int(request.form.get('lista_ids_tarjeta'))
+    ids_tarjeta = []
+    if contador_tarjeta >= 1:
+        for i in range (1, contador_tarjeta + 1) :
+            ids_tarjeta.append(request.form.get(f'tarjeta_{i}'))
+    for i in range(len(ids_tarjeta)):
+        if ids_tarjeta[i]:
+            ids_tarjeta[i] = int(ids_tarjeta[i])
+    ids_tarjeta = [x for x in ids_tarjeta if x is not None]
+    tarjetaf, tarjetan = encontrar_cambios_con_repeticiones(obtener_tarjeta_original, ids_tarjeta)
+    if tarjetan:
+        tarjetan = [x for x in tarjetan if x is not None]
+    modificar_tarjeta(dispo_id, tarjetaf, tarjetan, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
