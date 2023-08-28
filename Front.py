@@ -471,6 +471,21 @@ def modificar_dispo(dispo_id):
     if almacenamienton:
         almacenamienton = [x for x in almacenamienton if x is not None]
     modificar_almacenamiento(dispo_id, almacenamientof, almacenamienton, fecha_modificacion)
+
+    obtener_lectora_original = obtener_lectoraID(dispo_id)
+    contador_lectora = int(request.form.get('lista_ids_lectora'))
+    ids_lectora = []
+    if contador_lectora >= 1:
+        for i in range (1, contador_lectora + 1) :
+            ids_lectora.append(request.form.get(f'lectora_{i}'))
+    for i in range(len(ids_lectora)):
+        if ids_lectora[i]:
+            ids_lectora[i] = int(ids_lectora[i])
+    ids_lectora = [x for x in ids_lectora if x is not None]
+    lectoraf, lectoran = encontrar_cambios_con_repeticiones(obtener_lectora_original, ids_lectora)
+    if lectoran:
+        lectoran = [x for x in lectoran if x is not None]
+    modificar_lectora(dispo_id, lectoraf, lectoran, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
