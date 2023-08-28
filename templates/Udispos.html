@@ -79,7 +79,7 @@
     <!-- Asegúrate de tener incluida la biblioteca de jQuery antes de este script -->
 <!-- Coloca esto en la sección <head> de tu archivo HTML -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="mi_script.js"></script>
+    <!--<script src="mi_script.js"></script>-->
     <script>
         var listaIdsSistemas = [];
         var listaIdsRam = [];
@@ -392,6 +392,10 @@
                 $("#lista_ids_interno").val(contadorInterno);
             });
 
+            function eliminarCaracteresEscape(str) {
+                return str.replace(/&#39;/g, "'");
+            }
+
             $(document).ready(function() {
             // Obtener el número de clics de Flask
             var numeroDeClics = {{ numeroDeClics }}; // Asegúrate de que Flask proporcione este valor en tu plantilla HTML.
@@ -514,10 +518,24 @@
                     select.value = elemento;
                     i++;
                 });
+
+                var obtener_ip_original = {{ obtener_ip_original_json|safe }};
                 var i=1;
+                console.log(obtener_ip_original);
                 obtener_ip_original.forEach(function(elemento) {
                     console.log(elemento);
                     var nombreInput = "ip_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var input = document.querySelector("input[name='" + nombreInput + "']");
+                    input.value = elemento;
+                    i++;
+                });
+
+                var obtener_mac_original = {{ obtener_mac_original_json|safe }};
+                var i=1;
+                console.log(obtener_mac_original);
+                obtener_mac_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreInput = "mac_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
                     var input = document.querySelector("input[name='" + nombreInput + "']");
                     input.value = elemento;
                     i++;

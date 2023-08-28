@@ -1,4 +1,4 @@
-<script>
+
     // Obtener el elemento del menú desplegable
     const selectElement = document.getElementById('sistema_operativo');
 
@@ -17,9 +17,8 @@
         console.log("Versión:", version);
         console.log("Arquitectura:", arquitectura);
     });
-</script>
 
-<script>
+
 function obtenerModeloId() {
         const selectElement = document.getElementById('modelo');
         const selectedOption = selectElement.selectedOptions[0];
@@ -78,33 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
         inputUbicacionId.value = selectedId;
     });
 
-    // Obtener el elemento select y el elemento oculto para almacenar el TITULO_ID
-    const selectTitulo = document.getElementById('titulo');
-    const inputTituloId = document.getElementById('titulo_id');
-
-    // Agregar un evento para detectar el cambio en el menú deslizable de título
-    selectTitulo.addEventListener('change', function() {
-        // Obtener el valor seleccionado en el menú deslizable (TITULO_ID)
-        const selectedId = selectTitulo.options[selectTitulo.selectedIndex].value;
-
-        // Almacenar el TITULO_ID en el campo oculto
-        inputTituloId.value = selectedId;
-    });
-
-    // Obtener el elemento select y el elemento oculto para almacenar el DEPARTAMENTO_ID
-    const selectDepartamento = document.getElementById('departamento');
-    const inputDepartamentoId = document.getElementById('departamento_id');
-
-    // Agregar un evento para detectar el cambio en el menú deslizable de departamento
-    selectDepartamento.addEventListener('change', function() {
-        // Obtener el valor seleccionado en el menú deslizable (DEPARTAMENTO_ID)
-        const selectedId = selectDepartamento.options[selectDepartamento.selectedIndex].value;
-
-        // Almacenar el DEPARTAMENTO_ID en el campo oculto
-        inputDepartamentoId.value = selectedId;
-    });
-
-
     // Obtener el elemento select y el elemento oculto para almacenar el SUBTIPO_ID
     const selectSubtipo = document.getElementById('subtipo');
     const inputSubtipoId = document.getElementById('subtipo_id');
@@ -137,11 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
-
 });
 
-
-</script>
 
 
