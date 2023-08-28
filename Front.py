@@ -456,6 +456,21 @@ def modificar_dispo(dispo_id):
     if micron:
         micron = [x for x in micron if x is not None]
     modificar_micro(dispo_id, microf, micron, fecha_modificacion)
+
+    obtener_almacenamiento_original = obtener_almacenamientoID(dispo_id)
+    contador_almacenamiento = int(request.form.get('lista_ids_almacenamiento'))
+    ids_almacenamiento = []
+    if contador_almacenamiento >= 1:
+        for i in range (1, contador_almacenamiento + 1) :
+            ids_almacenamiento.append(request.form.get(f'almacenamiento_{i}'))
+    for i in range(len(ids_almacenamiento)):
+        if ids_almacenamiento[i]:
+            ids_almacenamiento[i] = int(ids_almacenamiento[i])
+    ids_almacenamiento = [x for x in ids_almacenamiento if x is not None]
+    almacenamientof, almacenamienton = encontrar_cambios_con_repeticiones(obtener_almacenamiento_original, ids_almacenamiento)
+    if almacenamienton:
+        almacenamienton = [x for x in almacenamienton if x is not None]
+    modificar_almacenamiento(dispo_id, almacenamientof, almacenamienton, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
