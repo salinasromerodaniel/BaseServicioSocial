@@ -2788,3 +2788,25 @@ def insertar_ResponsableR(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono
         print("Inserción exitosa en las tablas RESPONSABLE_RESGUARDO.")
     except mysql.connector.Error as error:
             print("Error al insertar en las tablas LIBRO:", error)
+
+def insertar_ResponsableI(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo,
+                          titulo_id, departamento_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        # Crear la consulta SQL para la inserción en la tabla ACTIVO
+        insert_responsable_query = "INSERT INTO RESPONSABLE_INTERNO (NOMBRE, AP_PATERNO, AP_MATERNO , NUM_TRB, RFC, TELEFONO, CORREO, DEPARTAMENTO_ID, TITULO_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        # Definir los valores para la inserción en la tabla ACTIVO
+        # el modelo simepre debe estar como N/A=id(76)
+        values_responsable = (nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo, titulo_id, departamento_id)
+        # Ejecutar la consulta de inserción en la tabla ACTIVO
+        cursor.execute(insert_responsable_query, values_responsable)
+        conn.commit()
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        print("Inserción exitosa en las tablas RESPONSABLE_INTERNO.")
+    except mysql.connector.Error as error:
+            print("Error al insertar en las tablas LIBRO:", error)
