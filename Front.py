@@ -441,6 +441,21 @@ def modificar_dispo(dispo_id):
     if puerton:
         puerton = [x for x in puerton if x is not None]
     modificar_puerto(dispo_id, puertof, puerton, fecha_modificacion)
+
+    obtener_micro_original = obtener_microID(dispo_id)
+    contador_micro = int(request.form.get('lista_ids_micro'))
+    ids_micro = []
+    if contador_micro >= 1:
+        for i in range (1, contador_micro + 1) :
+            ids_micro.append(request.form.get(f'micro_{i}'))
+    for i in range(len(ids_micro)):
+        if ids_micro[i]:
+            ids_micro[i] = int(ids_micro[i])
+    ids_micro = [x for x in ids_micro if x is not None]
+    microf, micron = encontrar_cambios_con_repeticiones(obtener_micro_original, ids_micro)
+    if micron:
+        micron = [x for x in micron if x is not None]
+    modificar_micro(dispo_id, microf, micron, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
