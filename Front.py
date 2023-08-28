@@ -441,6 +441,51 @@ def modificar_dispo(dispo_id):
     if puerton:
         puerton = [x for x in puerton if x is not None]
     modificar_puerto(dispo_id, puertof, puerton, fecha_modificacion)
+
+    obtener_micro_original = obtener_microID(dispo_id)
+    contador_micro = int(request.form.get('lista_ids_micro'))
+    ids_micro = []
+    if contador_micro >= 1:
+        for i in range (1, contador_micro + 1) :
+            ids_micro.append(request.form.get(f'micro_{i}'))
+    for i in range(len(ids_micro)):
+        if ids_micro[i]:
+            ids_micro[i] = int(ids_micro[i])
+    ids_micro = [x for x in ids_micro if x is not None]
+    microf, micron = encontrar_cambios_con_repeticiones(obtener_micro_original, ids_micro)
+    if micron:
+        micron = [x for x in micron if x is not None]
+    modificar_micro(dispo_id, microf, micron, fecha_modificacion)
+
+    obtener_almacenamiento_original = obtener_almacenamientoID(dispo_id)
+    contador_almacenamiento = int(request.form.get('lista_ids_almacenamiento'))
+    ids_almacenamiento = []
+    if contador_almacenamiento >= 1:
+        for i in range (1, contador_almacenamiento + 1) :
+            ids_almacenamiento.append(request.form.get(f'almacenamiento_{i}'))
+    for i in range(len(ids_almacenamiento)):
+        if ids_almacenamiento[i]:
+            ids_almacenamiento[i] = int(ids_almacenamiento[i])
+    ids_almacenamiento = [x for x in ids_almacenamiento if x is not None]
+    almacenamientof, almacenamienton = encontrar_cambios_con_repeticiones(obtener_almacenamiento_original, ids_almacenamiento)
+    if almacenamienton:
+        almacenamienton = [x for x in almacenamienton if x is not None]
+    modificar_almacenamiento(dispo_id, almacenamientof, almacenamienton, fecha_modificacion)
+
+    obtener_lectora_original = obtener_lectoraID(dispo_id)
+    contador_lectora = int(request.form.get('lista_ids_lectora'))
+    ids_lectora = []
+    if contador_lectora >= 1:
+        for i in range (1, contador_lectora + 1) :
+            ids_lectora.append(request.form.get(f'lectora_{i}'))
+    for i in range(len(ids_lectora)):
+        if ids_lectora[i]:
+            ids_lectora[i] = int(ids_lectora[i])
+    ids_lectora = [x for x in ids_lectora if x is not None]
+    lectoraf, lectoran = encontrar_cambios_con_repeticiones(obtener_lectora_original, ids_lectora)
+    if lectoran:
+        lectoran = [x for x in lectoran if x is not None]
+    modificar_lectora(dispo_id, lectoraf, lectoran, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
@@ -1385,7 +1430,9 @@ def busquedaD():
                 "RED_INFO": ", ".join(red_info_modificado) if red_info_modificado else "",
                 "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
-                "INTERNO_INFO": ", ".join(interno_info_list) if interno_info_list else ""
+                "INTERNO_INFO": ", ".join(interno_info_list) if interno_info_list else "",
+                "IPS": row[22],
+                "MAC": row[23]
             }
             datos_procesados.append(row_dict)
         return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)

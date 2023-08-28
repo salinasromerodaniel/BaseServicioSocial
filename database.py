@@ -1433,6 +1433,78 @@ def modificar_puerto(activo_id, quitar, agregar, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar el interno del activo:", e)
 
+def modificar_micro(activo_id, quitar, agregar, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if quitar:
+            for elemento in quitar:
+                query = f"UPDATE DISPO_MICRO SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND MICROPROCESADOR_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
+                cursor.execute(query)
+        
+        if agregar:
+            for elemento in agregar:
+                insert_nuevo = "INSERT INTO DISPO_MICRO(ACTIVO_ID, MICROPROCESADOR_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (activo_id, elemento, fecha_modificacion, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el interno del activo:", e)
+
+def modificar_almacenamiento(activo_id, quitar, agregar, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if quitar:
+            for elemento in quitar:
+                query = f"UPDATE DISPO_DD SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND DISCO_DURO_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
+                cursor.execute(query)
+        
+        if agregar:
+            for elemento in agregar:
+                insert_nuevo = "INSERT INTO DISPO_DD(ACTIVO_ID, DISCO_DURO_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (activo_id, elemento, fecha_modificacion, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el interno del activo:", e)
+
+def modificar_lectora(activo_id, quitar, agregar, fecha_modificacion):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if quitar:
+            for elemento in quitar:
+                query = f"UPDATE DISPO_LECTORA SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND UNIDAD_LECTORA_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
+                cursor.execute(query)
+        
+        if agregar:
+            for elemento in agregar:
+                insert_nuevo = "INSERT INTO DISPO_LECTORA(ACTIVO_ID, UNIDAD_LECTORA_ID, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (activo_id, elemento, fecha_modificacion, 1))
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el interno del activo:", e)
+
 def modificar_dispoD(id_activo, factura, serial, num_inventario, nombre, estado, modelo,
                     caracteristicas, num_procesadores, ram_instalada, ram_maxima, subtipo, fecha_modificacion):
     try:
@@ -1622,10 +1694,14 @@ def busqueda_dispos(diccionario=None):
                 (SELECT GROUP_CONCAT(DM.MICROPROCESADOR_ID) FROM DISPO_MICRO DM WHERE A.ACTIVO_ID = DM.ACTIVO_ID AND DM.OPERANTE = 1) AS MICROPROCESADOR_ID_CONCAT,
                 (SELECT GROUP_CONCAT(DD.DISCO_DURO_ID) FROM DISPO_DD DD WHERE A.ACTIVO_ID = DD.ACTIVO_ID AND DD.OPERANTE = 1) AS DISCO_DURO_ID_CONCAT,
                 (SELECT GROUP_CONCAT(DL.UNIDAD_LECTORA_ID) FROM DISPO_LECTORA DL WHERE A.ACTIVO_ID = DL.ACTIVO_ID AND DL.OPERANTE = 1) AS UNIDAD_LECTORA_ID_CONCAT,
+                
                 (SELECT GROUP_CONCAT(DRD.INTERFAZ_RED_ID) FROM DISPOSITIVO_RED DRD WHERE A.ACTIVO_ID = DRD.ACTIVO_ID AND DRD.OPERANTE = 1) AS INTERFAZ_RED_ID_CONCAT,
+    
                 (SELECT GROUP_CONCAT(DISTINCT HAUB.UBICACION_ID) FROM HISTORICO_ACTIVO_UBICACION HAUB WHERE A.ACTIVO_ID = HAUB.ACTIVO_ID AND HAUB.OPERANTE = 1) AS UBICACION_ID_CONCAT,
                 (SELECT GROUP_CONCAT(DISTINCT HAR.RESPONSABLE_RESGUARDO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE HAR WHERE A.ACTIVO_ID = HAR.ACTIVO_ID AND HAR.OPERANTE = 1) AS RESPONSABLE_RESGUARDO_ID_CONCAT,
-                (SELECT GROUP_CONCAT(DISTINCT HAINT.RESPONSABLE_INTERNO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE_INTERNO HAINT WHERE A.ACTIVO_ID = HAINT.ACTIVO_ID AND HAINT.OPERANTE = 1) AS RESPONSABLE_INTERNO_ID_CONCAT
+                (SELECT GROUP_CONCAT(DISTINCT HAINT.RESPONSABLE_INTERNO_ID) FROM HISTORICO_ACTIVO_RESPONSABLE_INTERNO HAINT WHERE A.ACTIVO_ID = HAINT.ACTIVO_ID AND HAINT.OPERANTE = 1) AS RESPONSABLE_INTERNO_ID_CONCAT,
+                (SELECT GROUP_CONCAT(DRD.IP) FROM DISPOSITIVO_RED DRD WHERE A.ACTIVO_ID = DRD.ACTIVO_ID AND DRD.OPERANTE = 1) AS IP_CONCAT,
+                (SELECT GROUP_CONCAT(DRD.MAC) FROM DISPOSITIVO_RED DRD WHERE A.ACTIVO_ID = DRD.ACTIVO_ID AND DRD.OPERANTE = 1) AS MAC_CONCAT
             FROM ACTIVO A 
             JOIN MODELO M ON A.MODELO_ID = M.MODELO_ID 
             JOIN DISPO_INTELIIGENTE DI ON A.ACTIVO_ID = DI.ACTIVO_ID 
