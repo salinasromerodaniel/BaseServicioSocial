@@ -2566,3 +2566,23 @@ def obtener_historicoC(activo_id):
     except mysql.connector.Error as e:
         print("Error al obtener los valores:", e)
     return historicos
+
+def obtener_nombvreA(activo_id):
+    historicos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla LIBRO con información de ACTIVO
+        cursor.execute(""" SELECT NOMBRE FROM ACTIVO WHERE ACTIVO_ID = %s""", (activo_id,))
+        # Obtiene los resultados de la consulta y los agrega a la lista de ubicaciones
+        for historico in cursor.fetchall():
+            nombre = historico[0]
+            historicos.append((nombre,))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los valores:", e)
+    return historicos
+
