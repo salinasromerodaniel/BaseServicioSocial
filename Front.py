@@ -395,6 +395,7 @@ def modificar_dispo(dispo_id):
     sof, son = encontrar_cambios_con_repeticiones(obtener_so_original, ids_so)
     if son:
         son = [x for x in son if x is not None]
+    modificar_so(dispo_id, sof, son, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
