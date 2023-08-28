@@ -383,7 +383,7 @@ def modificar_dispo(dispo_id):
     modificar_interno(dispo_id, internof, internon, fecha_modificacion)
 
     obtener_so_original = obtener_soID(dispo_id)
-    contador_so = int(request.form.get('lista_ids_so'))
+    contador_so = int(request.form.get('lista_ids_sistemas'))
     ids_so = []
     if contador_so >= 1:
         for i in range (1, contador_so + 1) :
