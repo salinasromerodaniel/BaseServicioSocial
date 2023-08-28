@@ -1580,6 +1580,26 @@ def obtener_titulo():
         print("Error al obtener los titulos:", e)
     return titulos
 
+def obtener_departamento():
+    departamentos = []
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Ejecuta la consulta para obtener los atributos de la tabla USUARIO_FINAL
+        cursor.execute("SELECT DEPARTAMENTO_ID, NOMBRE FROM DEPARTAMENTO ORDER BY NOMBRE")
+        # Obtiene los resultados de la consulta y los agrega a la lista de usuarios finales
+        for departamento in cursor.fetchall():
+           departamento_id = departamento[0]
+           nombre = departamento[1]
+           departamentos.append((departamento_id, nombre))
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al obtener los departamentos:", e)
+    return departamentos
+
 def obtener_division():
     divisiones = []
     try:
@@ -2747,3 +2767,24 @@ def obtener_nombvreA(activo_id):
         print("Error al obtener los valores:", e)
     return historicos
 
+def insertar_ResponsableR(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo,
+                          titulo_id, departamento_id):
+    try:
+        # Realiza la conexión a la base de datos (puedes definir db_config aquí o importarlo desde app.py)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        # Crear la consulta SQL para la inserción en la tabla ACTIVO
+        insert_responsable_query = "INSERT INTO RESPONSABLE_RESGUARDO (NOMBRE, AP_PATERNO, AP_MATERNO , NUM_TRB, RFC, TELEFONO, CORREO, DEPARTAMENTO_ID, TITULO_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        # Definir los valores para la inserción en la tabla ACTIVO
+        # el modelo simepre debe estar como N/A=id(76)
+        values_responsable = (nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo, titulo_id, departamento_id)
+        # Ejecutar la consulta de inserción en la tabla ACTIVO
+        cursor.execute(insert_responsable_query, values_responsable)
+        conn.commit()
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        print("Inserción exitosa en las tablas RESPONSABLE_RESGUARDO.")
+    except mysql.connector.Error as error:
+            print("Error al insertar en las tablas LIBRO:", error)

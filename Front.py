@@ -1821,10 +1821,70 @@ def eliminar_hpu(activo_id, historico_id):
 @app.route('/personas/agregar_responsable_resguardo')
 def responsableR():
     if 'logged_in' in session and session['logged_in']:
-        return render_template('Shistoricos.html')
+        datos_titulo = obtener_titulo()
+        datos_departamento = obtener_departamento()
+        return render_template('AResponsableR.html', datos_titulo=datos_titulo, datos_departamento=datos_departamento)
     else:
         return redirect(url_for('logout'))
-    
+
+@app.route('/agregar_responsableR', methods=['POST'])
+def agregar_responsableR():
+    # Obtener los datos del formulario
+    nombre = request.form.get('nombre').upper()
+    ap_paterno = request.form.get('ap_paterno').upper()
+    ap_materno = request.form.get('ap_materno').upper()
+    num_trb = request.form.get('num_trb')
+    rfc = request.form.get('rfc')
+    telefono = request.form.get('telefono')
+    correo = request.form.get('correo')
+    titulo_id = request.form.get('titulo_id')
+    departamento_id = request.form.get('departamento_id')
+    print("Valor de departamento_id:", departamento_id)
+
+    if num_trb is not None and num_trb != '':
+        num_trb = int(num_trb)
+    else:
+        num_trb = None
+    if not rfc:
+        rfc = "N/A"
+    if telefono is not None and telefono != '':
+        telefono = int(telefono)
+    else:
+        telefono = None
+    if not correo:
+        correo = "N/A"
+    # Redireccionar a la página de resultados y pasar los datos como parámetros en la URL
+    return redirect(url_for('mostrar_resultadosRR', nombre=nombre, ap_paterno=ap_paterno, ap_materno=ap_materno,
+                            num_trb=num_trb, rfc=rfc, telefono=telefono, correo=correo, titulo_id=titulo_id, departamento_id=departamento_id))
+
+@app.route('/mostrar_resultadosRR')
+def mostrar_resultadosRR():
+    # Obtener los datos de la URL
+    nombre = request.args.get('nombre')
+    ap_paterno = request.args.get('ap_paterno')
+    ap_materno = request.args.get('ap_materno')
+    num_trb = request.args.get('num_trb')
+    rfc = request.args.get('rfc')
+    telefono = request.args.get('telefono')
+    correo = request.args.get('correo')
+    titulo_id = request.args.get('titulo_id')
+    departamento_id = request.args.get('departamento_id')
+
+    insertar_ResponsableR(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo,
+                          titulo_id, departamento_id)
+
+    # Renderizar la página de resultados con los datos recibidos
+    return render_template('MPersonas.html')
+
+
+@app.route('/personas/agregar_responsable_interno')
+def responsableI():
+    if 'logged_in' in session and session['logged_in']:
+        datos_titulo = obtener_titulo()
+        datos_departamento = obtener_departamento()
+        return render_template('AResponsableI.html', datos_titulo=datos_titulo, datos_departamento=datos_departamento)
+    else:
+        return redirect(url_for('logout'))
 
 ##############################  M A I N ############################################################################
 if __name__=='__main__':
