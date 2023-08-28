@@ -1430,7 +1430,9 @@ def busquedaD():
                 "RED_INFO": ", ".join(red_info_modificado) if red_info_modificado else "",
                 "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
-                "INTERNO_INFO": ", ".join(interno_info_list) if interno_info_list else ""
+                "INTERNO_INFO": ", ".join(interno_info_list) if interno_info_list else "",
+                "IPS": row[22],
+                "MAC": row[23]
             }
             datos_procesados.append(row_dict)
         return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)
