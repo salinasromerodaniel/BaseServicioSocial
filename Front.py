@@ -426,6 +426,21 @@ def modificar_dispo(dispo_id):
     if tarjetan:
         tarjetan = [x for x in tarjetan if x is not None]
     modificar_tarjeta(dispo_id, tarjetaf, tarjetan, fecha_modificacion)
+
+    obtener_puerto_original = obtener_puertoID(dispo_id)
+    contador_puerto = int(request.form.get('lista_ids_puerto'))
+    ids_puerto = []
+    if contador_puerto >= 1:
+        for i in range (1, contador_puerto + 1) :
+            ids_puerto.append(request.form.get(f'puerto_{i}'))
+    for i in range(len(ids_puerto)):
+        if ids_puerto[i]:
+            ids_puerto[i] = int(ids_puerto[i])
+    ids_puerto = [x for x in ids_puerto if x is not None]
+    puertof, puerton = encontrar_cambios_con_repeticiones(obtener_puerto_original, ids_puerto)
+    if puerton:
+        puerton = [x for x in puerton if x is not None]
+    modificar_puerto(dispo_id, puertof, puerton, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
