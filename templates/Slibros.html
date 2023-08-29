@@ -117,7 +117,13 @@
         {% for libro in datos_libros %}
         <tr>
             <!--<td>{{ libro[0] }}</td>-->
-            <td>{{ libro[1] }}</td>
+            <td>
+                {% if libro[1] != "NO SE ENCUENTRA" %}
+                    <a href="{{ libro[1] }}" target="_blank" class="link-factura">{{ libro[1] }}</a>
+                {% else %}
+                    {{ libro[1] }}
+                {% endif %}
+            </td>
             <td>{{ libro[2] }}</td>
             <td>{{ libro[3] }}</td>
             <!--<td>{{ libro[4] }}</td>-->

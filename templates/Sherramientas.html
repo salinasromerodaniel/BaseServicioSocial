@@ -118,7 +118,13 @@
         {% for herramienta in datos_herramientas %}
         <tr>
             <!--<td>{{ herramienta[0] }}</td>-->
-            <td>{{ herramienta[1] }}</td>
+            <td>
+                {% if herramienta[1] != "NO SE ENCUENTRA" %}
+                    <a href="{{ herramienta[1] }}" target="_blank" class="link-factura">{{ herramienta[1] }}</a>
+                {% else %}
+                    {{ herramienta[1] }}
+                {% endif %}
+            </td>
             <td>{{ herramienta[2] }}</td>
             <td>{{ herramienta[3] }}</td>
             <!--<td>{{ herramienta[4] }}</td>-->

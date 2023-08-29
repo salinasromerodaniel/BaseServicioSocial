@@ -113,7 +113,13 @@
         {% for dispo in datos_dispos %}
         <tr>
             <!--<td>{{ dispo[0] }}</td>-->
-            <td>{{ dispo[1] }}</td>
+            <td>
+                {% if dispo[1] != "NO SE ENCUENTRA" %}
+                    <a href="{{ dispo[1] }}" target="_blank" class="link-factura">{{ dispo[1] }}</a>
+                {% else %}
+                    {{ dispo[1] }}
+                {% endif %}
+            </td>
             <td>{{ dispo[2] }}</td>
             <td>{{ dispo[3] }}</td>
             <!--<td>{{ dispo[4] }}</td>-->
