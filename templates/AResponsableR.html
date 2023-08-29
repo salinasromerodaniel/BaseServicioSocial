@@ -84,7 +84,7 @@
 <body>
     <div class="container">
         <h1>Agregar responsables de resguardo</h1>
-        <form action="/agregar_responsableI" method="post">
+        <form action="/agregar_responsableR" method="post">
 
             <div class="form-group">
                 <label for="factura">Nombre</label>
@@ -113,7 +113,7 @@
 
             <div class="form-group">
                 <label for="num_inventario">Télefono</label>
-                <input type="text" id="telefono" name="telefono" placeholder="N/A" pattern="[0-9]*">
+                <input type="text" id="telefono" name="telefono" placeholder="N/A" pattern="[0-9]*" required>
             </div>
 
             <div class="form-group">
@@ -150,5 +150,32 @@
             <button class="btn-submit" type="submit">Agregar</button>
         </form>
     </div>
+    <script>
+        // Obtener el elemento select de título y el elemento oculto para almacenar el TITULO_ID
+        const selectTitulo = document.getElementById('titulo');
+        const inputTituloId = document.getElementById('titulo_id');
+    
+        // Agregar un evento para detectar el cambio en el menú deslizable de título
+        selectTitulo.addEventListener('change', function() {
+            // Obtener el valor seleccionado en el menú deslizable (TITULO_ID)
+            const selectedId = selectTitulo.options[selectTitulo.selectedIndex].value;
+    
+            // Almacenar el TITULO_ID en el campo oculto
+            inputTituloId.value = selectedId;
+        });
+    
+        // Obtener el elemento select y el elemento oculto para almacenar el DEPARTAMENTO_ID
+        const selectDepartamento = document.getElementById('departamento');
+        const inputDepartamentoId = document.getElementById('departamento_id');
+    
+        // Agregar un evento para detectar el cambio en el menú deslizable
+        selectDepartamento.addEventListener('change', function() {
+            // Obtener el valor seleccionado en el menú deslizable (DEPARTAMENTO_ID)
+            const selectedId = selectDepartamento.options[selectDepartamento.selectedIndex].value;
+    
+            // Almacenar el DEPARTAMENTO_ID en el campo oculto
+            inputDepartamentoId.value = selectedId;
+        });
+    </script>
 </body>
 </html>
