@@ -597,22 +597,40 @@
                 var redDuplicado = $("select[name^='red_']").not(":first");
                 var ipDuplicado = $("input[name^='ip_']").not(":first");
                 var macDuplicado = $("input[name^='mac_']").not(":first");
+                var aDuplicado = $("label[name^='a_']").not(":first");
+                var bDuplicado = $("label[name^='b_']").not(":first");
+                var cDuplicado = $("label[name^='c_']").not(":first");
 
                 if (redDuplicado.length > 0 && ipDuplicado.length > 0 && macDuplicado.length > 0) {
                     var redDuplicado = redDuplicado.last();
                     var ipDuplicado = ipDuplicado.last();
                     var macDuplicado = macDuplicado.last();
+                    var aDuplicado = aDuplicado.last();
+                    var bDuplicado = bDuplicado.last();
+                    var cDuplicado = cDuplicado.last();
                     
                     // Restablecer el contador para mantener la sincronización con los elementos clonados
+                    contadorRed--;
                     contadorIp--;
                     contadorMac--;
+                    a--;
+                    b--;
+                    c--;
 
+                    aDuplicado.prev(".btn-borrar-red").remove();
                     redDuplicado.prev(".btn-borrar-red").remove();
+                    bDuplicado.prev(".btn-borrar-red").remove();
                     ipDuplicado.prev(".btn-borrar-red").remove();
+                    cDuplicado.prev(".btn-borrar-red").remove();
                     macDuplicado.prev(".btn-borrar-red").remove();
+
+                    aDuplicado.remove();
                     redDuplicado.remove();
+                    bDuplicado.remove();
                     ipDuplicado.remove();
+                    cDuplicado.remove();
                     macDuplicado.remove();
+                    
                     
                     // Restablecer los valores en los campos ocultos
                     $("#lista_ids_red").val(contadorRed);
@@ -622,6 +640,9 @@
                     var redOriginal = $("select[name='red_1']");
                     var ipOriginal = $("input[name='ip_1']");
                     var macOriginal = $("input[name='mac_1']");
+                    var aOriginal = $("label[name='a_1']");
+                    var bOriginal = $("label[name='b_1']");
+                    var cOriginal = $("label[name='c_1']");
                     redOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
                     ipOriginal.val("");
                     macOriginal.val("");
