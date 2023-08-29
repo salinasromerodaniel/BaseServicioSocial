@@ -1519,7 +1519,7 @@ def modificar_red(activo_id, quitar, agregar, fecha_modificacion):
         if agregar:
             for elemento in agregar:
                 insert_nuevo = "INSERT INTO DISPOSITIVO_RED(ACTIVO_ID, INTERFAZ_RED_ID, MAC, IP, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(insert_nuevo, (activo_id, elemento, fecha_modificacion, 1))
+                cursor.execute(insert_nuevo, (activo_id, elemento, '', '', fecha_modificacion, 1))
         
         # Realiza un commit para guardar los cambios
         conn.commit()
