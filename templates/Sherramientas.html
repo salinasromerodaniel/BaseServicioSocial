@@ -144,5 +144,41 @@
         {% endfor %}
     </table>
     <a class="btn-back" href="/activos/herramientas">&#8592;</a>
+    <br>
+    <form action="/cambiarResguardanteH" method="post" id="formulario">
+        <table>
+            <caption>Cambiar Resguardante de Activos</caption>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <select id="ubicacion" name="ubicacion" required>
+                            <!-- Opción deshabilitada y seleccionada por defecto -->
+                            <option value="" disabled selected>Seleccione ubicación de activos</option>
+                            <!-- Generamos las opciones del menú desplegable con los nombres de la tabla UBICACION -->
+                            {% for ubicacion_id, nombre in nombres_ubicacion %}
+                                <option value="{{ ubicacion_id }}">{{ nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" id="ubicacion_id" name="ubicacion_id">
+                </td>
+                <td>
+                    <div class="form-group">
+                        <select id="resguardo" name="resguardo_1" required>
+                            <!-- Opción deshabilitada y seleccionada por defecto -->
+                            <option value="" disabled selected>Seleccione nuevo resguardante</option>
+                            <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_RESGUARDO -->
+                            {% for responsable in nombres_resguardo %}
+                                <option value="{{ responsable.id }}" data-id="{{ responsable.id }}">{{ responsable.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" id="resguardo_id" name="resguardo_id">
+                </td>
+                <td>
+                    <button class="btn-submit" type="submit">Cambiar Resguardante</button>
+                </td>
+            </tr>
+        </table>
 </body>
 </html>

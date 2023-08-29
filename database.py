@@ -1288,6 +1288,61 @@ def modificar_resguardo(activo_id, nuevo_id, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar el resguardante del activo:", e)
 
+def cambiarResguardoActivos(ubicacion_id, resguardo_id):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Primero, actualiza el registro anterior
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET RESPONSABLE_RESGUARDO_ID = {resguardo_id} WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'I')")
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el resguardante del activo:", e)
+
+def cambiarResguardoHerramientas(ubicacion_id, resguardo_id):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Primero, actualiza el registro anterior
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET RESPONSABLE_RESGUARDO_ID = {resguardo_id} WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'H')")
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el resguardante del activo:", e)
+
+def cambiarResguardoLibros(ubicacion_id, resguardo_id):
+    try:
+        # Realiza la conexión a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Primero, actualiza el registro anterior
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET RESPONSABLE_RESGUARDO_ID = {resguardo_id} WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'L')")
+        
+        # Realiza un commit para guardar los cambios
+        conn.commit()
+        
+        # Cierra el cursor y la conexión a la base de datos
+        cursor.close()
+        conn.close()
+    except mysql.connector.Error as e:
+        print("Error al modificar el resguardante del activo:", e)
+
+
 def encontrar_cambios_con_repeticiones(obtener_interno_original, ids_interno):
     # Verificar si los arreglos son iguales
     if obtener_interno_original == ids_interno:
