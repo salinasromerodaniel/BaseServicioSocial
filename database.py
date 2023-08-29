@@ -2803,7 +2803,7 @@ def insertar_ResponsableR(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono
         insert_responsable_query = "INSERT INTO RESPONSABLE_RESGUARDO (NOMBRE, AP_PATERNO, AP_MATERNO , NUM_TRB, RFC, TELEFONO, CORREO, DEPARTAMENTO_ID, TITULO_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         # Definir los valores para la inserción en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
-        values_responsable = (nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo, titulo_id, departamento_id)
+        values_responsable = (nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo, departamento_id, titulo_id)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(insert_responsable_query, values_responsable)
         conn.commit()
@@ -2812,7 +2812,7 @@ def insertar_ResponsableR(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono
         conn.close()
         print("Inserción exitosa en las tablas RESPONSABLE_RESGUARDO.")
     except mysql.connector.Error as error:
-            print("Error al insertar en las tablas LIBRO:", error)
+            print("Error al insertar en las tablas RESPONSABLE_RESGUARDO:", error)
 
 def insertar_ResponsableI(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo,
                           titulo_id, departamento_id):
@@ -2825,7 +2825,7 @@ def insertar_ResponsableI(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono
         insert_responsable_query = "INSERT INTO RESPONSABLE_INTERNO (NOMBRE, AP_PATERNO, AP_MATERNO , NUM_TRB, RFC, TELEFONO, CORREO, DEPARTAMENTO_ID, TITULO_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         # Definir los valores para la inserción en la tabla ACTIVO
         # el modelo simepre debe estar como N/A=id(76)
-        values_responsable = (nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo, titulo_id, departamento_id)
+        values_responsable = (nombre, ap_paterno, ap_materno, num_trb, rfc, telefono, correo, departamento_id, titulo_id)
         # Ejecutar la consulta de inserción en la tabla ACTIVO
         cursor.execute(insert_responsable_query, values_responsable)
         conn.commit()
@@ -2834,4 +2834,4 @@ def insertar_ResponsableI(nombre, ap_paterno, ap_materno, num_trb, rfc, telefono
         conn.close()
         print("Inserción exitosa en las tablas RESPONSABLE_INTERNO.")
     except mysql.connector.Error as error:
-            print("Error al insertar en las tablas LIBRO:", error)
+            print("Error al insertar en las tablas RESPONSABLE_INTERNO:", error)
