@@ -79,7 +79,182 @@
     <!-- Asegúrate de tener incluida la biblioteca de jQuery antes de este script -->
 <!-- Coloca esto en la sección <head> de tu archivo HTML -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="mi_script.js"></script>
+    <script>
+
+        var listaIdsInterno = [];
+        var listaIdsResguardo = [];
+        var listaIdsUsuario = [];
+
+        $(document).ready(function() {
+
+            var contadorInterno = 1;
+            var contadorResguardo = 1;
+            var contadorUsuario = 1;
+
+
+            $("#agregar-interno").click(function() {
+                contadorInterno++;
+
+                var internoOriginal = $("#interno");
+                var nuevoInterno = internoOriginal.clone();
+
+                nuevoInterno.attr("id", "interno_" + contadorInterno);
+                nuevoInterno.attr("name", "interno_" + contadorInterno);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoInterno.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoInterno.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoInterno.after('<button class="btn-borrar-interno">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoInternoDuplicado = $("select[name^='interno_']").last();
+                nuevoInterno.insertAfter(ultimoInternoDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsInterno.push("interno_" + contadorInterno);
+
+                $("#lista_ids_interno").val(contadorInterno);
+            });
+
+            function eliminarCaracteresEscape(str) {
+                return str.replace(/&#39;/g, "'");
+            }
+
+            $(document).ready(function() {
+            // Obtener el número de clics de Flask
+            var numeroDeClics = {{ numeroDeClics }}; // Asegúrate de que Flask proporcione este valor en tu plantilla HTML.
+
+
+            // Función para simular clics en el botón
+            function simularClics() {
+                for (var i = 0; i < numeroDeClics; i++) {
+                    $("#agregar-interno").click();
+                }
+                
+                var i=1;
+                var obtener_interno_original = {{ obtener_interno_original }};
+                obtener_interno_original.forEach(function(elemento) {
+                    console.log(elemento);
+                    var nombreSelect = "interno_" + (i); // Reemplaza con el nombre del select que deseas seleccionar
+                    var select = document.querySelector("select[name='" + nombreSelect + "']");
+                    select.value = elemento;
+                    i++;
+                });
+
+                
+            }
+
+            // Llamar a la función para simular los clics después de que la página se haya cargado
+            simularClics();
+            });
+
+            $("#agregar-resguardo").click(function() {
+                contadorResguardo++;
+
+                var resguardoOriginal = $("#resguardo");
+                var nuevoResguardo = resguardoOriginal.clone();
+
+                nuevoResguardo.attr("id", "resguardo_" + contadorResguardo);
+                nuevoResguardo.attr("name", "resguardo_" + contadorResguardo);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoResguardo.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoResguardo.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoResguardo.after('<button class="btn-borrar-resguardo">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoResguardoDuplicado = $("select[name^='resguardo_']").last();
+                nuevoResguardo.insertAfter(ultimoResguardoDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsResguardo.push("resguardo_" + contadorResguardo);
+
+                $("#lista_ids_resguardo").val(contadorResguardo);
+            });
+
+            $("#agregar-usuario").click(function() {
+                contadorUsuario++;
+
+                var usuarioOriginal = $("#usuario");
+                var nuevoUsuario = usuarioOriginal.clone();
+
+                nuevoUsuario.attr("id", "usuario_" + contadorUsuario);
+                nuevoUsuario.attr("name", "usuario_" + contadorUsuario);
+
+                // Deseleccionar la opción en el nuevo sistema operativo clonado
+                nuevoUsuario.find("option:selected").removeAttr("selected");
+                
+                // Seleccionar la opción predeterminada en el nuevo sistema operativo clonado
+                nuevoUsuario.find("option:first").attr("selected", "selected");
+
+                // Agrega un botón de borrado junto al nuevo sistema operativo clonado
+                nuevoUsuario.after('<button class="btn-borrar-usuario">Borrar</button>');
+
+                // Agrega el nuevo sistema operativo clonado al formulario
+                var ultimoUsuarioDuplicado = $("select[name^='usuario_']").last();
+                nuevoUsuario.insertAfter(ultimoUsuarioDuplicado);
+                // Agrega el ID del sistema operativo clonado a la lista
+                listaIdsUsuario.push("usuario_" + contadorUsuario);
+
+                $("#lista_ids_usuario").val(contadorUsuario);
+            });
+
+            $(document).on('click', '.btn-borrar-resguardo', function() {
+                var resguardoDuplicado = $("select[name^='resguardo_']").not(":first");
+                
+                if (resguardoDuplicado.length > 0) {
+                    var resguardoDuplicado = resguardoDuplicado.last();
+                    resguardoDuplicado.prev(".btn-borrar-resguardo").remove(); // Remover el botón de borrado del sistema anterior
+                    resguardoDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsResguardo.pop();
+                } else {
+                    var resguardoOriginal = $("select[name='resguardo_1']");
+                    resguardoOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-interno', function() {
+                var internoDuplicado = $("select[name^='interno_']").not(":first");
+                
+                if (internoDuplicado.length > 0) {
+                    var internoDuplicado = internoDuplicado.last();
+                    internoDuplicado.prev(".btn-borrar-interno").remove(); // Remover el botón de borrado del sistema anterior
+                    internoDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsInterno.pop();
+                } else {
+                    var internoOriginal = $("select[name='interno_1']");
+                    internoOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+
+            $(document).on('click', '.btn-borrar-usuario', function() {
+                var usuarioDuplicado = $("select[name^='usuario_']").not(":first");
+                
+                if (usuarioDuplicado.length > 0) {
+                    var usuarioDuplicado = usuarioDuplicado.last();
+                    usuarioDuplicado.prev(".btn-borrar-usuario").remove(); // Remover el botón de borrado del sistema anterior
+                    usuarioDuplicado.remove(); // Remover el menú desplegable del sistema operativo duplicado
+                    listaIdsUsuario.pop();
+                } else {
+                    var usuarioOriginal = $("select[name='usuario_1']");
+                    usuarioOriginal.val(""); // Restablecer el valor a la opción deshabilitada y seleccionada por defecto
+                }
+            });
+          
+            
+
+            
+
+
+        });
+
+    </script>
 </head>
 <body>
     <div class="container">
@@ -176,30 +351,61 @@
                 <label for="descripcion">Descripción</label>
                 <input type="text" id="descripcion" name="descripcion" value="{{ herramienta[11] }}">
             </div>
+
+            <div class="form-group">
+                <label for="ubicacion">Ubicación*</label>
+                <select id="ubicacion" name="ubicacion" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione una ubicación</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla UBICACION -->
+                    {% for ubicacion_id, nombre in nombres_ubicacion %}
+                        <option value="{{ ubicacion_id }}" {% if ubicacion_id == obtener_ubicacion_original %}selected{% endif %}>{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="ubicacion_id" name="ubicacion_id">
+
+            <div class="form-group">
+                <label for="interno">Responsable interno*</label>
+                <select id="interno" name="interno_1" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione responsable</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_INTERNO -->
+                    {% for responsable_id, nombre in nombres_interno %}
+                        <option value="{{ responsable_id }}" {% if responsable_id == obtener_interno_original[0] %}selected{% endif %} data-nombre="{{ nombre }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" id="agregar-interno">Agregar otro Interno</button>
+                        </td>
+                        <td style="width: 50%; text-align: center;">
+                            <button type="button" class="btn-borrar-interno">Eliminar último Interno</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="hidden" id="interno_id" name="interno_id">
+
+            <div class="form-group">
+                <label for="resguardo">Responsable de resguardo*</label>
+                <select id="resguardo" name="resguardo_1" required>
+                    <!-- Opción deshabilitada y seleccionada por defecto -->
+                    <option value="" disabled selected>Seleccione responsable</option>
+                    <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_RESGUARDO -->
+                    {% for responsable in nombres_resguardo %}
+                        <option value="{{ responsable.id }}" {% if responsable.id == obtener_resguardo_original %}selected{% endif %}>{{ responsable.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" id="resguardo_id" name="resguardo_id">
+
+            <input type="hidden" name="lista_ids_interno" id="lista_ids_interno" value="1">
             
             <button class="btn-submit" type="submit">Modificar</button>
         </form>
         {% endfor %}
     </div>
-    <script>
-        // the selector will match all input controls of type :checkbox with name="ram_unit"
-        // and attach a click event handler 
-        $("input:checkbox[name='ram_unit']").on('click', function() {
-            // in the handler, 'this' refers to the checkbox clicked on
-            var $box = $(this);
-            if ($box.is(":checked")) {
-            // the name of the box is retrieved using the .attr() method
-            // as it is assumed and expected to be immutable
-            var group = "input:checkbox[name='" + $box.attr("name") + "']";
-            // the checked state of the group/box on the other hand will change
-            // and the current value is retrieved using .prop() method
-            $(group).prop("checked", false);
-            $box.prop("checked", true);
-            } else {
-            $box.prop("checked", false);
-            }
-        });
-
-    </script>
 </body>
 </html>

@@ -874,7 +874,9 @@ def editar_herramienta(herramienta_id):
         obtener_resguardo_original = obtener_resguardoID(herramienta_id)
         numeroDeClics = len(obtener_interno_original) -1
         return render_template('Uherramientas.html', obtener_herramientaIDs=obtener_herramientaIDs, nombres_ubicacion=nombres_ubicacion,  
-                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios, nombres_modelo=nombres_modelo)
+                            nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, nombres_usuarios=nombres_usuarios, nombres_modelo=nombres_modelo,
+                            obtener_ubicacion_original=obtener_ubicacion_original, obtener_interno_original=obtener_interno_original, obtener_resguardo_original=obtener_resguardo_original,
+                            numeroDeClics=numeroDeClics)
     else:
         return redirect(url_for('logout'))
 
@@ -892,10 +894,38 @@ def modificar_herramienta(herramienta_id):
     cantidad = request.form.get('cantidad')
     contenido = request.form.get('contenido').upper()
     descripcion = request.form.get('descripcion').upper()
-    #ubicacion = request.form.get('ubicacion')
-    #usuario = request.form.get('usuario')
-    #resguardo = request.form.get('resguardo')
-    #interno = request.form.get('interno')
+
+    fecha_modificacion = datetime.date.today()
+    obtener_interno_original = obtener_internoID(herramienta_id)
+    contador_interno = int(request.form.get('lista_ids_interno'))
+    ids_interno = []
+    if contador_interno >= 1:
+        for i in range (1, contador_interno + 1) :
+            ids_interno.append(request.form.get(f'interno_{i}'))
+    for i in range(len(ids_interno)):
+        if ids_interno[i]:
+            ids_interno[i] = int(ids_interno[i])
+    ids_interno = [x for x in ids_interno if x is not None]
+    internof, internon = encontrar_cambios_con_repeticiones(obtener_interno_original, ids_interno)
+    if internon:
+        internon = [x for x in internon if x is not None]
+    modificar_interno(herramienta_id, internof, internon, fecha_modificacion)
+
+    ubicacion_original = obtener_ubicacionID(herramienta_id)
+    if ubicacion_original:
+        ubicacion_original = int(ubicacion_original)
+    ubicacion_nueva = int(request.form.get('ubicacion'))
+    resguardo_original = obtener_resguardoID(herramienta_id)
+    if resguardo_original:
+        resguardo_original = int(resguardo_original)
+    resguardo_nueva = int(request.form.get('resguardo_1'))
+    
+
+    if ubicacion_original != ubicacion_nueva:
+        modificar_ubicacion(herramienta_id, ubicacion_nueva, fecha_modificacion)
+    if resguardo_original != resguardo_nueva:
+        modificar_resguardo(herramienta_id, resguardo_nueva, fecha_modificacion)
+
     if not factura:
         factura = "NO SE ENCUENTRA"
     if not serial:
