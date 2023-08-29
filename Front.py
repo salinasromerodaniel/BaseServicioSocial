@@ -93,13 +93,11 @@ def ADispos():
         nombres_puerto = obtener_nombres_puerto()
         nombres_lectora = obtener_info_lectora()
         nombres_red = obtener_info_red()
-        contador_duplicacion = 1
         return render_template('ADispos.html', nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so, 
                                nombres_subtipo=nombres_subtipo, nombres_modelo=nombres_modelo, nombres_ram=nombres_ram,  
                                 nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, 
                                 nombres_almacenamiento=nombres_almacenamiento, nombres_usuarios=nombres_usuarios, nombres_micro=nombres_micro,
-                                nombres_tarjeta=nombres_tarjeta, nombres_puerto=nombres_puerto, nombres_lectora=nombres_lectora, nombres_red=nombres_red,
-                                contador_duplicacion = contador_duplicacion)
+                                nombres_tarjeta=nombres_tarjeta, nombres_puerto=nombres_puerto, nombres_lectora=nombres_lectora, nombres_red=nombres_red)
     else:
         return redirect(url_for('logout'))
     
