@@ -1505,21 +1505,22 @@ def modificar_lectora(activo_id, quitar, agregar, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar el interno del activo:", e)
 
-def modificar_red(activo_id, quitar, agregar, fecha_modificacion):
+def modificar_red(activo_id, viejo, nueva , diccionario_nuevo, fecha_modificacion):
     try:
         # Realiza la conexión a la base de datos
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
-        if quitar:
-            for elemento in quitar:
-                query = f"UPDATE DISPOSITIVO_RED SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND INTERFAZ_RED_ID = {elemento} AND OPERANTE = 1 LIMIT 1"
-                cursor.execute(query)
+        if viejo:
+            query = f"UPDATE DISPOSITIVO_RED SET OPERANTE = 0 WHERE ACTIVO_ID = {activo_id} AND OPERANTE = 1"
+            cursor.execute(query)
         
-        if agregar:
-            for elemento in agregar:
+        if nueva:
+            for i in range(len(nueva)):
+                valor = diccionario_nuevo.get(i)
+                valor1, valor2, valor3 = valor
                 insert_nuevo = "INSERT INTO DISPOSITIVO_RED(ACTIVO_ID, INTERFAZ_RED_ID, MAC, IP, FECHA_COLOC, OPERANTE) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(insert_nuevo, (activo_id, elemento, '', '', fecha_modificacion, 1))
+                cursor.execute(insert_nuevo, (activo_id, valor1, valor3, valor2, fecha_modificacion, 1))
         
         # Realiza un commit para guardar los cambios
         conn.commit()

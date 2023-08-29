@@ -109,6 +109,7 @@
             var contadorInterno = 1;
             var contadorResguardo = 1;
             var contadorUsuario = 1;
+            var contador_duplicacion = {{contador_duplicacion}};
 
             $("#agregar-sistema").click(function() {
                 contadorSistemas++;
@@ -309,6 +310,7 @@
                 contadorRed++;
                 contadorIp++;
                 contadorMac++;
+                contador_duplicacion++;
 
                 var redOriginal = $("#red");
                 var ipOriginal = $("#ip");
@@ -712,30 +714,59 @@
 
             <div class="form-group">
                 <label for="red" style="font-size: 25px;">Interfaz de Red</label>
-                <select id="red" name="red_1" class="form-control">
-                    <option value="" disabled selected>Escoja una Interfaz de Red</option>
-                    {% set red_por_marca = {} %}
-                    {% for red_id, nombre, modelo, marca, integ_o_extern, tipo_nombre in nombres_red %}
-                        {% if marca not in red_por_marca %}
-                            {% set _ = red_por_marca.update({marca: []}) %}
-                        {% endif %}
-                        {% set _ = red_por_marca[marca].append((red_id, nombre, modelo, integ_o_extern, tipo_nombre)) %}
-                    {% endfor %}
-                    {% for marca, redes in red_por_marca.items() %}
-                        <optgroup label="{{ marca }}">
-                            {% for red in redes %}
-                                <option value="{{ red[0] }}">
-                                    {{ red[1] }} - {{ red[2] }} - Interfaz: {% if red[3]|int == 0 %}Integrada{% else %}Externa{% endif %} - {{ red[4] }}
-                                </option>
-                            {% endfor %}
-                        </optgroup>
-                    {% endfor %}
-                </select>
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <strong>{% print(contador_duplicacion) %}</strong>
+                        </td>
+                        <td>
+                            <select id="red" name="red_1" class="form-control">
+                                <option value="" disabled selected>Escoja una Interfaz de Red</option>
+                                {% set red_por_marca = {} %}
+                                {% for red_id, nombre, modelo, marca, integ_o_extern, tipo_nombre in nombres_red %}
+                                    {% if marca not in red_por_marca %}
+                                        {% set _ = red_por_marca.update({marca: []}) %}
+                                    {% endif %}
+                                    {% set _ = red_por_marca[marca].append((red_id, nombre, modelo, integ_o_extern, tipo_nombre)) %}
+                                {% endfor %}
+                                {% for marca, redes in red_por_marca.items() %}
+                                    <optgroup label="{{ marca }}">
+                                        {% for red in redes %}
+                                            <option value="{{ red[0] }}">
+                                                {{ red[1] }} - {{ red[2] }} - Interfaz: {% if red[3]|int == 0 %}Integrada{% else %}Externa{% endif %} - {{ red[4] }}
+                                            </option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                
                 <!-- Agregar caja de texto para dirección IP -->
                 <label for="ip">Dirección IPv4</label>
-                <input type="text" id="ip" name="ip_1" placeholder="NO ASIGNADA" class="form-control">
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <strong>{% print(contador_duplicacion) %}</strong>
+                        </td>
+                        <td>
+                            <input type="text" id="ip" name="ip_1" placeholder="NO ASIGNADA" class="form-control">
+                        </td>
+                    </tr>
+                </table>
                 <label for="mac">Dirección MAC</label>
-                <input type="text" id="mac" name="mac_1" placeholder="NO INDICADA" class="form-control">
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <strong>{% print(contador_duplicacion) %}</strong>
+                        </td>
+                        <td>
+                            <input type="text" id="mac" name="mac_1" placeholder="NO INDICADA" class="form-control">
+                        </td>
+                    </tr>
+                </table>
+
                 <table style="width: 100%;">
                     <tr>
                         <td style="width: 50%; text-align: center;">
