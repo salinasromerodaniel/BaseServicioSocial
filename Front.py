@@ -840,7 +840,8 @@ def busquedaH():
                 "DESCRIPCION": row[10],
                 "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
-                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else ""
+                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else "",
+                "ID_ACTIVO": row[14]
             }
             datos_procesados.append(row_dict)
         return render_template('SBherramientas.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion)
@@ -1167,7 +1168,8 @@ def busquedaL():
                 "CANTIDAD": row[9],
                 "UBICACION_INFO": "-\n".join(ubicacion_info_list) if ubicacion_info_list else "",
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
-                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else ""
+                "INTERNO_INFO": "-\n".join(interno_info_list) if interno_info_list else "",
+                "ID_ACTIVO": row[13]
             }
             datos_procesados.append(row_dict)
         return render_template('SBlibros.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion)
@@ -1612,7 +1614,8 @@ def busquedaD():
                 "RESGUARDO_INFO": "-\n".join(resguardo_info_list) if resguardo_info_list else "",
                 "INTERNO_INFO": ", ".join(interno_info_list) if interno_info_list else "",
                 "IPS": row[22],
-                "MAC": row[23]
+                "MAC": row[23],
+                "ID_ACTIVO": row[24]
             }
             datos_procesados.append(row_dict)
         return render_template('SBdispos.html', datos_procesados=datos_procesados, nombres_ubicacion=nombres_ubicacion, nombres_modelo=nombres_modelo)

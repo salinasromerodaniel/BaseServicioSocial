@@ -195,6 +195,7 @@
                     <th>UBICACIÓN</th>
                     <th>RESGUARDANTES</th>
                     <th>RESPONSABLES INTERNOS</th>
+                    <th>HISTORICO</th>
                 </tr class="data-row">
                 {% for row in datos_procesados %}
                 <tr>
@@ -228,6 +229,10 @@
                     <td>{{ row['UBICACION_INFO'] }}</td>
                     <td>{{ row['RESGUARDO_INFO'] }}</td>
                     <td>{{ row['INTERNO_INFO'] }}</td>
+                    <td>
+                        <a href="{{ url_for('historico_activoD', activo_id=row['ID_ACTIVO']) }}" class="btn-delete">Historico</a>
+                    </td>
+                    
                 </tr>
                 {% endfor %}
             </table>
