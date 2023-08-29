@@ -6,6 +6,7 @@ from collections import defaultdict
 import re
 import datetime
 import json
+from collections import Counter
 
 app = Flask(__name__)
 
@@ -92,11 +93,13 @@ def ADispos():
         nombres_puerto = obtener_nombres_puerto()
         nombres_lectora = obtener_info_lectora()
         nombres_red = obtener_info_red()
+        contador_duplicacion = 1
         return render_template('ADispos.html', nombres_ubicacion=nombres_ubicacion, nombres_so=nombres_so, 
                                nombres_subtipo=nombres_subtipo, nombres_modelo=nombres_modelo, nombres_ram=nombres_ram,  
                                 nombres_resguardo= nombres_resguardo, nombres_interno=nombres_interno, 
                                 nombres_almacenamiento=nombres_almacenamiento, nombres_usuarios=nombres_usuarios, nombres_micro=nombres_micro,
-                                nombres_tarjeta=nombres_tarjeta, nombres_puerto=nombres_puerto, nombres_lectora=nombres_lectora, nombres_red=nombres_red)
+                                nombres_tarjeta=nombres_tarjeta, nombres_puerto=nombres_puerto, nombres_lectora=nombres_lectora, nombres_red=nombres_red,
+                                contador_duplicacion = contador_duplicacion)
     else:
         return redirect(url_for('logout'))
     
@@ -494,21 +497,71 @@ def modificar_dispo(dispo_id):
     obtener_red_original = obtener_redID(dispo_id)
     obtener_ip_original = obtener_ipID(dispo_id)
     obtener_mac_original = obtener_macID(dispo_id)
+    diccionario_viejo = {}
+    for i in range(len(obtener_red_original)):
+        clave = obtener_red_original[i]
+        valor1 = obtener_ip_original[i]
+        valor2 = obtener_mac_original[i]
+        diccionario_viejo[clave] = (valor1, valor2)
     contador_red = int(request.form.get('lista_ids_red'))
     contador_ip = int(request.form.get('lista_ids_ip'))
     contador_mac = int(request.form.get('lista_ids_mac'))
     ids_red = []
+    ids_ip = []
+    ids_mac = []
     if contador_red >= 1:
         for i in range (1, contador_red + 1) :
             ids_red.append(request.form.get(f'red_{i}'))
     for i in range(len(ids_red)):
         if ids_red[i]:
             ids_red[i] = int(ids_red[i])
+    if contador_ip >= 1:
+        for i in range (1, contador_ip + 1) :
+            ip_value = request.form.get(f'ip_{i}')
+            if not ip_value:
+                ip_value = "NO ASIGNADA"
+            ids_ip.append(ip_value)
+    for i in range(len(ids_ip)):
+        if ids_ip[i]:
+            ids_ip[i] = ids_ip[i]
+    if contador_mac >= 1:
+        for i in range (1, contador_mac + 1) :
+            mac_value = request.form.get(f'mac_{i}')
+            if not mac_value:
+                mac_value = "NO INDICADA"
+            ids_mac.append(mac_value)
+    for i in range(len(ids_mac)):
+        if ids_mac[i]:
+            ids_mac[i] = ids_mac[i]
     ids_red = [x for x in ids_red if x is not None]
+
+    diccionario_nuevo = {}
+    for i in range(len(ids_red)):
+        clave = i
+        valor1 = ids_red[i]
+        valor2 = ids_ip[i]
+        valor3 = ids_mac[i]
+        diccionario_nuevo[clave] = (valor1, valor2, valor3)
     redf, redn = encontrar_cambios_con_repeticiones(obtener_red_original, ids_red)
     if redn:
         redn = [x for x in redn if x is not None]
-    modificar_red(dispo_id, redf, redn, fecha_modificacion)
+    contador1 = Counter(obtener_red_original)
+    contador2 = Counter(ids_red)
+    interseccion = [elemento for elemento, conteo in (contador1 & contador2).items() if conteo >= 1]
+    modificar_red(dispo_id, obtener_red_original, ids_red , diccionario_nuevo, fecha_modificacion)
+
+
+    print("red original", obtener_red_original)
+    print("red nuevo", ids_red)
+    print("ip original", obtener_ip_original)
+    print("ip nuevo", ids_ip)
+    print("mac original", obtener_mac_original)
+    print("mac nuevo", ids_mac)
+    print("diccionario_nuevo", diccionario_nuevo)
+    print("red agregar", redn)
+    print("red faltan", redf)
+    print("interseccion", interseccion)
+    #modificar_red(dispo_id, redf, redn, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
