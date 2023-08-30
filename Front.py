@@ -359,6 +359,7 @@ def editar_dispo(dispo_id):
         obtener_puerto_original = obtener_puertoID(dispo_id)
         obtener_lectora_original = obtener_lectoraID(dispo_id)
         obtener_red_original = obtener_redID(dispo_id)
+        print(obtener_red_original)
         obtener_ip_original = obtener_ipID(dispo_id)
         obtener_ip_original_json = json.dumps(obtener_ip_original)
 

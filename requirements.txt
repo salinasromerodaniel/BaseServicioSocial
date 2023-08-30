@@ -1,0 +1,3 @@
+# Para instalar bibliotecas ejecuta lo siguiente: "pip install -r requirements.txt"
+mysql-connector-python
+Flask
