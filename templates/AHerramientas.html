@@ -335,22 +335,12 @@
                         <option value="{{ responsable.id }}" data-id="{{ responsable.id }}">{{ responsable.nombre }}</option>
                     {% endfor %}
                 </select>
-                <table style="width: 100%;">
-                    <tr>
-                        <td style="width: 50%; text-align: center;">
-                            <button type="button" id="agregar-resguardo">Agregar otro Resguardante</button>
-                        </td>
-                        <td style="width: 50%; text-align: center;">
-                            <button type="button" class="btn-borrar-resguardo">Eliminar último Resguardante</button>
-                        </td>
-                    </tr>
-                </table>
             </div>
             <input type="hidden" id="resguardo_id" name="resguardo_id">
 
             <div class="form-group">
                 <label for="interno">Responsable interno*</label>
-                <select id="interno" name="interno_1" required>
+                <select id="interno" name="interno_1">
                     <!-- Opción deshabilitada y seleccionada por defecto -->
                     <option value="" disabled selected>Seleccione responsable</option>
                     <!-- Generamos las opciones del menú desplegable con los nombres de la tabla RESPONSABLE_INTERNO -->

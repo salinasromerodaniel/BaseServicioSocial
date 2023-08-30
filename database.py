@@ -1288,60 +1288,74 @@ def modificar_resguardo(activo_id, nuevo_id, fecha_modificacion):
     except mysql.connector.Error as e:
         print("Error al modificar el resguardante del activo:", e)
 
-def cambiarResguardoActivos(ubicacion_id, resguardo_id):
+def cambiarResguardoActivos(ubicacion_id, resguardo_id, fecha_modificacion):
     try:
+        activos = []
         # Realiza la conexión a la base de datos
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-
+        cursor.execute(f"SELECT ACTIVO_ID FROM ACTIVO WHERE TIPO = 'I' AND ACTIVO_ID IN (SELECT ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION WHERE UBICACION_ID = {ubicacion_id} AND OPERANTE = 1)")
+        # Obtener los ACTIVO_ID y agregarlos a la lista activos
+        for (activo_id,) in cursor:
+            activos.append(activo_id)
         # Primero, actualiza el registro anterior
-        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET RESPONSABLE_RESGUARDO_ID = {resguardo_id} WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'I')")
-        
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET OPERANTE = 0 WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'I' AND HAU.OPERANTE =1)")
+        for elemento in activos:
+                insert_nuevo = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE(FECHA_CAMBIO_RESGUARDO, RESPONSABLE_RESGUARDO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (fecha_modificacion, resguardo_id, elemento, 1))
         # Realiza un commit para guardar los cambios
         conn.commit()
-        
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al modificar el resguardante del activo:", e)
 
-def cambiarResguardoHerramientas(ubicacion_id, resguardo_id):
+def cambiarResguardoHerramientas(ubicacion_id, resguardo_id, fecha_modificacion):
     try:
+        activos = []
         # Realiza la conexión a la base de datos
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-
+        cursor.execute(f"SELECT ACTIVO_ID FROM ACTIVO WHERE TIPO = 'H' AND ACTIVO_ID IN (SELECT ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION WHERE UBICACION_ID = {ubicacion_id} AND OPERANTE = 1)")
+        # Obtener los ACTIVO_ID y agregarlos a la lista activos
+        for (activo_id,) in cursor:
+            activos.append(activo_id)
         # Primero, actualiza el registro anterior
-        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET RESPONSABLE_RESGUARDO_ID = {resguardo_id} WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'H')")
-        
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET OPERANTE = 0 WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'H' AND HAU.OPERANTE =1)")
+        for elemento in activos:
+                insert_nuevo = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE(FECHA_CAMBIO_RESGUARDO, RESPONSABLE_RESGUARDO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (fecha_modificacion, resguardo_id, elemento, 1))
         # Realiza un commit para guardar los cambios
         conn.commit()
-        
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al modificar el resguardante del activo:", e)
 
-def cambiarResguardoLibros(ubicacion_id, resguardo_id):
+def cambiarResguardoLibros(ubicacion_id, resguardo_id, fecha_modificacion):
     try:
+        activos = []
         # Realiza la conexión a la base de datos
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-
+        cursor.execute(f"SELECT ACTIVO_ID FROM ACTIVO WHERE TIPO = 'L' AND ACTIVO_ID IN (SELECT ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION WHERE UBICACION_ID = {ubicacion_id} AND OPERANTE = 1)")
+        # Obtener los ACTIVO_ID y agregarlos a la lista activos
+        for (activo_id,) in cursor:
+            activos.append(activo_id)
         # Primero, actualiza el registro anterior
-        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET RESPONSABLE_RESGUARDO_ID = {resguardo_id} WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'L')")
-        
+        cursor.execute(f"UPDATE HISTORICO_ACTIVO_RESPONSABLE SET OPERANTE = 0 WHERE ACTIVO_ID IN (SELECT HAU.ACTIVO_ID FROM HISTORICO_ACTIVO_UBICACION HAU INNER JOIN ACTIVO A ON HAU.ACTIVO_ID = A.ACTIVO_ID WHERE HAU.UBICACION_ID = {ubicacion_id} AND A.TIPO = 'L' AND HAU.OPERANTE =1)")
+        for elemento in activos:
+                insert_nuevo = "INSERT INTO HISTORICO_ACTIVO_RESPONSABLE(FECHA_CAMBIO_RESGUARDO, RESPONSABLE_RESGUARDO_ID, ACTIVO_ID, OPERANTE) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_nuevo, (fecha_modificacion, resguardo_id, elemento, 1))
         # Realiza un commit para guardar los cambios
         conn.commit()
-        
         # Cierra el cursor y la conexión a la base de datos
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
         print("Error al modificar el resguardante del activo:", e)
-
 
 def encontrar_cambios_con_repeticiones(obtener_interno_original, ids_interno):
     # Verificar si los arreglos son iguales

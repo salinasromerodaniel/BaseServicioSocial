@@ -292,7 +292,8 @@ def cambiarRA():
         # El usuario está logeado, renderizamos la págin
         ubicacion = int(request.form.get('ubicacion'))
         resguardo = int(request.form.get('resguardo_1'))
-        cambiarResguardoActivos(ubicacion, resguardo)
+        fecha_modificacion = datetime.date.today()
+        cambiarResguardoActivos(ubicacion, resguardo, fecha_modificacion)
         #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
         return redirect(url_for('activos'))
 
@@ -303,7 +304,8 @@ def cambiarRH():
         # El usuario está logeado, renderizamos la págin
         ubicacion = int(request.form.get('ubicacion'))
         resguardo = int(request.form.get('resguardo_1'))
-        cambiarResguardoHerramientas(ubicacion, resguardo)
+        fecha_modificacion = datetime.date.today()
+        cambiarResguardoHerramientas(ubicacion, resguardo, fecha_modificacion)
         #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
         return redirect(url_for('activos'))
 
@@ -314,7 +316,8 @@ def cambiarRL():
         # El usuario está logeado, renderizamos la págin
         ubicacion = int(request.form.get('ubicacion'))
         resguardo = int(request.form.get('resguardo_1'))
-        cambiarResguardoLibros(ubicacion, resguardo)
+        fecha_modificacion = datetime.date.today()
+        cambiarResguardoLibros(ubicacion, resguardo, fecha_modificacion)
         #nombres_modelo = obtener_info_modelo() #no se ocupa el modelo
         return redirect(url_for('activos'))
 
@@ -558,7 +561,7 @@ def modificar_dispo(dispo_id):
             ids_ip[i] = ids_ip[i]
     if contador_mac >= 1:
         for i in range (1, contador_mac + 1) :
-            mac_value = request.form.get(f'mac_{i}')
+            mac_value = request.form.get(f'mac_{i}').upper()
             if not mac_value:
                 mac_value = "NO INDICADA"
             ids_mac.append(mac_value)
@@ -582,18 +585,6 @@ def modificar_dispo(dispo_id):
     interseccion = [elemento for elemento, conteo in (contador1 & contador2).items() if conteo >= 1]
     modificar_red(dispo_id, obtener_red_original, ids_red , diccionario_nuevo, fecha_modificacion)
 
-
-    print("red original", obtener_red_original)
-    print("red nuevo", ids_red)
-    print("ip original", obtener_ip_original)
-    print("ip nuevo", ids_ip)
-    print("mac original", obtener_mac_original)
-    print("mac nuevo", ids_mac)
-    print("diccionario_nuevo", diccionario_nuevo)
-    print("red agregar", redn)
-    print("red faltan", redf)
-    print("interseccion", interseccion)
-    #modificar_red(dispo_id, redf, redn, fecha_modificacion)
     
 
     ubicacion_original = int(obtener_ubicacionID(dispo_id))
@@ -2058,7 +2049,6 @@ def mostrar_resultadosRR():
 
     # Renderizar la página de resultados con los datos recibidos
     return render_template('MPersonas.html')
-
 
 @app.route('/personas/agregar_responsable_interno')
 def responsableI():
